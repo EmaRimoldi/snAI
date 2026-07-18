@@ -1,0 +1,233 @@
+// snAI frontend — served entirely by this Supabase Edge Function.
+// Auth is handled client-side by Supabase Auth (supabase-js); this function
+// only serves static HTML, so it is deployed with verify_jwt = false.
+import "jsr:@supabase/functions-js/edge-runtime.d.ts";
+
+const html = `<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sign in - snAI</title>
+<style>
+  :root { color-scheme: light; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: #ffffff;
+    color: #111827;
+    font: 16px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif;
+    min-height: 100vh;
+  }
+  .visually-hidden {
+    position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+    overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+  }
+  a.skip-link {
+    position: absolute; left: -9999px; top: 0; z-index: 10;
+    background: #ffffff; color: #1d4ed8; padding: 0.5rem 1rem;
+  }
+  a.skip-link:focus { left: 0; }
+  header {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 1rem; padding: 1rem 1.5rem; border-bottom: 1px solid #e5e7eb;
+  }
+  h1 { font-size: 1.25rem; margin: 0; }
+  main { max-width: 24rem; margin: 0 auto; padding: 2rem 1.5rem; }
+  h2 { font-size: 1.5rem; margin: 0 0 1rem; }
+  form { display: grid; gap: 1rem; }
+  label { font-weight: 600; display: block; margin-bottom: 0.25rem; }
+  input {
+    width: 100%; padding: 0.625rem 0.75rem; font: inherit;
+    color: #111827; background: #ffffff;
+    border: 1px solid #6b7280; border-radius: 0.375rem;
+  }
+  input[aria-invalid="true"] { border: 2px solid #b91c1c; }
+  button {
+    font: inherit; font-weight: 600; cursor: pointer;
+    padding: 0.625rem 1rem; min-height: 44px;
+    border-radius: 0.375rem; border: 1px solid transparent;
+    background: #1d4ed8; color: #ffffff;
+  }
+  button.secondary { background: #ffffff; color: #1d4ed8; border-color: #1d4ed8; }
+  :focus-visible { outline: 3px solid #1d4ed8; outline-offset: 2px; }
+  button:focus-visible { outline-color: #111827; }
+  .error { color: #b91c1c; font-weight: 600; margin: 0; }
+  .field-error { color: #b91c1c; margin: 0.25rem 0 0; }
+  #status { margin-top: 1rem; }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to main content</a>
+<header>
+  <h1>snAI</h1>
+  <p id="user-info" hidden>Signed in as <strong id="user-email"></strong></p>
+  <button id="signout" class="secondary" type="button" hidden>Sign out</button>
+</header>
+<main id="main">
+  <section id="view-login" aria-labelledby="login-heading" hidden>
+    <h2 id="login-heading" tabindex="-1">Sign in</h2>
+    <form id="login-form" novalidate>
+      <p id="form-error" class="error" role="alert" hidden></p>
+      <div>
+        <label for="email">Email address</label>
+        <input id="email" name="email" type="email" autocomplete="email"
+               required aria-describedby="email-error" autocapitalize="none" spellcheck="false">
+        <p id="email-error" class="field-error" hidden></p>
+      </div>
+      <div>
+        <label for="password">Password</label>
+        <input id="password" name="password" type="password"
+               autocomplete="current-password" required aria-describedby="password-error">
+        <p id="password-error" class="field-error" hidden></p>
+      </div>
+      <button type="submit" id="submit">Sign in</button>
+    </form>
+  </section>
+  <section id="view-app" aria-labelledby="app-heading" hidden>
+    <h2 id="app-heading" tabindex="-1" class="visually-hidden">Home</h2>
+    <!-- App content intentionally empty for now -->
+  </section>
+  <p id="status" role="status" aria-live="polite"></p>
+</main>
+<script type="module">
+  import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+
+  const supabase = createClient("__SUPABASE_URL__", "__SUPABASE_ANON_KEY__");
+
+  const el = (id) => document.getElementById(id);
+  const viewLogin = el("view-login");
+  const viewApp = el("view-app");
+  const form = el("login-form");
+  const emailInput = el("email");
+  const passwordInput = el("password");
+  const formError = el("form-error");
+  const emailError = el("email-error");
+  const passwordError = el("password-error");
+  const statusEl = el("status");
+  const signoutBtn = el("signout");
+  const userInfo = el("user-info");
+  const userEmail = el("user-email");
+
+  let busy = false;
+
+  function announce(message) { statusEl.textContent = message; }
+
+  function showLogin() {
+    viewApp.hidden = true;
+    viewLogin.hidden = false;
+    signoutBtn.hidden = true;
+    userInfo.hidden = true;
+    document.title = "Sign in - snAI";
+  }
+
+  function showApp(session) {
+    viewLogin.hidden = true;
+    viewApp.hidden = false;
+    userEmail.textContent = session.user.email;
+    userInfo.hidden = false;
+    signoutBtn.hidden = false;
+    document.title = "Home - snAI";
+  }
+
+  function clearErrors() {
+    formError.hidden = true; formError.textContent = "";
+    emailError.hidden = true; emailError.textContent = "";
+    passwordError.hidden = true; passwordError.textContent = "";
+    emailInput.removeAttribute("aria-invalid");
+    passwordInput.removeAttribute("aria-invalid");
+  }
+
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    if (busy) return;
+    clearErrors();
+
+    let firstInvalid = null;
+    if (!emailInput.value.trim()) {
+      emailError.textContent = "Error: Enter your email address.";
+      emailError.hidden = false;
+      emailInput.setAttribute("aria-invalid", "true");
+      firstInvalid = emailInput;
+    }
+    if (!passwordInput.value) {
+      passwordError.textContent = "Error: Enter your password.";
+      passwordError.hidden = false;
+      passwordInput.setAttribute("aria-invalid", "true");
+      firstInvalid = firstInvalid || passwordInput;
+    }
+    if (firstInvalid) {
+      announce("");
+      firstInvalid.focus();
+      return;
+    }
+
+    busy = true;
+    announce("Signing in, please wait.");
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: emailInput.value.trim(),
+      password: passwordInput.value,
+    });
+    busy = false;
+
+    if (error) {
+      announce("");
+      const friendly = error.message === "Invalid login credentials"
+        ? "Incorrect email or password."
+        : error.message;
+      formError.textContent = "Error: " + friendly;
+      formError.hidden = false;
+      emailInput.focus();
+      return;
+    }
+
+    showApp(data.session);
+    announce("Signed in successfully.");
+    el("app-heading").focus();
+  });
+
+  signoutBtn.addEventListener("click", async () => {
+    await supabase.auth.signOut();
+    showLogin();
+    announce("Signed out.");
+    el("login-heading").focus();
+  });
+
+  const { data: { session } } = await supabase.auth.getSession();
+  if (session) {
+    showApp(session);
+  } else {
+    showLogin();
+  }
+</script>
+</body>
+</html>`;
+
+Deno.serve(() => {
+  const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
+  const anonKey = Deno.env.get("SUPABASE_ANON_KEY") ?? "";
+
+  const page = html
+    .replace("__SUPABASE_URL__", supabaseUrl)
+    .replace("__SUPABASE_ANON_KEY__", anonKey);
+
+  const csp = [
+    "default-src 'self'",
+    "script-src 'unsafe-inline' https://esm.sh",
+    `connect-src ${supabaseUrl} https://esm.sh`,
+    "style-src 'unsafe-inline'",
+    "img-src 'self' data:",
+    "base-uri 'none'",
+    "frame-ancestors 'none'",
+  ].join("; ");
+
+  return new Response(page, {
+    headers: {
+      "Content-Type": "text/html; charset=utf-8",
+      "Content-Security-Policy": csp,
+      "X-Content-Type-Options": "nosniff",
+      "Referrer-Policy": "strict-origin-when-cross-origin",
+    },
+  });
+});
