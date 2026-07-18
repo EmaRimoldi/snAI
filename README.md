@@ -1,16 +1,20 @@
-# snAI — RealDoor (Hack-Nation Challenge 03)
+# RealDoor — Application-Readiness Copilot (Hack-Nation Challenge 03)
 
-Renter-side application-readiness copilot. Challenge brief: [`challenge_03.pdf`](challenge_03.pdf).
+Renter-side copilot that turns synthetic household documents into a human-confirmed
+profile, explains one affordable-housing program's rules with citations, identifies
+missing or expired documents, and creates a renter-controlled application-readiness
+packet — without deciding eligibility. Challenge brief: [`challenge_03.pdf`](challenge_03.pdf).
 
 ## Frontend (branch `frontend`)
 
 Minimal skeleton: a login page (Supabase Auth, email + password) and an intentionally
-empty white page after sign-in. No app content yet.
+empty white page after sign-in (RealDoor logo top left, account icon top right with a
+sign-out menu). No app content yet.
 
-- **Live app:** https://snai-one.vercel.app
-- **Hosting:** Vercel (project `snai`, team `chefcurrys-projects`), serving the static
-  files in [`frontend/`](frontend/). No build step, no framework — one HTML page with
-  inline CSS/JS, `supabase-js` loaded from esm.sh.
+- **Live app:** https://realdoor-boston.vercel.app
+- **Hosting:** Vercel (project `realdoor-boston`, team `chefcurrys-projects`), serving
+  the static files in [`frontend/`](frontend/). No build step, no framework — one HTML
+  page with inline CSS/JS, `supabase-js` loaded from esm.sh.
 - **Backend:** Supabase (project `snAI`, ref `zgfanoruqwftbqhhvtwg`, region eu-central-1)
   provides auth (and later the database). The URL and publishable key embedded in
   `index.html` are public by design (equivalent to the anon key); real secrets never go
@@ -38,9 +42,9 @@ Security headers (CSP etc.) are configured in [`frontend/vercel.json`](frontend/
    - Fully keyboard-operable (native controls, skip link, logical focus order)
    - Visible focus indicator (3px outline on `:focus-visible`)
    - Labeled controls; errors linked via `aria-describedby` + `aria-invalid`
-   - No color-only status: every error/status prefixed with text ("Error: …")
+   - No color-only status: every error prefixed with text ("Error: …")
    - Structured headings (`h1` app name → `h2` per view), focus moved to the view
      heading on navigation
-   - Clear completion announcements via the `role="status"` live region
-     ("Signed in successfully.", "Signed out.")
+   - Clear completion announcements via the visually-hidden `role="status"` live
+     region ("Signed in successfully.", "Signed out.") — screen-reader only by design
    - AA color contrast (#111827 / #1d4ed8 / #b91c1c on white)

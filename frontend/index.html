@@ -3,15 +3,25 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Sign in - snAI</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' rx='3' fill='%231d4ed8'/%3E%3Ctext x='8' y='12' font-size='10' font-family='sans-serif' fill='white' text-anchor='middle'%3ES%3C/text%3E%3C/svg%3E">
+<title>Sign in - RealDoor</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' rx='3.5' fill='%23fff7ed'/%3E%3Cpath d='M3.5 13.5 V7 A4.5 4.5 0 0 1 12.5 7 V13.5 Z' fill='%237c2d12'/%3E%3Cpath d='M5.5 13.5 V7.4 A2.5 2.5 0 0 1 10.5 7.4 V13.5 Z' fill='%23b45309'/%3E%3Ccircle cx='9.3' cy='10.2' r='0.75' fill='%23fff7ed'/%3E%3C/svg%3E">
 <style>
-  :root { color-scheme: light; }
+  :root {
+    color-scheme: light;
+    --brand: #7c2d12;
+    --brand-dark: #66240e;
+    --door: #b45309;
+    --ink: #111827;
+    --muted: #4b5563;
+    --danger: #b91c1c;
+    --line: #e5e7eb;
+    --cream: #fff7ed;
+  }
   * { box-sizing: border-box; }
   body {
     margin: 0;
     background: #ffffff;
-    color: #111827;
+    color: var(--ink);
     font: 16px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif;
     min-height: 100vh;
   }
@@ -21,50 +31,87 @@
   }
   a.skip-link {
     position: absolute; left: -9999px; top: 0; z-index: 10;
-    background: #ffffff; color: #1d4ed8; padding: 0.5rem 1rem;
+    background: #ffffff; color: var(--brand); padding: 0.5rem 1rem;
   }
   a.skip-link:focus { left: 0; }
   header {
+    position: relative;
     display: flex; align-items: center; justify-content: space-between;
-    gap: 0.5rem 1rem; padding: 1rem 1.5rem; border-bottom: 1px solid #e5e7eb;
-    flex-wrap: wrap;
+    gap: 0.5rem 1rem; padding: 0.875rem 1.5rem; border-bottom: 1px solid var(--line);
   }
-  h1 { font-size: 1.25rem; margin: 0; }
+  .brand { display: flex; align-items: center; gap: 0.625rem; }
+  .brand svg { display: block; }
+  h1 { font-size: 1.25rem; margin: 0; letter-spacing: -0.01em; }
+  h1 .accent { color: var(--brand); }
   main { max-width: 24rem; margin: 0 auto; padding: 2rem 1.5rem; }
-  h2 { font-size: 1.5rem; margin: 0 0 1rem; }
+  h2 { font-size: 1.5rem; margin: 0 0 0.25rem; }
+  .tagline { margin: 0 0 1.5rem; color: var(--muted); font-size: 0.9375rem; }
   form { display: grid; gap: 1rem; }
   label { font-weight: 600; display: block; margin-bottom: 0.25rem; }
   input {
     width: 100%; padding: 0.625rem 0.75rem; font: inherit;
-    color: #111827; background: #ffffff;
+    color: var(--ink); background: #ffffff;
     border: 1px solid #6b7280; border-radius: 0.375rem;
   }
-  input[aria-invalid="true"] { border: 2px solid #b91c1c; }
+  input[aria-invalid="true"] { border: 2px solid var(--danger); }
   button {
     font: inherit; font-weight: 600; cursor: pointer;
     padding: 0.625rem 1rem; min-height: 44px;
     border-radius: 0.375rem; border: 1px solid transparent;
-    background: #1d4ed8; color: #ffffff;
+    background: var(--brand); color: #ffffff;
   }
-  button.secondary { background: #ffffff; color: #1d4ed8; border-color: #1d4ed8; }
-  :focus-visible { outline: 3px solid #1d4ed8; outline-offset: 2px; }
-  button:focus-visible { outline-color: #111827; }
-  .error { color: #b91c1c; font-weight: 600; margin: 0; }
-  .field-error { color: #b91c1c; margin: 0.25rem 0 0; }
-  #status { margin-top: 1rem; }
+  button:hover { background: var(--brand-dark); }
+  button.secondary { background: #ffffff; color: var(--brand); border-color: var(--brand); }
+  button.secondary:hover { background: var(--cream); }
+  :focus-visible { outline: 3px solid var(--brand); outline-offset: 2px; }
+  .icon-button {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 44px; min-height: 44px; padding: 0;
+    background: #ffffff; color: var(--ink);
+    border: 1px solid var(--line); border-radius: 50%;
+  }
+  .icon-button:hover { background: var(--cream); border-color: var(--door); }
+  .account-panel {
+    position: absolute; right: 1.5rem; top: calc(100% + 0.5rem); z-index: 5;
+    min-width: 14rem; padding: 0.75rem; display: grid; gap: 0.75rem;
+    background: #ffffff; border: 1px solid var(--line); border-radius: 0.5rem;
+    box-shadow: 0 8px 24px rgba(17, 24, 39, 0.12);
+  }
+  .account-panel p { margin: 0; color: var(--muted); font-size: 0.9375rem; overflow-wrap: anywhere; }
+  .error { color: var(--danger); font-weight: 600; margin: 0; }
+  .field-error { color: var(--danger); margin: 0.25rem 0 0; }
   [hidden] { display: none !important; }
 </style>
 </head>
 <body>
 <a class="skip-link" href="#main">Skip to main content</a>
 <header>
-  <h1>snAI</h1>
-  <p id="user-info" hidden>Signed in as <strong id="user-email"></strong></p>
-  <button id="signout" class="secondary" type="button" hidden>Sign out</button>
+  <div class="brand">
+    <svg width="30" height="30" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <path d="M4.5 21 V10 A7.5 7.5 0 0 1 19.5 10 V21 Z" fill="#7c2d12"/>
+      <path d="M7 21 V10.4 A5 5 0 0 1 17 10.4 V21 Z" fill="#b45309"/>
+      <circle cx="14.9" cy="14.4" r="1" fill="#fff7ed"/>
+      <rect x="3" y="20.4" width="18" height="1.8" rx="0.9" fill="#7c2d12"/>
+    </svg>
+    <h1>Real<span class="accent">Door</span></h1>
+  </div>
+  <button id="account-button" class="icon-button" type="button"
+          aria-expanded="false" aria-controls="account-panel" hidden>
+    <span class="visually-hidden">Account</span>
+    <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <circle cx="12" cy="8" r="4" fill="currentColor"/>
+      <path d="M4 20.5 a8 8 0 0 1 16 0 Z" fill="currentColor"/>
+    </svg>
+  </button>
+  <div id="account-panel" class="account-panel" hidden>
+    <p id="account-email"></p>
+    <button id="signout" class="secondary" type="button">Sign out</button>
+  </div>
 </header>
 <main id="main">
   <section id="view-login" aria-labelledby="login-heading" hidden>
     <h2 id="login-heading" tabindex="-1">Sign in</h2>
+    <p class="tagline">Application-Readiness Copilot</p>
     <form id="login-form" novalidate>
       <p id="form-error" class="error" role="alert" hidden></p>
       <div>
@@ -86,7 +133,7 @@
     <h2 id="app-heading" tabindex="-1" class="visually-hidden">Home</h2>
     <!-- App content intentionally empty for now -->
   </section>
-  <p id="status" role="status" aria-live="polite"></p>
+  <p id="status" role="status" aria-live="polite" class="visually-hidden"></p>
 </main>
 <script type="module">
   import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
@@ -107,29 +154,35 @@
   const emailError = el("email-error");
   const passwordError = el("password-error");
   const statusEl = el("status");
+  const accountBtn = el("account-button");
+  const accountPanel = el("account-panel");
+  const accountEmail = el("account-email");
   const signoutBtn = el("signout");
-  const userInfo = el("user-info");
-  const userEmail = el("user-email");
 
   let busy = false;
 
+  // Screen-reader-only completion announcements (no visible status text).
   function announce(message) { statusEl.textContent = message; }
+
+  function closeAccountPanel() {
+    accountPanel.hidden = true;
+    accountBtn.setAttribute("aria-expanded", "false");
+  }
 
   function showLogin() {
     viewApp.hidden = true;
     viewLogin.hidden = false;
-    signoutBtn.hidden = true;
-    userInfo.hidden = true;
-    document.title = "Sign in - snAI";
+    accountBtn.hidden = true;
+    closeAccountPanel();
+    document.title = "Sign in - RealDoor";
   }
 
   function showApp(session) {
     viewLogin.hidden = true;
     viewApp.hidden = false;
-    userEmail.textContent = session.user.email;
-    userInfo.hidden = false;
-    signoutBtn.hidden = false;
-    document.title = "Home - snAI";
+    accountEmail.textContent = session.user.email;
+    accountBtn.hidden = false;
+    document.title = "Home - RealDoor";
   }
 
   function clearErrors() {
@@ -139,6 +192,30 @@
     emailInput.removeAttribute("aria-invalid");
     passwordInput.removeAttribute("aria-invalid");
   }
+
+  accountBtn.addEventListener("click", () => {
+    const isOpen = !accountPanel.hidden;
+    if (isOpen) {
+      closeAccountPanel();
+    } else {
+      accountPanel.hidden = false;
+      accountBtn.setAttribute("aria-expanded", "true");
+    }
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && !accountPanel.hidden) {
+      closeAccountPanel();
+      accountBtn.focus();
+    }
+  });
+
+  document.addEventListener("click", (event) => {
+    if (accountPanel.hidden) return;
+    if (!accountPanel.contains(event.target) && !accountBtn.contains(event.target)) {
+      closeAccountPanel();
+    }
+  });
 
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
