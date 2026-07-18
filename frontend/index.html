@@ -1,14 +1,10 @@
-// snAI frontend — served entirely by this Supabase Edge Function.
-// Auth is handled client-side by Supabase Auth (supabase-js); this function
-// only serves static HTML, so it is deployed with verify_jwt = false.
-import "jsr:@supabase/functions-js/edge-runtime.d.ts";
-
-const html = `<!doctype html>
+<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Sign in - snAI</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' rx='3' fill='%231d4ed8'/%3E%3Ctext x='8' y='12' font-size='10' font-family='sans-serif' fill='white' text-anchor='middle'%3ES%3C/text%3E%3C/svg%3E">
 <style>
   :root { color-scheme: light; }
   * { box-sizing: border-box; }
@@ -30,7 +26,8 @@ const html = `<!doctype html>
   a.skip-link:focus { left: 0; }
   header {
     display: flex; align-items: center; justify-content: space-between;
-    gap: 1rem; padding: 1rem 1.5rem; border-bottom: 1px solid #e5e7eb;
+    gap: 0.5rem 1rem; padding: 1rem 1.5rem; border-bottom: 1px solid #e5e7eb;
+    flex-wrap: wrap;
   }
   h1 { font-size: 1.25rem; margin: 0; }
   main { max-width: 24rem; margin: 0 auto; padding: 2rem 1.5rem; }
@@ -94,7 +91,11 @@ const html = `<!doctype html>
 <script type="module">
   import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-  const supabase = createClient("__SUPABASE_URL__", "__SUPABASE_ANON_KEY__");
+  // Publishable key: safe to expose by design (like an anon key).
+  const SUPABASE_URL = "https://zgfanoruqwftbqhhvtwg.supabase.co";
+  const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_ThFBIsq2HyTAGwuWgdVuNw_bvfUh6Vy";
+
+  const supabase = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
 
   const el = (id) => document.getElementById(id);
   const viewLogin = el("view-login");
@@ -202,32 +203,4 @@ const html = `<!doctype html>
   }
 </script>
 </body>
-</html>`;
-
-Deno.serve(() => {
-  const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
-  const anonKey = Deno.env.get("SUPABASE_ANON_KEY") ?? "";
-
-  const page = html
-    .replace("__SUPABASE_URL__", supabaseUrl)
-    .replace("__SUPABASE_ANON_KEY__", anonKey);
-
-  const csp = [
-    "default-src 'self'",
-    "script-src 'unsafe-inline' https://esm.sh",
-    `connect-src ${supabaseUrl} https://esm.sh`,
-    "style-src 'unsafe-inline'",
-    "img-src 'self' data:",
-    "base-uri 'none'",
-    "frame-ancestors 'none'",
-  ].join("; ");
-
-  return new Response(page, {
-    headers: {
-      "Content-Type": "text/html; charset=utf-8",
-      "Content-Security-Policy": csp,
-      "X-Content-Type-Options": "nosniff",
-      "Referrer-Policy": "strict-origin-when-cross-origin",
-    },
-  });
-});
+</html>
