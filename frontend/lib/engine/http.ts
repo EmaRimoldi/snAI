@@ -13,7 +13,7 @@ import type {
   NormBox,
   PayFrequency,
 } from "@/lib/pipeline/types";
-import type { ClassifyResult, ExtractResult } from "@/lib/engine/extract";
+import type { ExtractResult, ProcessedDoc } from "@/lib/engine/extract";
 
 type EngineField = {
   field: string;
@@ -96,53 +96,15 @@ function toDocumentType(raw: string): DocumentType {
     : "unknown";
 }
 
-// classifyDocument(file) runs the real extraction once; extractFields() only
-// receives the file NAME, so the parsed record is cached here in between.
-const pending = new Map<string, EngineDocument>();
-
-export async function httpClassify(baseUrl: string, file: File): Promise<ClassifyResult> {
-  const body = new FormData();
-  body.append("files", file, file.name);
-  const response = await fetch(`${baseUrl.replace(/\/$/, "")}/extract`, {
-    method: "POST",
-    body,
-  });
-  if (!response.ok) {
-    throw new Error(`engine /extract failed (${response.status})`);
-  }
-  const artifact = (await response.json()) as { documents: EngineDocument[] };
-  const doc = artifact.documents[0];
-  if (!doc) throw new Error("engine returned no document");
-  pending.set(file.name, doc);
-
-  const confidences = doc.fields
-    .filter((f) => f.field !== QUARANTINE_FIELD)
-    .map((f) => f.confidence ?? 1);
-  const confidence = confidences.length
-    ? confidences.reduce((a, b) => a + b, 0) / confidences.length
-    : 0.9;
-  return { documentType: toDocumentType(doc.document_type), confidence };
-}
-
-export function httpExtract(doc: {
-  id: string;
-  fileName: string;
-  documentType: DocumentType;
-}): ExtractResult {
-  const record = pending.get(doc.fileName);
-  if (!record) {
-    throw new Error(`no extraction cached for ${doc.fileName} — classify first`);
-  }
-  pending.delete(doc.fileName);
-
+function toExtractResult(record: EngineDocument, docId: string): ExtractResult {
   const pageSize = record.page_size_points ?? [612, 792];
   const quarantined = record.fields.find((f) => f.field === QUARANTINE_FIELD);
 
   const fields: ExtractedField[] = record.fields
     .filter((f) => f.field !== QUARANTINE_FIELD)
     .map((f) => ({
-      id: `${doc.id}:${f.field}`,
-      documentId: doc.id,
+      id: `${docId}:${f.field}`,
+      documentId: docId,
       key: f.field,
       value: String(f.value ?? ""),
       page: f.page,
@@ -157,4 +119,52 @@ export function httpExtract(doc: {
     fields,
     quarantinedText: quarantined ? String(quarantined.value ?? "") : undefined,
   };
+}
+
+function classifyConfidence(record: EngineDocument): number {
+  const confidences = record.fields
+    .filter((f) => f.field !== QUARANTINE_FIELD)
+    .map((f) => f.confidence ?? 1);
+  return confidences.length
+    ? confidences.reduce((a, b) => a + b, 0) / confidences.length
+    : 0.9;
+}
+
+/** One POST /extract with ALL files; results mapped back to inputs by index
+ *  (the server preserves upload order — file_name is asserted as a sanity check). */
+export async function httpProcessBatch(
+  baseUrl: string,
+  inputs: ReadonlyArray<{ id: string; file: File }>,
+): Promise<ProcessedDoc[]> {
+  const body = new FormData();
+  for (const { file } of inputs) body.append("files", file, file.name);
+  const response = await fetch(`${baseUrl.replace(/\/$/, "")}/extract`, {
+    method: "POST",
+    body,
+  });
+  if (!response.ok) {
+    throw new Error(`engine /extract failed (${response.status})`);
+  }
+  const artifact = (await response.json()) as { documents: EngineDocument[] };
+  if (artifact.documents.length !== inputs.length) {
+    throw new Error(
+      `engine returned ${artifact.documents.length} documents for ${inputs.length} files`,
+    );
+  }
+
+  return inputs.map(({ id, file }, i) => {
+    const record = artifact.documents[i];
+    if (record.file_name && record.file_name !== file.name) {
+      throw new Error(
+        `engine document order mismatch: expected ${file.name}, got ${record.file_name}`,
+      );
+    }
+    const { fields, quarantinedText } = toExtractResult(record, id);
+    return {
+      documentType: toDocumentType(record.document_type),
+      confidence: classifyConfidence(record),
+      fields,
+      quarantinedText,
+    };
+  });
 }

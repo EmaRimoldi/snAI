@@ -35,6 +35,8 @@ export type DocumentRecord = {
   id: string;
   fileName: string;
   fileUrl: string; // object URL (client) or storage signed URL
+  /** Raw uploaded bytes, client memory only — dies with the session (never transmitted or stored). */
+  file?: File;
   mimeType: string;
   documentType: DocumentType;
   classifyConfidence: number;

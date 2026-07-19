@@ -94,3 +94,54 @@ the browser (upload → confirm → lock walk; delete-session → NOT_STARTED).
 
 **Note:** exported `submission.readiness_status` untouched — UNCONFIRMED_FIELDS still blocks it, so
 final outcomes after full confirmation are identical to before.
+
+## 2026-07-19 — Real PDF viewer with bounding-box overlays (branch pdfviewer)
+
+**Shipped:**
+- `pdfjs-dist` (exact 6.1.200) renders the actual uploaded PDFs in the review pane
+  (`components/pipeline/PdfViewer.tsx`): every page as a canvas inside a FIXED-size scrollable box,
+  ALL extracted-field boxes overlaid as clickable buttons (click = jump to that field, same
+  focus-managed path as the error menu). Active box highlighted; confirmed boxes tinted green.
+- Zoom: +/− / fit-width buttons (44px, localized), Ctrl+wheel / trackpad pinch (non-passive
+  listener), +/− keys on the focused region; zoom grows the PDF inside the box, never the box.
+- **Auto-crop:** navigating to a value zooms so its box is comfortably framed (~55% width, capped)
+  and centers the viewport on it; smooth unless prefers-reduced-motion. Manual zoom respected until
+  the next navigation.
+- Bytes stay in the browser: `DocumentRecord.file` (File) → `getDocument({data})` — never fetched or
+  uploaded; Supabase Storage deliberately NOT used (user decision; deletion-proof stays trivial,
+  offline-venue safe). Worker is a same-origin Turbopack asset (`lib/pdf/pdfjs.ts`); CSP gained only
+  `worker-src 'self'`.
+- Batch parse: one `POST /extract` for a whole upload (`processBatch` seam in `lib/engine/extract.ts`
+  + `httpProcessBatch` in `lib/engine/http.ts`, response mapped by index with file_name sanity
+  check); killed the fragile per-file classify/extract filename cache. Mock engine unchanged
+  (per-file, deterministic). `pageCount` now set from pdf.js via `setDocumentPageCount`.
+- Non-PDF/image uploads and pdf.js failures fall back to the old schematic + open-original link.
+- New copy (viewer label, zoom, page x of y, preview error) in all five languages.
+
+**Verified:** `npm run build` clean; engine `POST /extract` with all 4 HH-001 PDFs → 4 docs in
+order, 0 LLM calls; `npm run dev:household` (engine mode, port 3000) serving with worker asset
+emitted. Browser click-through (boxes, auto-crop, zoom) pending user check.
+
+**Viewer refinements (same session):** anchored zoom (buttons/keys = viewport center, Ctrl+wheel =
+cursor) with scrollbar-gutter fix for the fit-width oscillation; auto-center only on navigation
+(manual zoom/pan never snapped back); viewer box size fully locked (grid min-width clamp);
+boxes colored by the shared green→red confidence ramp (`lib/pipeline/confidence.ts`, CSS var
+`--conf`), slightly dilated (0.6% page pad) so characters stay readable; auto-crop now fills ~80%
+of the viewer width; confidence meter uses the same ramp.
+
+**Viewer additions:** coordinate-space fix (`position: relative` on the scroll box — centering and
+zoom-anchor math were measuring offsets against a distant ancestor); side minimap (96px, constant
+fit-to-width thumbnail of the active page with a live viewport rectangle, click-to-pan, hidden
+<720px, aria-hidden decorative); "Snap to value" toolbar button re-running the auto-crop on the
+active field (localized ×5).
+
+## 2026-07-19 — Pipeline copy complete in all five languages; viewer drag-to-pan
+
+- `lib/pipeline/copy.ts`: es/zh/tl/vi are now FULL `Copy` objects (was `Partial` with EN fallback) —
+  switching language changes every pipeline string (~120 keys/language), enforced at compile time
+  like `dictionaries.ts`. Field explanations ("Why this is needed") localized too via
+  `useFieldExplain()` (16 fields × 5 languages); the EN-only `FIELD_EXPLAIN` export is gone.
+  Supabase `i18n_translations` mirroring of pipeline copy remains a follow-up (table writes are
+  dashboard-only; bundled copy is the offline source of truth).
+- PdfViewer: mouse drag-to-pan on the page background (pointer capture; boxes stay clickable;
+  touch keeps native scrolling; grab/grabbing cursor).

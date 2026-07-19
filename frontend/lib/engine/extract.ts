@@ -1,8 +1,8 @@
-// Engine seam. The UI depends only on classifyDocument() + extractFields().
-// Today a deterministic MOCK implements them; teammates' real engine (Supabase
-// Edge Function, API route, or Python service) swaps in via NEXT_PUBLIC_ENGINE
-// without any UI change. No values are keyed to household IDs — everything is
-// derived from a hash of the file name, so nothing is hardcoded to the oracle.
+// Engine seam. The UI depends only on processBatch(): one call per upload,
+// covering classification + extraction for every file. The real engine
+// (engine/server.py) swaps in via NEXT_PUBLIC_ENGINE; the deterministic MOCK
+// is the default. No values are keyed to household IDs — everything is derived
+// from a hash of the file name, so nothing is hardcoded to the oracle.
 
 import type {
   DocumentType,
@@ -15,6 +15,40 @@ const ENGINE = process.env.NEXT_PUBLIC_ENGINE ?? "mock";
 
 export type ClassifyResult = { documentType: DocumentType; confidence: number };
 export type ExtractResult = { fields: ExtractedField[]; quarantinedText?: string };
+export type ProcessedDoc = {
+  documentType: DocumentType;
+  confidence: number;
+  fields: ExtractedField[];
+  quarantinedText?: string;
+};
+
+/**
+ * Process a whole upload in one go. The real engine receives ALL files in a
+ * single POST /extract (its batch mode caps LLM-backup calls per batch); the
+ * mock keeps its deterministic per-file behavior.
+ */
+export async function processBatch(
+  inputs: ReadonlyArray<{ id: string; file: File }>,
+): Promise<ProcessedDoc[]> {
+  if (ENGINE.startsWith("http") || ENGINE.startsWith("/")) {
+    const { httpProcessBatch } = await import("@/lib/engine/http");
+    return httpProcessBatch(ENGINE, inputs);
+  }
+  if (ENGINE !== "mock") {
+    throw new Error(`Unknown NEXT_PUBLIC_ENGINE "${ENGINE}" — use "mock" or an engine URL`);
+  }
+  const results: ProcessedDoc[] = [];
+  for (const { id, file } of inputs) {
+    const { documentType, confidence } = await mockClassify(file);
+    const { fields, quarantinedText } = await mockExtract({
+      id,
+      fileName: file.name,
+      documentType,
+    });
+    results.push({ documentType, confidence, fields, quarantinedText });
+  }
+  return results;
+}
 
 // ---- deterministic PRNG (stable per file name) ------------------------------
 
@@ -73,30 +107,20 @@ function pick<T>(rng: () => number, arr: readonly T[]): T {
 const NAMES = ["Jordan Rivera", "Alex Chen", "Maria Santos", "Sam Okafor", "Linh Tran", "Priya Nair"];
 const STREETS = ["Blue Hill Ave", "Dorchester Ave", "Massachusetts Ave", "Centre St", "Bennington St"];
 
-// ---- public API -------------------------------------------------------------
+// ---- deterministic mock (default when no NEXT_PUBLIC_ENGINE is set) ---------
 
-export async function classifyDocument(file: File): Promise<ClassifyResult> {
-  if (ENGINE.startsWith("http") || ENGINE.startsWith("/")) {
-    const { httpClassify } = await import("@/lib/engine/http");
-    return httpClassify(ENGINE, file);
-  }
-  if (ENGINE !== "mock") throw new Error(`Unknown NEXT_PUBLIC_ENGINE "${ENGINE}" — use "mock" or an engine URL`);
+async function mockClassify(file: File): Promise<ClassifyResult> {
   await delay(180);
   const { type, matched } = guessType(file.name);
   const rng = mulberry32(hashString(file.name));
   return { documentType: type, confidence: matched ? 0.9 + rng() * 0.09 : 0.6 + rng() * 0.12 };
 }
 
-export async function extractFields(doc: {
+async function mockExtract(doc: {
   id: string;
   fileName: string;
   documentType: DocumentType;
 }): Promise<ExtractResult> {
-  if (ENGINE.startsWith("http") || ENGINE.startsWith("/")) {
-    const { httpExtract } = await import("@/lib/engine/http");
-    return httpExtract(doc);
-  }
-  if (ENGINE !== "mock") throw new Error(`Unknown NEXT_PUBLIC_ENGINE "${ENGINE}" — use "mock" or an engine URL`);
   await delay(260);
   const rng = mulberry32(hashString(doc.fileName) ^ 0x9e3779b9);
   const type = doc.documentType === "unknown" ? pick(rng, DOC_TYPES) : doc.documentType;

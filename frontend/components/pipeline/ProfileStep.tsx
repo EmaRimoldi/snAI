@@ -7,8 +7,9 @@
 import { useEffect, useRef, useState } from "react";
 import { useApp, REQUIRED_CHECKLIST } from "@/lib/pipeline/state";
 import type { DocumentType } from "@/lib/pipeline/types";
-import { useCopy, fmt, FIELD_EXPLAIN } from "@/lib/pipeline/copy";
+import { useCopy, fmt, useFieldExplain } from "@/lib/pipeline/copy";
 import { LOW_CONFIDENCE } from "@/lib/pipeline/calc";
+import { confidenceColor } from "@/lib/pipeline/confidence";
 import DocumentPreview from "./DocumentPreview";
 import s from "./pipeline.module.css";
 
@@ -18,6 +19,7 @@ function humanize(key: string): string {
 
 export default function ProfileStep() {
   const c = useCopy();
+  const fieldExplain = useFieldExplain();
   const {
     documents, fields, busy, addFiles, confirmField, correctField, goToStep,
     pendingReviewFieldId, clearReviewRequest,
@@ -218,16 +220,24 @@ export default function ProfileStep() {
               </h3>
               <p className={s.fieldExplain}>
                 <strong>{c.whyNeeded}: </strong>
-                {FIELD_EXPLAIN[field.key] ?? `${humanize(field.key)} — extracted from ${docLabel(doc.documentType)}.`}
+                {fieldExplain[field.key] ?? `${humanize(field.key)} — ${docLabel(doc.documentType)}`}
               </p>
 
               <div className={`${s.confidenceWrap} ${field.confidence < LOW_CONFIDENCE ? s.confidenceLow : ""}`}>
                 <div className={s.confidenceHead}>
                   <span>{c.confidence}</span>
-                  <span>{Math.round(field.confidence * 100)}%</span>
+                  <span style={{ color: confidenceColor(field.confidence) }}>
+                    {Math.round(field.confidence * 100)}%
+                  </span>
                 </div>
                 <div className={s.confidenceBar}>
-                  <div className={s.confidenceFill} style={{ width: `${Math.round(field.confidence * 100)}%` }} />
+                  <div
+                    className={s.confidenceFill}
+                    style={{
+                      width: `${Math.round(field.confidence * 100)}%`,
+                      background: confidenceColor(field.confidence),
+                    }}
+                  />
                 </div>
               </div>
 
@@ -298,7 +308,11 @@ export default function ProfileStep() {
               )}
             </div>
 
-            <DocumentPreview doc={doc} field={field} />
+            <DocumentPreview
+              doc={doc}
+              field={field}
+              fields={fields.filter((f) => f.documentId === doc.id)}
+            />
           </div>
 
           <p className={s.hint} style={{ marginTop: "1rem" }}>

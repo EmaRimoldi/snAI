@@ -34,7 +34,7 @@ import {
   thresholdCentsForSize,
   centsToDollars,
 } from "@/lib/pipeline/calc";
-import { classifyDocument, extractFields } from "@/lib/engine/extract";
+import { processBatch } from "@/lib/engine/extract";
 
 export type Step = "profile" | "understand" | "prepare";
 
@@ -71,6 +71,7 @@ type AppValue = {
   goToStep: (step: Step) => void;
   requestReviewField: (id: string) => void;
   clearReviewRequest: () => void;
+  setDocumentPageCount: (id: string, pageCount: number) => void;
   addFiles: (files: File[]) => Promise<void>;
   confirmField: (id: string) => void;
   correctField: (id: string, value: string) => void;
@@ -119,34 +120,38 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
   const applicationIdRef = useRef<string>(`APP-${shortId()}`);
   const demoStartedRef = useRef(false);
 
+  // One batched engine call per drop: the real engine's /extract accepts all
+  // files in a single request (and caps its LLM backup per batch).
   const addFiles = useCallback(async (files: File[]) => {
     if (files.length === 0) return;
     setBusy(true);
     try {
-      for (const file of files) {
-        const id = `doc-${shortId()}`;
-        const { documentType, confidence } = await classifyDocument(file);
-        const { fields: docFields, quarantinedText } = await extractFields({
-          id,
-          fileName: file.name,
-          documentType,
-        });
-        const record: DocumentRecord = {
-          id,
-          fileName: file.name,
-          fileUrl: URL.createObjectURL(file),
-          mimeType: file.type || "application/octet-stream",
-          documentType,
-          classifyConfidence: confidence,
-          pageCount: 1,
-          quarantinedText,
-        };
-        setDocuments((prev) => [...prev, record]);
-        setFields((prev) => [...prev, ...docFields]);
-      }
+      const inputs = files.map((file) => ({ id: `doc-${shortId()}`, file }));
+      const results = await processBatch(inputs);
+      const records: DocumentRecord[] = inputs.map(({ id, file }, i) => ({
+        id,
+        fileName: file.name,
+        fileUrl: URL.createObjectURL(file),
+        file,
+        mimeType: file.type || "application/octet-stream",
+        documentType: results[i].documentType,
+        classifyConfidence: results[i].confidence,
+        pageCount: 1, // corrected by the viewer once pdf.js opens the document
+        quarantinedText: results[i].quarantinedText,
+      }));
+      setDocuments((prev) => [...prev, ...records]);
+      setFields((prev) => [...prev, ...results.flatMap((r) => r.fields)]);
     } finally {
       setBusy(false);
     }
+  }, []);
+
+  const setDocumentPageCount = useCallback((id: string, pageCount: number) => {
+    setDocuments((prev) =>
+      prev.some((d) => d.id === id && d.pageCount !== pageCount)
+        ? prev.map((d) => (d.id === id ? { ...d, pageCount } : d))
+        : prev,
+    );
   }, []);
 
   useEffect(() => {
@@ -289,6 +294,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
       goToStep: setStep,
       requestReviewField,
       clearReviewRequest,
+      setDocumentPageCount,
       addFiles,
       confirmField,
       correctField,
@@ -302,7 +308,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
       readiness, displayStatus, unresolvedCount, missingRequired, presentTypes,
       household.size, household.confirmed, pendingReviewFieldId,
       addFiles, confirmField, correctField, deleteSession, buildSubmission,
-      requestReviewField, clearReviewRequest,
+      requestReviewField, clearReviewRequest, setDocumentPageCount,
     ],
   );
 

@@ -22,6 +22,137 @@
 /* The status/error chips moved into the site header (components/HeaderStatus.tsx,
    styled in globals.css). */
 
+/* PDF viewer (PdfViewer.tsx) */
+.viewerShell {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-width: 0;
+  max-width: 100%;
+}
+.viewerToolbar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+.viewerBtn,
+.viewerBtnText {
+  min-width: 44px;
+  min-height: 44px;
+  cursor: pointer;
+  border: 1px solid var(--input);
+  border-radius: 0.6rem;
+  background: transparent;
+  color: var(--foreground);
+  font-weight: 700;
+}
+.viewerBtnText { padding: 0 0.75rem; }
+.viewerBtn:hover:not(:disabled),
+.viewerBtnText:hover { background: var(--secondary); }
+.viewerBtn:disabled { color: var(--muted-foreground); cursor: not-allowed; }
+.zoomReadout {
+  min-width: 3.2rem;
+  text-align: center;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--muted-foreground);
+}
+.pageReadout {
+  margin-left: auto;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--muted-foreground);
+}
+.viewerBody {
+  display: flex;
+  gap: 0.5rem;
+  min-width: 0;
+}
+.viewerMinimap {
+  position: relative;
+  flex: none;
+  width: 96px;
+  align-self: flex-start;
+  overflow: hidden;
+  cursor: pointer;
+  border: 1px solid var(--input);
+  border-radius: 0.35rem;
+  background: #fff;
+}
+.viewerMinimapCanvas {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.minimapViewport {
+  position: absolute;
+  pointer-events: none;
+  border: 2px solid var(--primary-dark);
+  border-radius: 2px;
+  background: color-mix(in srgb, var(--primary) 14%, transparent);
+}
+
+.viewerScroll {
+  /* Positioned so children's offsetLeft/offsetTop are measured from THIS box —
+     the centering + zoom-anchor math depends on it. */
+  position: relative;
+  flex: 1;
+  overflow: auto;
+  overscroll-behavior: contain;
+  max-width: 100%;
+  /* Fixed box: zooming grows the PDF inside it, never the box itself. */
+  height: min(60vh, 560px);
+  /* Reserve the scrollbar lane so fit-width doesn't oscillate when the
+     vertical scrollbar appears at higher zoom levels. */
+  scrollbar-gutter: stable;
+  border: 1px solid var(--input);
+  border-radius: 0.6rem;
+  background: color-mix(in srgb, var(--muted) 60%, var(--background));
+}
+.viewerScroll:focus-visible { outline-offset: -3px; }
+.viewerScroll { cursor: grab; user-select: none; }
+.viewerLoading {
+  margin: 0;
+  padding: 2rem 1rem;
+  text-align: center;
+  color: var(--muted-foreground);
+}
+.viewerContent {
+  position: relative;
+  width: fit-content;
+  margin: 0 auto;
+  padding: 1px;
+}
+.pdfPageWrap {
+  position: relative;
+  background: #fff;
+  box-shadow: 0 1px 4px color-mix(in srgb, var(--foreground) 18%, transparent);
+}
+.pdfCanvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+/* Box color = the field's confidence, same green→red ramp as the meter
+   (--conf is set inline per box by PdfViewer). */
+.bboxBtn {
+  position: absolute;
+  cursor: pointer;
+  padding: 0;
+  border: 2px solid color-mix(in srgb, var(--conf, var(--primary)) 70%, transparent);
+  border-radius: 3px;
+  background: color-mix(in srgb, var(--conf, var(--primary)) 10%, transparent);
+}
+.bboxBtn:hover { background: color-mix(in srgb, var(--conf, var(--primary)) 24%, transparent); }
+.bboxBtn:focus-visible { outline-offset: 1px; }
+.bboxActive {
+  border-width: 3px;
+  border-color: var(--conf, var(--primary-dark));
+  background: color-mix(in srgb, var(--conf, var(--primary)) 18%, transparent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--conf, var(--primary)) 35%, transparent);
+}
+
 /* Stepper */
 .stepper {
   display: flex;
@@ -115,6 +246,8 @@
   display: grid;
   grid-template-columns: 1.1fr 1fr;
   gap: 1.25rem;
+  /* Children may hold oversized canvases — never let them stretch the tracks. */
+  min-width: 0;
   align-items: start;
 }
 .fieldNavBar {
@@ -151,8 +284,8 @@
   background: color-mix(in srgb, var(--secondary) 60%, var(--background));
   overflow: hidden;
 }
+/* Fill + % color come inline from confidenceColor(): green (high) → red (low). */
 .confidenceFill { height: 100%; border-radius: 999px; background: var(--primary); }
-.confidenceLow .confidenceFill { background: var(--danger); }
 
 .statusChip {
   display: inline-flex; align-items: center; gap: 0.4rem;
@@ -163,7 +296,15 @@
 .chipExtracted { color: var(--muted-foreground); }
 
 /* Document preview + bbox schematic */
-.previewPane { display: flex; flex-direction: column; gap: 0.75rem; }
+.previewPane {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  /* Grid/flex items default to min-width auto — the zoomed canvas must scroll
+     INSIDE the viewer box, never widen the column (the box stays put). */
+  min-width: 0;
+  max-width: 100%;
+}
 .page {
   position: relative;
   width: 100%;
@@ -291,4 +432,6 @@
   .globals { grid-template-columns: 1fr; }
   .stepper { flex-direction: column; }
   .reviewGrid { grid-template-columns: 1fr; }
+  /* Small screens: every pixel goes to the document itself. */
+  .viewerMinimap { display: none; }
 }
