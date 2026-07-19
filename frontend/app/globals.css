@@ -825,3 +825,21 @@ a { -webkit-tap-highlight-color: transparent; }
   .phase-card { animation: none; }
   .hero-heading.is-typing::after { animation: none; }
 }
+
+/* Print: when the readiness receipt is on screen (Prepare step), only it reaches
+   paper / Save-as-PDF — app chrome, cards, and controls are hidden. Scoped with
+   :has() so printing any other page stays untouched. */
+@media print {
+  html, body { height: auto !important; overflow: visible !important; }
+  body:has([data-print-region]) { background: #fff; }
+  body:has([data-print-region]) * { visibility: hidden; }
+  body:has([data-print-region]) [data-print-region],
+  body:has([data-print-region]) [data-print-region] * { visibility: visible; }
+  body:has([data-print-region]) [data-print-region] {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    margin: 0;
+  }
+}

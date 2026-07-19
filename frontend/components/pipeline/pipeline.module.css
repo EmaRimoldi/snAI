@@ -2,7 +2,7 @@
    flat, warm, large-radius, no shadows — consistent with FRONTEND-DESIGN.md. */
 
 .shell {
-  width: min(100%, 62rem);
+  width: min(100%, 72rem);
   margin: 0 auto;
   display: flex;
   flex-direction: column;
@@ -253,6 +253,28 @@
 .reasonCode { font-weight: 800; font-size: 0.85rem; overflow-wrap: anywhere; }
 .reasonBlocking .reasonCode { color: var(--danger); }
 
+.statusRow {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem;
+  margin: 0.25rem 0 0.5rem;
+}
+
+/* Prepare: controls rail on the left, the big document preview on the right
+   (~half the screen, like a PDF pane). Collapses to one column below 960px. */
+.prepareGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+  gap: 1.75rem;
+  align-items: start;
+}
+.prepareControls { min-width: 0; }
+.prepareDoc { min-width: 0; }
+@media (min-width: 961px) {
+  /* keep the controls in view while the long document scrolls (site header is sticky) */
+  .prepareControls { position: sticky; top: 5.5rem; }
+}
+@media (max-width: 960px) {
+  .prepareGrid { grid-template-columns: 1fr; }
+}
 .verdict {
   display: inline-flex; align-items: center; gap: 0.5rem;
   padding: 0.5rem 1rem; border-radius: 999px; font-weight: 800; font-size: 1.05rem;

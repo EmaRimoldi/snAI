@@ -6,15 +6,11 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useApp, REQUIRED_CHECKLIST } from "@/lib/pipeline/state";
-import type { DocumentType } from "@/lib/pipeline/types";
 import { useCopy, fmt, FIELD_EXPLAIN } from "@/lib/pipeline/copy";
 import { LOW_CONFIDENCE } from "@/lib/pipeline/calc";
+import { humanize, useDocLabels } from "@/lib/pipeline/labels";
 import DocumentPreview from "./DocumentPreview";
 import s from "./pipeline.module.css";
-
-function humanize(key: string): string {
-  return key.replace(/_/g, " ").replace(/\b\w/g, (m) => m.toUpperCase());
-}
 
 export default function ProfileStep() {
   const c = useCopy();
@@ -22,23 +18,12 @@ export default function ProfileStep() {
     documents, fields, busy, addFiles, confirmField, correctField, goToStep,
     pendingReviewFieldId, clearReviewRequest,
   } = useApp();
+  const docLabels = useDocLabels();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [dragging, setDragging] = useState(false);
   const [index, setIndex] = useState(0);
   const [correcting, setCorrecting] = useState(false);
   const [draft, setDraft] = useState("");
-
-  const docLabel = (t: DocumentType): string => {
-    const map: Record<DocumentType, string> = {
-      application_summary: c.docApplication_summary,
-      pay_stub: c.docPay_stub,
-      employment_letter: c.docEmployment_letter,
-      benefit_letter: c.docBenefit_letter,
-      gig_statement: c.docGig_statement,
-      unknown: c.docUnknown,
-    };
-    return map[t];
-  };
 
   const onFiles = async (list: FileList | null) => {
     const files = Array.from(list ?? []);
@@ -158,7 +143,7 @@ export default function ProfileStep() {
                 <span className={s.checkMark} aria-hidden="true">
                   {has ? "✓" : "○"}
                 </span>
-                <span>{docLabel(t)}</span>
+                <span>{docLabels[t]}</span>
                 <span style={{ marginLeft: "auto", fontSize: "0.8rem", fontWeight: 700 }}>
                   {has ? c.present : c.missing}
                 </span>
@@ -218,7 +203,7 @@ export default function ProfileStep() {
               </h3>
               <p className={s.fieldExplain}>
                 <strong>{c.whyNeeded}: </strong>
-                {FIELD_EXPLAIN[field.key] ?? `${humanize(field.key)} — extracted from ${docLabel(doc.documentType)}.`}
+                {FIELD_EXPLAIN[field.key] ?? `${humanize(field.key)} — extracted from ${docLabels[doc.documentType]}.`}
               </p>
 
               <div className={`${s.confidenceWrap} ${field.confidence < LOW_CONFIDENCE ? s.confidenceLow : ""}`}>

@@ -1,0 +1,174 @@
+/* Readiness receipt: a stacked "paper" SAMPLE document rendered on the cream app
+   background. Consumes the global design tokens (:root in globals.css). White page
+   with a small radius = paper, distinct from the large-radius app cards. */
+
+/* Stacked pages: two pseudo-page edges peek out bottom-right behind the top page. */
+.stack {
+  position: relative;
+  margin-top: 0.25rem;
+  padding: 0 0.9rem 0.9rem 0;
+}
+.stack::before,
+.stack::after {
+  content: "";
+  position: absolute;
+  background: #fff;
+  border: 1px solid var(--input);
+  border-radius: 0.4rem;
+  z-index: 0;
+}
+.stack::before { top: 0.9rem; right: 0; bottom: 0; left: 0.9rem; }
+.stack::after { top: 0.45rem; right: 0.45rem; bottom: 0.45rem; left: 0.45rem; }
+
+/* SAMPLE disclaimer banner above the document (screen only — the page carries its
+   own SAMPLE kicker + watermark so the flag survives print). */
+.banner {
+  margin: 0 0 0.85rem;
+  padding: 0.7rem 0.9rem;
+  border: 1px solid color-mix(in srgb, var(--warn) 45%, var(--input));
+  background: color-mix(in srgb, var(--warn) 10%, var(--background));
+  border-radius: 0.8rem;
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.page {
+  position: relative;
+  z-index: 1;
+  background: #fff;
+  border: 1px solid var(--input);
+  border-radius: 0.4rem;
+  padding: clamp(1.1rem, 4vw, 2.2rem);
+  overflow: hidden;
+}
+.watermark {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  display: grid;
+  place-items: center;
+  transform: rotate(-24deg);
+  font-size: clamp(2.6rem, 14vw, 6.5rem);
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  white-space: nowrap;
+  color: color-mix(in srgb, var(--danger) 13%, transparent);
+  pointer-events: none;
+  user-select: none;
+}
+.inner { position: relative; z-index: 1; }
+
+/* Document header */
+.docHeader {
+  border-bottom: 2px solid var(--foreground);
+  padding-bottom: 0.75rem;
+}
+.kicker {
+  margin: 0;
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  color: var(--muted-foreground);
+}
+.docTitle { margin: 0.25rem 0 0.25rem; font-size: clamp(1.2rem, 3vw, 1.5rem); letter-spacing: -0.02em; }
+.meta { margin: 0; font-size: 0.85rem; color: var(--muted-foreground); font-variant-numeric: tabular-nums; }
+
+/* Sections */
+.section { margin-top: 1.1rem; }
+.secTitle {
+  margin: 0 0 0.4rem;
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted-foreground);
+  border-bottom: 1px solid var(--input);
+  padding-bottom: 0.3rem;
+}
+
+/* Key/value rows with an optional per-row Correct action */
+.rows { margin: 0; padding: 0; list-style: none; }
+.row {
+  display: grid;
+  grid-template-columns: minmax(7rem, 1fr) 2fr auto;
+  gap: 0.4rem 0.75rem;
+  align-items: center;
+  padding: 0.4rem 0;
+  border-bottom: 1px dotted color-mix(in srgb, var(--input) 70%, transparent);
+}
+.rowKey { color: var(--muted-foreground); font-weight: 700; font-size: 0.88rem; text-transform: capitalize; }
+.rowVal { font-weight: 700; overflow-wrap: anywhere; font-variant-numeric: tabular-nums; }
+.missingVal { color: var(--danger); }
+.errorText { flex-basis: 100%; color: var(--danger); font-size: 0.85rem; font-weight: 700; }
+.fileName { font-weight: 600; text-transform: none; letter-spacing: normal; overflow-wrap: anywhere; }
+.quarantineNote { color: var(--danger); }
+.editBtn {
+  justify-self: end;
+  min-height: 44px;
+  padding: 0.35rem 0.9rem;
+  border: 1px solid var(--input);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--primary-dark);
+  font: inherit;
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+.editBtn:hover { background: var(--secondary); }
+.editArea { grid-column: 2 / -1; display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; }
+.editInput {
+  flex: 1 1 10rem;
+  min-height: 44px;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--input);
+  border-radius: 0.6rem;
+  background: var(--background);
+  color: var(--foreground);
+  font: inherit;
+  font-weight: 700;
+}
+
+/* Documents checklist rows (plain paper style, no bordered pills) */
+.checkRow { display: flex; align-items: center; gap: 0.5rem; padding: 0.35rem 0; font-weight: 700; }
+.checkOn { color: var(--primary-dark); font-weight: 800; }
+.checkOff { color: var(--muted-foreground); font-weight: 800; }
+.checkState { margin-left: auto; font-size: 0.8rem; font-weight: 700; color: var(--muted-foreground); }
+
+.screenOnly {}
+.verdictLine { margin: 0.2rem 0 0.5rem; }
+.reasonNotes { margin: 0.4rem 0 0; padding: 0; list-style: none; display: grid; gap: 0.3rem; }
+.note { color: var(--muted-foreground); font-size: 0.85rem; line-height: 1.55; margin: 0.5rem 0 0; }
+
+.docFooter {
+  margin-top: 1.4rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--input);
+  color: var(--muted-foreground);
+  font-size: 0.82rem;
+  line-height: 1.55;
+}
+
+@media (max-width: 440px) {
+  .row { grid-template-columns: 1fr; gap: 0.15rem; }
+  .editBtn { justify-self: start; }
+  .editArea { grid-column: auto; }
+  .watermark { font-size: clamp(2rem, 18vw, 4rem); }
+}
+
+@media print {
+  /* .banner needs no rule here: it renders outside [data-print-region], so the
+     global print isolation in globals.css already hides it. */
+  .editBtn,
+  .screenOnly { display: none; }
+  .stack { padding: 0; }
+  .stack::before,
+  .stack::after { display: none; }
+  .page {
+    border: 0;
+    border-radius: 0;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+}

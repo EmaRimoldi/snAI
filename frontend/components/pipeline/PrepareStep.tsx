@@ -1,30 +1,24 @@
 "use client";
 
-// Prepare: file-level readiness (READY_TO_REVIEW / NEEDS_REVIEW — never eligibility)
-// with coded reasons, a summary of collected info, and renter controls: edit,
-// preview, download (download-only), delete session (with proof), and lock.
+// Prepare: one simple surface. Readiness status + lock at the top, a single
+// visible actions row (save PDF / download packet / edit / raw data), then the
+// SAMPLE receipt document itself; delete-with-confirm sits last, out of the
+// happy path. Readiness describes the file (READY_TO_REVIEW / NEEDS_REVIEW) —
+// never eligibility.
 
 import { useState } from "react";
 import { useApp } from "@/lib/pipeline/state";
 import type { DeletionProof } from "@/lib/pipeline/state";
-import type { ReviewReasonCode } from "@/lib/pipeline/types";
 import { useCopy, fmt } from "@/lib/pipeline/copy";
-import { formatMoneyCents, compareToThreshold, thresholdCentsForSize } from "@/lib/pipeline/calc";
-import { thresholdForSize } from "@/lib/data/mtsp2026";
+import { humanize, useReasonTexts } from "@/lib/pipeline/labels";
+import ReceiptDocument from "./ReceiptDocument";
 import s from "./pipeline.module.css";
-
-function humanize(key: string): string {
-  return key.replace(/_/g, " ").replace(/\b\w/g, (m) => m.toUpperCase());
-}
 
 export default function PrepareStep() {
   const c = useCopy();
   const {
     documents,
-    fields,
     readiness,
-    grossIncomeCents,
-    householdSize,
     locked,
     lock,
     unlock,
@@ -34,23 +28,12 @@ export default function PrepareStep() {
     applicationId,
   } = useApp();
 
+  const reasonText = useReasonTexts();
   const [proof, setProof] = useState<DeletionProof | null>(null);
-  const [showPreview, setShowPreview] = useState(false);
+  const [showRaw, setShowRaw] = useState(false);
   const [confirmingDelete, setConfirmingDelete] = useState(false);
 
-  const reasonText: Record<ReviewReasonCode, string> = {
-    PAY_STUB_TOTAL_CONFLICT: c.rc_PAY_STUB_TOTAL_CONFLICT,
-    GIG_INCOME_UNCORROBORATED: c.rc_GIG_INCOME_UNCORROBORATED,
-    EMPLOYMENT_LETTER_EXPIRED: c.rc_EMPLOYMENT_LETTER_EXPIRED,
-    UNCONFIRMED_FIELDS: c.rc_UNCONFIRMED_FIELDS,
-    LOW_CONFIDENCE_FIELDS: c.rc_LOW_CONFIDENCE_FIELDS,
-    MISSING_REQUIRED_DOCUMENT: c.rc_MISSING_REQUIRED_DOCUMENT,
-  };
-
-  const confirmed = fields.filter((f) => f.reviewStatus !== "extracted");
   const submission = buildSubmission();
-  const thresholdDollars = thresholdForSize(householdSize);
-  const comparison = compareToThreshold(grossIncomeCents, thresholdCentsForSize(householdSize));
   const isReady = readiness.status === "READY_TO_REVIEW";
 
   const download = () => {
@@ -102,123 +85,104 @@ export default function PrepareStep() {
   }
 
   return (
-    <>
-      {/* Readiness */}
-      <section className={s.card} aria-labelledby="ready-h">
-        <h2 id="ready-h" className={s.cardTitle}>
-          {c.readinessTitle}
-        </h2>
-        <p>
-          <span className={`${s.verdict} ${isReady ? s.verdictReady : s.verdictNeeds}`}>
-            {isReady ? c.statusReady : c.statusNeeds}
-          </span>
-        </p>
-        <p className={s.hint}>{c.verdictNote}</p>
+    <section className={s.card} aria-labelledby="receipt-h">
+      <h2 id="receipt-h" className={s.cardTitle}>
+        {c.receiptTitle}
+      </h2>
 
-        <h3 style={{ margin: "1rem 0 0", fontSize: "1rem" }}>{c.reasonsTitle}</h3>
-        {readiness.reasons.length === 0 ? (
-          <p className={s.hint}>{c.noReasons}</p>
-        ) : (
-          <ul className={s.reasonList}>
-            {readiness.reasons.map((r, i) => (
-              <li key={`${r.code}-${i}`} className={r.blocking ? `${s.reason} ${s.reasonBlocking}` : s.reason}>
-                <span className={s.reasonCode}>{r.code}</span>
-                <span>
-                  {reasonText[r.code]}
-                  {r.detail && r.code === "MISSING_REQUIRED_DOCUMENT" ? ` (${humanize(r.detail)})` : ""}
-                </span>
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
+      <div className={s.prepareGrid}>
+        {/* Left rail: guidance, status + lock, reasons, actions, delete */}
+        <div className={s.prepareControls}>
+          <p className={s.hint}>{c.prepareIntro}</p>
 
-      {/* Summary */}
-      <section className={s.card} aria-labelledby="summary-h">
-        <h2 id="summary-h" className={s.cardTitle}>
-          {c.summaryTitle}
-        </h2>
-        <ul className={s.summaryList}>
-          {confirmed.map((f) => (
-            <li key={f.id} className={s.summaryRow}>
-              <span className={s.summaryKey}>{humanize(f.key)}</span>
-              <span className={s.summaryVal}>{f.value}</span>
-            </li>
-          ))}
-          <li className={s.summaryRow}>
-            <span className={s.summaryKey}>{c.annualizedIncome}</span>
-            <span className={s.summaryVal}>{formatMoneyCents(grossIncomeCents)}</span>
-          </li>
-          <li className={s.summaryRow}>
-            <span className={s.summaryKey}>{c.threshold60}</span>
-            <span className={s.summaryVal}>
-              {thresholdDollars === null ? c.cmpNone : formatMoneyCents(thresholdDollars * 100)}
+          <div className={s.statusRow}>
+            <span className={`${s.verdict} ${isReady ? s.verdictReady : s.verdictNeeds}`}>
+              {isReady ? c.statusReady : c.statusNeeds}
             </span>
-          </li>
-          <li className={s.summaryRow}>
-            <span className={s.summaryKey}>{c.comparison}</span>
-            <span className={s.summaryVal}>
-              {comparison === "below_or_equal" ? c.cmpBelow : comparison === "above" ? c.cmpAbove : c.cmpNone}
-            </span>
-          </li>
-        </ul>
-
-        {showPreview && (
-          <pre
-            className={s.formula}
-            style={{ marginTop: "1rem", whiteSpace: "pre-wrap", overflowX: "auto" }}
-            aria-label="submission.json"
-          >
-            {JSON.stringify(submission, null, 2)}
-          </pre>
-        )}
-      </section>
-
-      {/* Controls */}
-      <section className={s.card} aria-labelledby="controls-h">
-        <h2 id="controls-h" className={s.cardTitle}>
-          {c.controlsTitle}
-        </h2>
-        <div className={s.actions}>
-          <button type="button" className="secondary-button" onClick={() => goToStep("profile")}>
-            {c.editBtn}
-          </button>
-          <button type="button" className="secondary-button" onClick={() => setShowPreview((v) => !v)}>
-            {c.previewBtn}
-          </button>
-          <button type="button" className="primary-button" onClick={download}>
-            {c.downloadBtn}
-          </button>
-          {locked ? (
-            <button type="button" className="secondary-button" onClick={unlock}>
-              {c.unlockBtn}
-            </button>
-          ) : (
-            <button type="button" className="primary-button" onClick={lock}>
-              {c.lockBtn}
-            </button>
+            {locked ? (
+              <button type="button" className="secondary-button" onClick={unlock}>
+                {c.unlockBtn}
+              </button>
+            ) : (
+              <button type="button" className="secondary-button" onClick={lock}>
+                {c.lockBtn}
+              </button>
+            )}
+          </div>
+          <p className={s.hint}>{locked ? c.lockedNote : c.verdictNote}</p>
+          {readiness.reasons.length > 0 && (
+            <>
+              <h3 style={{ margin: "1rem 0 0", fontSize: "1rem" }}>{c.reasonsTitle}</h3>
+              <ul className={s.reasonList}>
+                {readiness.reasons.map((r, i) => (
+                  <li key={`${r.code}-${i}`} className={r.blocking ? `${s.reason} ${s.reasonBlocking}` : s.reason}>
+                    <span className={s.reasonCode}>{r.code}</span>
+                    <span>
+                      {reasonText[r.code]}
+                      {r.detail && r.code === "MISSING_REQUIRED_DOCUMENT" ? ` (${humanize(r.detail)})` : ""}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </>
           )}
-        </div>
-        {locked && <p className={s.hint} style={{ marginTop: "0.6rem" }}>{c.lockedNote}</p>}
 
-        <div style={{ marginTop: "1rem" }}>
-          {confirmingDelete ? (
-            <div className={s.actions}>
-              <span className={s.hint}>{c.deleteConfirm}</span>
-              <button type="button" className="primary-button" onClick={doDelete}>
+          <div className={s.actions}>
+            <button type="button" className="primary-button" onClick={() => window.print()}>
+              {c.receiptPrint}
+            </button>
+            <button type="button" className="secondary-button" onClick={download}>
+              {c.downloadBtn}
+            </button>
+            <button type="button" className="secondary-button" onClick={() => goToStep("profile")}>
+              {c.editBtn}
+            </button>
+            <button
+              type="button"
+              className="secondary-button"
+              onClick={() => setShowRaw((v) => !v)}
+              aria-expanded={showRaw}
+              aria-controls="receipt-raw"
+            >
+              {showRaw ? c.rawHide : c.rawShow}
+            </button>
+          </div>
+          {showRaw && (
+            <pre
+              id="receipt-raw"
+              className={s.formula}
+              style={{ marginTop: "1rem", whiteSpace: "pre-wrap", overflowX: "auto" }}
+              aria-label="submission.json"
+            >
+              {JSON.stringify(submission, null, 2)}
+            </pre>
+          )}
+
+          {/* Delete — destructive, out of the happy path */}
+          <div style={{ marginTop: "1.25rem", borderTop: "1px solid var(--input)", paddingTop: "1rem" }}>
+            {confirmingDelete ? (
+              <div className={s.actions} style={{ marginTop: 0 }}>
+                <span className={s.hint}>{c.deleteConfirm}</span>
+                <button type="button" className="primary-button" onClick={doDelete}>
+                  {c.deleteBtn}
+                </button>
+                <button type="button" className="secondary-button" onClick={() => setConfirmingDelete(false)}>
+                  {c.cancel}
+                </button>
+              </div>
+            ) : (
+              <button type="button" className="secondary-button" onClick={() => setConfirmingDelete(true)}>
                 {c.deleteBtn}
               </button>
-              <button type="button" className="secondary-button" onClick={() => setConfirmingDelete(false)}>
-                {c.cancel}
-              </button>
-            </div>
-          ) : (
-            <button type="button" className="secondary-button" onClick={() => setConfirmingDelete(true)}>
-              {c.deleteBtn}
-            </button>
-          )}
+            )}
+          </div>
         </div>
-      </section>
-    </>
+
+        {/* Right pane: the big document preview */}
+        <div className={s.prepareDoc}>
+          <ReceiptDocument />
+        </div>
+      </div>
+    </section>
   );
 }

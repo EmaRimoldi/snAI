@@ -109,24 +109,42 @@ const en = {
   verdictNote: "This describes the file's completeness and consistency — never eligibility.",
   reasonsTitle: "What to resolve",
   noReasons: "Everything checks out — the file is complete and consistent.",
+  prepareIntro:
+    "Check your receipt below — correct anything marked in red, then save it as a PDF or download the data packet.",
   rc_PAY_STUB_TOTAL_CONFLICT: "A pay stub's stated gross doesn't match its hourly rate × hours.",
   rc_GIG_INCOME_UNCORROBORATED: "Gig income is included but needs corroboration.",
   rc_EMPLOYMENT_LETTER_EXPIRED: "An employment letter is older than the 60-day currency window.",
   rc_UNCONFIRMED_FIELDS: "Some fields still need your confirmation.",
   rc_LOW_CONFIDENCE_FIELDS: "Some fields were extracted with low confidence.",
   rc_MISSING_REQUIRED_DOCUMENT: "A recommended document hasn't been uploaded yet.",
-  controlsTitle: "Your controls",
   editBtn: "Edit details",
-  previewBtn: "Preview packet",
   downloadBtn: "Download packet",
   deleteBtn: "Delete session",
-  deleteConfirm: "Delete everything in this session? Documents and extracted values will be removed.",
+  deleteConfirm: "Delete everything in this session? Documents, extracted values, and this receipt will be removed.",
   deletedProof: "Session deleted. {docs} documents and {fields} values removed at {at}.",
   lockBtn: "Confirm — lock as ready to review",
   unlockBtn: "Unlock to edit",
   lockedNote: "Locked as ready to review. You can unlock to edit.",
-  summaryTitle: "Summary",
   fieldsConfirmed: "{n} of {total} fields confirmed",
+
+  receiptTitle: "Your readiness receipt",
+  receiptPrint: "Save receipt as PDF",
+  rawShow: "View raw data",
+  rawHide: "Hide raw data",
+  sampleWord: "SAMPLE",
+  sampleBanner:
+    "This is a SAMPLE document generated from your session data. It is not an official form and is never sent anywhere.",
+  receiptKicker: "Affordable housing paperwork · Boston · SAMPLE",
+  receiptDocTitle: "Application readiness receipt",
+  receiptGenerated: "Generated {date}",
+  receiptFileLabel: "File",
+  receiptSecDocs: "Documents provided",
+  receiptSecIncome: "Income calculation",
+  receiptSecReadiness: "File readiness",
+  receiptEditNote: "Corrections here update your whole file instantly.",
+  invalidAmount: "Enter a non-negative number, like 1250.00.",
+  receiptFooter:
+    "RealDoor prepared this summary to help a human reviewer. It can't tell you whether you qualify — readiness describes the paperwork only. Download-only: this receipt is never transmitted.",
 };
 
 export type Copy = typeof en;
@@ -159,9 +177,28 @@ const es: Partial<Copy> = {
   refusal: "RealDoor no puede decirte si cumples los requisitos, ni si serás aprobado o rechazado — esas son decisiones humanas. Solo prepara y revisa tus documentos y compara los ingresos con un límite publicado.",
   prepareTitle: "Prepara y finaliza", readinessTitle: "Preparación del expediente",
   verdictNote: "Describe qué tan completo y coherente está el expediente — nunca la elegibilidad.",
-  controlsTitle: "Tus controles", editBtn: "Editar datos", downloadBtn: "Descargar paquete",
+  prepareIntro:
+    "Revisa tu recibo abajo — corrige lo marcado en rojo y luego guárdalo como PDF o descarga el paquete de datos.",
+  editBtn: "Editar datos", downloadBtn: "Descargar paquete",
   deleteBtn: "Borrar sesión", lockBtn: "Confirmar — marcar como listo para revisar",
-  summaryTitle: "Resumen",
+  deleteConfirm: "¿Borrar todo en esta sesión? Se eliminarán los documentos, los valores extraídos y este recibo.",
+  receiptTitle: "Tu recibo de preparación",
+  receiptPrint: "Guardar recibo como PDF",
+  rawShow: "Ver datos sin procesar", rawHide: "Ocultar datos sin procesar",
+  sampleWord: "MUESTRA",
+  sampleBanner:
+    "Este es un documento de MUESTRA generado con los datos de tu sesión. No es un formulario oficial y nunca se envía a ninguna parte.",
+  receiptKicker: "Documentos de vivienda asequible · Boston · MUESTRA",
+  receiptDocTitle: "Recibo de preparación de la solicitud",
+  receiptGenerated: "Generado el {date}",
+  receiptFileLabel: "Expediente",
+  receiptSecDocs: "Documentos entregados",
+  receiptSecIncome: "Cálculo de ingresos",
+  receiptSecReadiness: "Preparación del expediente",
+  receiptEditNote: "Las correcciones aquí actualizan todo tu expediente al instante.",
+  invalidAmount: "Introduce un número no negativo, como 1250.00.",
+  receiptFooter:
+    "RealDoor preparó este resumen para ayudar a un revisor humano. No puede decirte si cumples los requisitos — la preparación describe solo los documentos. Solo descarga: este recibo nunca se transmite.",
 };
 
 const zh: Partial<Copy> = {
@@ -192,8 +229,26 @@ const zh: Partial<Copy> = {
   refusal: "RealDoor 无法告诉您是否符合资格，也无法判定批准或拒绝——这些属于人工决定。它只帮您准备和核对材料，并将收入与公布的上限进行比较。",
   prepareTitle: "准备并完成", readinessTitle: "材料就绪情况",
   verdictNote: "这说明材料的完整性与一致性——绝不涉及资格。",
-  controlsTitle: "您的操作", editBtn: "编辑信息", downloadBtn: "下载材料包",
-  deleteBtn: "删除会话", lockBtn: "确认——标记为可供审核", summaryTitle: "摘要",
+  prepareIntro: "请检查下方的回执——更正标为红色的内容，然后将其保存为 PDF 或下载数据包。",
+  editBtn: "编辑信息", downloadBtn: "下载材料包",
+  deleteBtn: "删除会话", lockBtn: "确认——标记为可供审核",
+  deleteConfirm: "删除本会话中的所有内容？文件、提取的数值和此回执都将被移除。",
+  receiptTitle: "您的就绪回执",
+  receiptPrint: "将回执保存为 PDF",
+  rawShow: "查看原始数据", rawHide: "隐藏原始数据",
+  sampleWord: "样本",
+  sampleBanner: "这是根据您的会话数据生成的样本文件。它不是官方表格，也绝不会被发送到任何地方。",
+  receiptKicker: "可负担住房材料 · 波士顿 · 样本",
+  receiptDocTitle: "申请就绪回执",
+  receiptGenerated: "生成于 {date}",
+  receiptFileLabel: "档案",
+  receiptSecDocs: "已提供的文件",
+  receiptSecIncome: "收入计算",
+  receiptSecReadiness: "材料就绪情况",
+  receiptEditNote: "在此处的更正会立即更新您的整个档案。",
+  invalidAmount: "请输入非负数字，例如 1250.00。",
+  receiptFooter:
+    "RealDoor 准备本摘要以协助人工审核。它无法告诉您是否符合资格——就绪仅描述材料本身。仅供下载：此回执绝不会被传送。",
 };
 
 const tl: Partial<Copy> = {
@@ -224,8 +279,28 @@ const tl: Partial<Copy> = {
   refusal: "Hindi masasabi ng RealDoor kung kwalipikado ka, o kung maa-aprubahan o tatanggihan ka — mga desisyon iyon ng tao. Inihahanda at sinusuri lang nito ang iyong mga papeles at inihahambing ang kita sa isang nakalathalang limitasyon.",
   prepareTitle: "Maghanda at tapusin", readinessTitle: "Kahandaan ng file",
   verdictNote: "Inilalarawan nito ang pagkakumpleto at pagkakatugma ng file — hindi ang eligibility.",
-  controlsTitle: "Iyong mga kontrol", editBtn: "I-edit ang mga detalye", downloadBtn: "I-download ang packet",
-  deleteBtn: "Burahin ang session", lockBtn: "Kumpirmahin — i-lock bilang handa nang suriin", summaryTitle: "Buod",
+  prepareIntro:
+    "Suriin ang resibo sa ibaba — iwasto ang mga minarkahan ng pula, pagkatapos ay i-save ito bilang PDF o i-download ang data packet.",
+  editBtn: "I-edit ang mga detalye", downloadBtn: "I-download ang packet",
+  deleteBtn: "Burahin ang session", lockBtn: "Kumpirmahin — i-lock bilang handa nang suriin",
+  deleteConfirm: "Burahin ang lahat sa session na ito? Aalisin ang mga dokumento, mga na-extract na halaga, at ang resibong ito.",
+  receiptTitle: "Ang iyong resibo ng kahandaan",
+  receiptPrint: "I-save ang resibo bilang PDF",
+  rawShow: "Tingnan ang raw na datos", rawHide: "Itago ang raw na datos",
+  sampleWord: "HALIMBAWA",
+  sampleBanner:
+    "Ito ay isang HALIMBAWANG dokumento na ginawa mula sa datos ng iyong session. Hindi ito opisyal na form at hindi kailanman ipinapadala kahit saan.",
+  receiptKicker: "Mga papeles sa abot-kayang pabahay · Boston · HALIMBAWA",
+  receiptDocTitle: "Resibo ng kahandaan ng aplikasyon",
+  receiptGenerated: "Ginawa noong {date}",
+  receiptFileLabel: "File",
+  receiptSecDocs: "Mga dokumentong naibigay",
+  receiptSecIncome: "Pagkalkula ng kita",
+  receiptSecReadiness: "Kahandaan ng file",
+  receiptEditNote: "Ang mga pagwawasto rito ay agad na nag-a-update sa buong file mo.",
+  invalidAmount: "Maglagay ng numerong hindi negatibo, tulad ng 1250.00.",
+  receiptFooter:
+    "Inihanda ng RealDoor ang buod na ito para tumulong sa isang taong tagasuri. Hindi nito masasabi kung kwalipikado ka — inilalarawan lang ng kahandaan ang mga papeles. Download lang: hindi kailanman ipinapadala ang resibong ito.",
 };
 
 const vi: Partial<Copy> = {
@@ -256,8 +331,28 @@ const vi: Partial<Copy> = {
   refusal: "RealDoor không thể cho biết bạn có đủ điều kiện hay không, hay bạn sẽ được chấp thuận hoặc bị từ chối — đó là các quyết định của con người. Nó chỉ chuẩn bị, kiểm tra giấy tờ và so sánh thu nhập với một giới hạn đã công bố.",
   prepareTitle: "Chuẩn bị và hoàn tất", readinessTitle: "Mức độ sẵn sàng của hồ sơ",
   verdictNote: "Điều này mô tả mức độ đầy đủ và nhất quán của hồ sơ — không bao giờ là điều kiện.",
-  controlsTitle: "Các tùy chọn của bạn", editBtn: "Chỉnh sửa thông tin", downloadBtn: "Tải gói hồ sơ",
-  deleteBtn: "Xóa phiên", lockBtn: "Xác nhận — khóa là sẵn sàng xem xét", summaryTitle: "Tóm tắt",
+  prepareIntro:
+    "Kiểm tra biên nhận bên dưới — sửa những mục được đánh dấu đỏ, sau đó lưu thành PDF hoặc tải gói dữ liệu.",
+  editBtn: "Chỉnh sửa thông tin", downloadBtn: "Tải gói hồ sơ",
+  deleteBtn: "Xóa phiên", lockBtn: "Xác nhận — khóa là sẵn sàng xem xét",
+  deleteConfirm: "Xóa mọi thứ trong phiên này? Giấy tờ, các giá trị đã trích xuất và biên nhận này sẽ bị xóa.",
+  receiptTitle: "Biên nhận mức độ sẵn sàng của bạn",
+  receiptPrint: "Lưu biên nhận dưới dạng PDF",
+  rawShow: "Xem dữ liệu thô", rawHide: "Ẩn dữ liệu thô",
+  sampleWord: "BẢN MẪU",
+  sampleBanner:
+    "Đây là tài liệu BẢN MẪU được tạo từ dữ liệu phiên của bạn. Nó không phải là biểu mẫu chính thức và không bao giờ được gửi đi đâu.",
+  receiptKicker: "Giấy tờ nhà ở giá phải chăng · Boston · BẢN MẪU",
+  receiptDocTitle: "Biên nhận mức độ sẵn sàng của hồ sơ",
+  receiptGenerated: "Tạo ngày {date}",
+  receiptFileLabel: "Hồ sơ",
+  receiptSecDocs: "Giấy tờ đã cung cấp",
+  receiptSecIncome: "Tính toán thu nhập",
+  receiptSecReadiness: "Mức độ sẵn sàng của hồ sơ",
+  receiptEditNote: "Các chỉnh sửa tại đây sẽ cập nhật toàn bộ hồ sơ của bạn ngay lập tức.",
+  invalidAmount: "Nhập một số không âm, ví dụ 1250.00.",
+  receiptFooter:
+    "RealDoor chuẩn bị bản tóm tắt này để hỗ trợ người xét duyệt. Nó không thể cho bạn biết bạn có đủ điều kiện hay không — mức độ sẵn sàng chỉ mô tả giấy tờ. Chỉ để tải xuống: biên nhận này không bao giờ được truyền đi.",
 };
 
 const OVERRIDES: Record<Language, Partial<Copy>> = { en, es, zh, tl, vi };

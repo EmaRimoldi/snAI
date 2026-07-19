@@ -94,3 +94,65 @@ the browser (upload → confirm → lock walk; delete-session → NOT_STARTED).
 
 **Note:** exported `submission.readiness_status` untouched — UNCONFIRMED_FIELDS still blocks it, so
 final outcomes after full confirmation are identical to before.
+
+## 2026-07-19 — Prepare: SAMPLE readiness receipt (paper preview, inline edit, print-to-PDF)
+
+**Shipped:**
+- New `frontend/components/pipeline/ReceiptDocument.tsx` + `receipt.module.css` — the Prepare step's
+  Summary card is replaced by a stacked "paper" document (SAMPLE watermark + banner + on-document
+  kicker so the flag survives print): applicant/household, documents checklist, confirmed details
+  with per-row Correct (edit-in-place via `correctField`, hidden when locked; recompute cascades
+  live), income calculation (annualized / FY2026 60% limit / comparison / effective date), file
+  readiness (status + coded reasons + non-decisional note), and a refusal-form footer.
+- "Save receipt as PDF" = `window.print()` + print isolation in `globals.css` (scoped with
+  `body:has([data-print-region])` so printing pages without a receipt is untouched; the show rules
+  carry the same `:has()` prefix — a bare `[data-print-region] *` loses the specificity fight and
+  prints blank). "View raw data" keeps the `submission.json` `<pre>`; JSON download unchanged.
+- ~18 new copy keys × all five languages; `deleteConfirm` now mentions the receipt (all five);
+  removed dead `previewBtn`/`summaryTitle` keys. Supabase `i18n_translations` mirror for pipeline
+  copy still follows the earlier fold-in follow-up (§14).
+
+**Revised after user direction + code review (same day):** the receipt's data sections now mirror
+the parsed-document schema — one section per uploaded document listing every expected field for its
+type (`EXPECTED_DOC_FIELDS` in `ReceiptDocument.tsx`; benefit amount is a dynamic one-of across
+weekly/biweekly/semimonthly/monthly/annual keys; `declared_income` optional). Values come only from
+parsed fields — never invented; absent entries render red "Still missing", extracted-but-unconfirmed
+ones red "Needs your check", and a document's quarantined text is flagged ("⚠ Quarantined text —
+ignored") without ever rendering its content. Review fixes: lock now force-closes an in-flight
+editor and gates start/save (was a HIGH: save still worked if the editor was open when lock fired);
+income-tagged corrections are validated non-negative/parseable with an inline `role="alert"` error
+(`invalidAmount` ×5 languages) — this also guards the pre-existing `annualizeCents` throw-on-negative
+crash (no error boundary exists in the app) and the silent `toCents("garbage") → $0` coercion, on
+this surface; focus returns to the row's Correct button after save/cancel; `humanize`/doc-label/
+reason-text helpers extracted to `lib/pipeline/labels.ts` (were copy-pasted ×3); edit inputs capped
+at `maxLength={120}`; redundant threshold double-lookup dropped.
+
+**Simplified (user-directed, same day):** Prepare collapsed from three cards to ONE surface —
+title + a plain-language intro ("Check your receipt below — correct anything marked in red…"), the
+readiness chip with the lock/unlock button beside it (locked swaps the note to `lockedNote`),
+reasons only when they exist, a single visible actions row (Save receipt as PDF = the one primary
+button; Download packet / Edit details / View raw data secondary), then the receipt document, with
+delete-with-confirm last behind a separator rule. New `prepareIntro` copy ×5; `controlsTitle`
+removed (`noReasons` kept — HeaderStatus uses it); `.statusRow` added to `pipeline.module.css`.
+Verified: tsc clean; one h2 on the step; print isolation intact after the restructure; 375px stacks
+cleanly (remaining overflow is the pre-existing header nav).
+
+**Split view (user-directed, same day):** Prepare is now a two-pane layout on desktop — controls
+rail on the left (intro, status + lock, reasons, actions, delete), the big paper document preview
+on the right at ~60% of the card (`.prepareGrid` 2fr/3fr in `pipeline.module.css`, collapses to one
+column ≤960px; the rail is `position: sticky` under the sticky header so actions stay reachable
+while the document scrolls). `.shell` widened 62rem → 72rem so the document truly reads as half the
+screen (all steps get the wider canvas). Verified: doc pane ≈592px right-of-rail at 1440px, sticky
+rail pinned at ~88px mid-scroll, mobile stacks controls→document, print still emits only the
+receipt.
+
+**Known quirk (pre-existing, unchanged):** the DeletionProof panel in PrepareStep is unreachable —
+`deleteSession()` navigates back to Profile, unmounting PrepareStep before the proof renders. Also
+pre-existing: ProfileStep's correction input still lacks the numeric guard (same crash path), and
+there's no route-level `error.tsx` boundary — both worth a follow-up.
+
+**Verified:** `tsc --noEmit` clean; Playwright click-through (upload → confirm all → Understand →
+Prepare): receipt visible by default, edit on receipt recomputes income/readiness/header chips
+(gross-pay conflict fires PAY_STUB_TOTAL_CONFLICT), lock hides edit buttons, print emulation renders
+the receipt alone with watermark, 320px collapses rows to one column (remaining 320px horizontal
+overflow comes from the pre-existing header nav, not the receipt), ES localization + delete flow OK.
