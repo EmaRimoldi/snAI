@@ -8,29 +8,76 @@ Challenge brief: [`challenge_03.pdf`](challenge_03.pdf) · Live app:
 **https://realdoor-boston.vercel.app**
 
 ```mermaid
+---
+config:
+  theme: base
+  themeVariables:
+    fontFamily: ''
+    fontSize: 15px
+    background: '#FBF6EF'
+    primaryColor: '#FFFFFF'
+    primaryTextColor: '#3D2C24'
+    primaryBorderColor: '#C4593F'
+    lineColor: '#A8654F'
+    clusterBkg: '#FBF6EF'
+    clusterBorder: '#D9C7B8'
+    edgeLabelBackground: '#FFF9F2'
+  flowchart:
+    curve: basis
+    padding: 12
+---
 flowchart LR
-    R(["Renter's browser"])
+ subgraph ENGINE["Deterministic engine"]
+    direction TB
+        B1["<b>Text layer</b><br><i>pdfplumber</i>"]
+        B2["<b>OCR fallback</b><br><i>tesseract</i>"]
+        B3["<b>Scored matcher</b><br>exact→synonym→fuzzy<br><i>+ anonimized LLM backup</i>"]
+  end
+ subgraph MATH["Deterministic reasoning — no model in the loop"]
+    direction TB
+        D["<b>Income math</b><br>integer cents · Decimal<br><i>frozen FY2026 MTSP CSV</i>"]
+        Q["<b>Rules Q&amp;A + citations</b><br>frozen 11-rule corpus<br><i>abstains out of corpus</i>"]
+  end
+ subgraph CONTROL["Renter keeps control — browser memory only"]
+    direction TB
+        E["<b>File readiness</b><br>READY_TO_REVIEW /<br>NEEDS_REVIEW + coded reasons"]
+        F["<b>Packet</b><br>download only — never sent<br>+ delete with proof"]
+  end
+    B1 --> B2
+    B2 --> B3
+    D --- Q
+    E --> F
+    B3 == extracted fields<br>+ evidence ==> C["<b>Renter confirms every value</b><br>evidence: page · bbox · confidence<br>"]
+    C == confirmed<br>values only ==> D
+    Q ==> G{{"<b>SAFETY GATE</b><br>injection quarantine<br>never-strings lint<br>never decides eligibility"}}
+    G ==> E
+    G -.- V(["✓ <b>Verified</b> — 6/6 gold households · 53/53 dev splits<br><i>pytest + vitest + eval harness</i>"])
+    B3 -.- O["<b>OpenAI</b><br>sees masked labels only<br>never values or names"]
+    C -. AI help .- S["<b>Supabase</b><br>i18n ×5 languages<br>AI-chat Edge Function proxy"]
+    S -.- O
+    A["<b>Upload</b><br>PDFs stay in the browser<br>"] --> ENGINE
 
-    subgraph V["Vercel · realdoor-boston.vercel.app"]
-        FE["Next.js frontend<br/>Profile · Understand · Prepare<br/>deterministic math, integer cents<br/>readiness receipt · i18n ×5"]
-        EN["Python engine /api/engine<br/>classify + extract<br/>page/bbox evidence + confidence"]
-    end
-
-    subgraph S["Supabase · project snAI"]
-        AUTH["anonymous auth · i18n tables"]
-        FN["understand-chat edge function<br/>policy gates · citations<br/>rate limits · decision-language lint"]
-        AUD[("ai_request_events<br/>metadata-only audit")]
-    end
-
-    OAI["OpenAI gpt-4o<br/>Structured Outputs · store: false"]
-
-    R --> FE
-    FE -- "PDF uploads" --> EN
-    EN -- "allowlisted fields + evidence" --> FE
-    FE --- AUTH
-    FE -- "chat: JWT + allowlisted numeric context" --> FN
-    FN -- "only if every gate passes" --> OAI
-    FN --> AUD
+     B1:::engine
+     B2:::engine
+     B3:::engine
+     D:::engine
+     Q:::engine
+     E:::browser
+     F:::browser
+     C:::browser
+     G:::safety
+     V:::proof
+     O:::service
+     S:::service
+     A:::browser
+    classDef browser fill:#FDF3EA,stroke:#C4593F,stroke-width:2px,color:#3D2C24
+    classDef engine fill:#EFF4F0,stroke:#2F6B4F,stroke-width:2px,color:#22352C
+    classDef safety fill:#B3261E,stroke:#7A130D,stroke-width:3px,color:#FFF7EF,font-weight:bold
+    classDef proof fill:#FBF6EF,stroke:#2F6B4F,stroke-width:1px,stroke-dasharray:4 3,color:#22352C
+    classDef service fill:#EAF3F8,stroke:#2E6E8E,stroke-width:1.5px,stroke-dasharray:5 3,color:#1F3947
+    style ENGINE fill:#F4F8F4,stroke:#2F6B4F,stroke-width:2px
+    style MATH fill:#F4F8F4,stroke:#2F6B4F,stroke-width:2px
+    style CONTROL fill:#FFFBF5,stroke:#C4593F,stroke-width:2px
 ```
 
 *The red line everywhere in this diagram: no component ever labels a person eligible, approved,
