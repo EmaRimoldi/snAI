@@ -125,12 +125,17 @@ export function deriveIncomeSources(
     return toCents(f.value);
   };
 
-  const entries: IncomeSourceEntry[] = resolvedIncome.map((f) => {
+  const entries: IncomeSourceEntry[] = [];
+  for (const f of resolvedIncome) {
     const documentType = docType(f.documentId);
     const frequency = f.incomeFrequency ?? "monthly";
     const periodCents = documentType === "pay_stub" ? stubBasisCents(f) : toCents(f.value);
+    // Defense in depth: a negative/unparseable amount is invalid input, never a
+    // source (the UI also rejects negative corrections at the boundary) — and
+    // it must never reach annualizeCents, which throws on negatives.
+    if (periodCents < 0) continue;
     const counted = documentType !== "pay_stub" || f.id === countedStubId;
-    return {
+    entries.push({
       fieldId: f.id,
       documentId: f.documentId,
       key: f.key,
@@ -139,8 +144,8 @@ export function deriveIncomeSources(
       frequency,
       annualCents: annualizeCents(periodCents, frequency),
       counted,
-    };
-  });
+    });
+  }
 
   // No pay stub at all: an employment letter's confirmed weekly_hours ×
   // hourly_rate stands as the recurring wage source (weekly). With stubs

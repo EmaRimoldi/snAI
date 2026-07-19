@@ -78,6 +78,10 @@ type AppValue = {
   lock: () => void;
   unlock: () => void;
   deleteSession: () => DeletionProof;
+  /** Proof of the last completed deletion — survives the wipe until dismissed. */
+  deletionProof: DeletionProof | null;
+  clearDeletionProof: () => void;
+  setDocumentPageCount: (id: string, pageCount: number) => void;
   buildSubmission: () => Submission;
 };
 
@@ -165,6 +169,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
           id,
           fileName: file.name,
           fileUrl: URL.createObjectURL(file),
+          file,
           mimeType: file.type || "application/octet-stream",
           documentType,
           classifyConfidence: confidence,
@@ -232,8 +237,35 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
     );
   }, []);
 
+  const [deletionProof, setDeletionProof] = useState<DeletionProof | null>(null);
+  const clearDeletionProof = useCallback(() => setDeletionProof(null), []);
+
+  const setDocumentPageCount = useCallback((id: string, pageCount: number) => {
+    setDocuments((prev) =>
+      prev.some((d) => d.id === id && d.pageCount !== pageCount)
+        ? prev.map((d) => (d.id === id ? { ...d, pageCount } : d))
+        : prev,
+    );
+  }, []);
+
+  // Typing a value into an ABSTAINED (empty) extraction is the renter entering
+  // it, not correcting a machine value — mark it renter_entered (§ traps: the
+  // no-OCR path asks the renter to type the value).
   const correctField = useCallback((id: string, value: string) => {
-    setFields((prev) => prev.map((f) => (f.id === id ? { ...f, value, reviewStatus: "corrected" } : f)));
+    setFields((prev) =>
+      prev.map((f) =>
+        f.id === id
+          ? {
+              ...f,
+              value,
+              reviewStatus:
+                f.reviewStatus === "extracted" && f.value.trim() === ""
+                  ? "renter_entered"
+                  : "corrected",
+            }
+          : f,
+      ),
+    );
   }, []);
 
   const deleteSession = useCallback((): DeletionProof => {
@@ -250,6 +282,9 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
     setLocked(false);
     setUnderstandVisited(false);
     setStep("profile");
+    // The proof survives the wipe (it lives outside the deleted record) so the
+    // UI can actually show it after navigation resets to Profile.
+    setDeletionProof(proof);
     return proof;
   }, [documents, fields]);
 
@@ -341,6 +376,9 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
       lock: () => setLocked(true),
       unlock: () => setLocked(false),
       deleteSession,
+      deletionProof,
+      clearDeletionProof,
+      setDocumentPageCount,
       buildSubmission,
     }),
     [
@@ -348,7 +386,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
       errorCount, readiness, displayStatus, unresolvedCount, missingRequired, presentTypes,
       household.size, household.confirmed, pendingReviewFieldId,
       goToStep, addFiles, confirmField, correctField, deleteSession, buildSubmission,
-      requestReviewField, clearReviewRequest,
+      requestReviewField, clearReviewRequest, deletionProof, clearDeletionProof, setDocumentPageCount,
     ],
   );
 

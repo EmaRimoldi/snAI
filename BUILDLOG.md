@@ -278,3 +278,25 @@ an in-panel visual pass on the unlocked Understand chat is still worth a click-t
 - Verification: official 6/6 exact; dev1–dev6 53/53 households exact on income, comparison,
   readiness status AND reason codes (zero remaining gaps). Engine remains authoritative for
   submissions; the frontend now tells the same story.
+
+## 2026-07-19 — Review sweep: all six audit points closed; viewer on main; tests; arch note
+
+1. AI-context regression FIXED: `lib/ai/context.ts` now sends the corroborated COUNTED sources
+   (sum ≡ displayed total, integrity gate passes with 2+ stubs); negative amounts can no longer
+   reach `annualizeCents` (skipped at derivation + rejected at the correction boundary with a
+   localized error). HH-002 basis was already fixed on HEAD (243155b).
+2. Deletion proof FIXED: proof lives in the provider, survives the wipe, and renders as a
+   dismissible `role="status"` banner in PipelineApp (demo step 6 now visible).
+3. Evidence viewer FIXED on main: real pdf.js viewer ported from the pdfviewer branch (canvas
+   pages, confidence-colored source boxes, auto-crop/zoom/minimap/snap, worker-src CSP,
+   `DocumentRecord.file`, `setDocumentPageCount`); verified via headless screenshot — real HH-001
+   page renders with boxes in Profile.
+4. Crash on negative correction FIXED: boundary validation + calc guards + `app/error.tsx`
+   global boundary (message in all five languages, outside the i18n provider).
+5. Abstention path ADDED: typing into an empty/abstained extraction marks it `renter_entered`
+   (distinct localized status chip); confirmed values unchanged.
+6. Frontend tests ADDED: vitest (`npm test`), 23 passing unit tests over the rewritten math —
+   corroboration, hours×rate basis, letter-only wages, benefit frequencies, expiry incl. YYYY-MM,
+   rate conflict, missing size/threshold/income gating, display ladder, inclusive boundary.
+Plus: `ARCHITECTURE.md` (deliverable #5 — architecture & risk note). Oracle re-verified after all
+changes: official 6/6 exact.

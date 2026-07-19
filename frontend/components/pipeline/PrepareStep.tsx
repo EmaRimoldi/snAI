@@ -8,7 +8,6 @@
 
 import { useState } from "react";
 import { useApp } from "@/lib/pipeline/state";
-import type { DeletionProof } from "@/lib/pipeline/state";
 import type { DocumentType } from "@/lib/pipeline/types";
 import { useCopy, fmt } from "@/lib/pipeline/copy";
 import { humanize, useDocLabels, useReasonTexts, useReasonTitles } from "@/lib/pipeline/labels";
@@ -32,7 +31,6 @@ export default function PrepareStep() {
   const reasonText = useReasonTexts();
   const reasonTitle = useReasonTitles();
   const docLabels = useDocLabels();
-  const [proof, setProof] = useState<DeletionProof | null>(null);
   const [showRaw, setShowRaw] = useState(false);
   const [confirmingDelete, setConfirmingDelete] = useState(false);
 
@@ -51,27 +49,12 @@ export default function PrepareStep() {
     URL.revokeObjectURL(url);
   };
 
+  // The proof itself is stored in the provider and rendered by PipelineApp —
+  // deleteSession navigates back to Profile, which unmounts this component.
   const doDelete = () => {
-    const p = deleteSession();
-    setProof(p);
+    deleteSession();
     setConfirmingDelete(false);
   };
-
-  if (proof) {
-    return (
-      <section className={s.card} role="status">
-        <h2 className={s.cardTitle}>{c.deleteBtn}</h2>
-        <p className={s.proof}>
-          {fmt(c.deletedProof, { docs: proof.documentsRemoved, fields: proof.fieldsRemoved, at: proof.at })}
-        </p>
-        <div className={s.actions}>
-          <button type="button" className="primary-button" onClick={() => setProof(null)}>
-            {c.step1}
-          </button>
-        </div>
-      </section>
-    );
-  }
 
   if (documents.length === 0) {
     return (

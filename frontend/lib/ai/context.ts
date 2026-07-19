@@ -1,10 +1,9 @@
 import type { DocumentRecord, ExtractedField, ReadinessResult } from "@/lib/pipeline/types";
 import type { SafeUnderstandingContext } from "@/lib/ai/types";
 import {
-  annualizeCents,
   centsToDollars,
+  deriveIncomeSources,
   thresholdCentsForSize,
-  toCents,
 } from "@/lib/pipeline/calc";
 
 type ContextInput = {
@@ -41,19 +40,18 @@ export function buildSafeUnderstandingContext(input: ContextInput): SafeUndersta
     evidenceByDocument.set(item.documentId, [...(evidenceByDocument.get(item.documentId) ?? []), item.evidenceId]);
   }
 
-  const incomeSources = confirmedFields
-    .filter((field) => field.isIncome)
-    .map((field) => {
-      const frequency = field.incomeFrequency ?? "monthly";
-      const periodCents = toCents(field.value);
-      return {
-        field: field.key,
-        periodAmount: centsToDollars(periodCents),
-        frequency,
-        annualAmount: centsToDollars(annualizeCents(periodCents, frequency)),
-        evidenceRef: safeEvidenceId(field.id),
-      };
-    });
+  // COUNTED sources only — same corroborated derivation as the UI total, so
+  // the per-source sum always equals annualizedIncome (the server-side
+  // integrity gate rejects the request otherwise).
+  const incomeSources = deriveIncomeSources(input.documents, input.fields)
+    .filter((source) => source.counted)
+    .map((source) => ({
+      field: source.key,
+      periodAmount: centsToDollars(source.periodCents),
+      frequency: source.frequency,
+      annualAmount: centsToDollars(source.annualCents),
+      evidenceRef: safeEvidenceId(source.fieldId),
+    }));
 
   const thresholdCents = input.householdSizeConfirmed
     ? thresholdCentsForSize(input.householdSize)

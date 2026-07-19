@@ -17,6 +17,7 @@ const csp = [
   `connect-src 'self' ${SUPABASE_URL}${ENGINE_ORIGIN ? ` ${ENGINE_ORIGIN}` : ""}`,
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data:",
+  "worker-src 'self'",
   "font-src 'self'",
   "base-uri 'none'",
   "frame-ancestors 'none'",

@@ -6,7 +6,7 @@
 
 import type { RefObject } from "react";
 import { useApp } from "@/lib/pipeline/state";
-import { useCopy } from "@/lib/pipeline/copy";
+import { useCopy, fmt } from "@/lib/pipeline/copy";
 import Stepper from "./Stepper";
 import ProfileStep from "./ProfileStep";
 import UnderstandStep from "./UnderstandStep";
@@ -17,7 +17,7 @@ type Props = { headingRef?: RefObject<HTMLHeadingElement | null>; headingId?: st
 
 function PipelineInner({ headingRef, headingId }: Props) {
   const c = useCopy();
-  const { step } = useApp();
+  const { step, deletionProof, clearDeletionProof } = useApp();
 
   return (
     <div className={s.shell}>
@@ -27,6 +27,21 @@ function PipelineInner({ headingRef, headingId }: Props) {
         </h1>
         <p className={s.subtitle}>{c.appSubtitle}</p>
       </div>
+
+      {/* Deletion proof — lives in the provider so it survives the wipe and
+          the navigation back to Profile (demo step 6). */}
+      {deletionProof && (
+        <div className={s.proof} role="status">
+          {fmt(c.deletedProof, {
+            docs: deletionProof.documentsRemoved,
+            fields: deletionProof.fieldsRemoved,
+            at: deletionProof.at,
+          })}{" "}
+          <button type="button" className="secondary-button" onClick={clearDeletionProof}>
+            {c.dismiss}
+          </button>
+        </div>
+      )}
 
       <Stepper />
 

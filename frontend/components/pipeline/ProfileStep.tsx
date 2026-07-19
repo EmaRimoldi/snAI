@@ -26,6 +26,7 @@ export default function ProfileStep() {
   const [index, setIndex] = useState(0);
   const [correcting, setCorrecting] = useState(false);
   const [draft, setDraft] = useState("");
+  const [correctError, setCorrectError] = useState<string | null>(null);
 
   const onFiles = async (list: FileList | null) => {
     const files = Array.from(list ?? []);
@@ -231,22 +232,58 @@ export default function ProfileStep() {
                     id="correct-input"
                     className={s.fieldValue}
                     value={draft}
-                    onChange={(e) => setDraft(e.target.value)}
+                    aria-invalid={correctError ? true : undefined}
+                    aria-describedby={correctError ? "correct-error" : undefined}
+                    onChange={(e) => {
+                      setDraft(e.target.value);
+                      setCorrectError(null);
+                    }}
                     autoFocus
                   />
+                  {correctError && (
+                    <p id="correct-error" className={s.correctError} role="alert">
+                      {correctError}
+                    </p>
+                  )}
                   <div className={s.actions}>
                     <button
                       type="button"
                       className="primary-button"
                       onClick={() => {
-                        correctField(field.id, draft.trim());
+                        const trimmed = draft.trim();
+                        // Money/number fields must never go negative (the math
+                        // layer rejects negatives by design — validate here).
+                        const numericKey =
+                          field.isIncome ||
+                          /_benefit$/.test(field.key) ||
+                          [
+                            "gross_pay", "hourly_rate", "regular_hours", "weekly_hours",
+                            "gross_receipts", "household_size", "net_pay", "platform_fees",
+                            "declared_income", "monthly_benefit",
+                          ].includes(field.key);
+                        if (numericKey) {
+                          const parsed = Number(trimmed.replace(/[^0-9.-]/g, ""));
+                          if (Number.isFinite(parsed) && parsed < 0) {
+                            setCorrectError(c.errNegative);
+                            return;
+                          }
+                        }
+                        correctField(field.id, trimmed);
                         setCorrecting(false);
+                        setCorrectError(null);
                         advanceAfterResolve(safeIndex);
                       }}
                     >
                       {c.saveCorrection}
                     </button>
-                    <button type="button" className="secondary-button" onClick={() => setCorrecting(false)}>
+                    <button
+                      type="button"
+                      className="secondary-button"
+                      onClick={() => {
+                        setCorrecting(false);
+                        setCorrectError(null);
+                      }}
+                    >
                       {c.cancel}
                     </button>
                   </div>
@@ -266,7 +303,9 @@ export default function ProfileStep() {
                         ? c.stExtracted
                         : field.reviewStatus === "corrected"
                           ? c.stCorrected
-                          : c.stConfirmed}
+                          : field.reviewStatus === "renter_entered"
+                            ? c.stRenterEntered
+                            : c.stConfirmed}
                     </span>
                   </p>
                   <div className={s.actions}>
@@ -289,7 +328,11 @@ export default function ProfileStep() {
               )}
             </div>
 
-            <DocumentPreview doc={doc} field={field} />
+            <DocumentPreview
+              doc={doc}
+              field={field}
+              fields={fields.filter((f) => f.documentId === doc.id)}
+            />
           </div>
 
           <p className={s.hint} style={{ marginTop: "1rem" }}>
