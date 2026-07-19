@@ -11,7 +11,7 @@ import type { Language } from "@/lib/dictionaries";
 
 const en = {
   appTitle: "Your application",
-  appSubtitle: "RealDoor prepares and checks your paperwork. It never decides eligibility.",
+  appSubtitle: "RealDoor prepares and checks your paperwork for affordable housing in Boston. It never decides eligibility.",
   getStarted: "Get started",
   step1: "Profile",
   step2: "Understand",
@@ -154,7 +154,7 @@ export type Copy = typeof en;
 
 const es: Partial<Copy> = {
   appTitle: "Tu solicitud",
-  appSubtitle: "RealDoor prepara y revisa tus documentos. Nunca decide la elegibilidad.",
+  appSubtitle: "RealDoor prepara y revisa tus documentos para vivienda asequible en Boston. Nunca decide la elegibilidad.",
   getStarted: "Empezar",
   step1: "Perfil", step2: "Entender", step3: "Preparar",
   step1Info: "Subir y confirmar", step2Info: "Ingresos y reglas", step3Info: "Revisar y exportar",
@@ -223,7 +223,7 @@ const es: Partial<Copy> = {
 
 const zh: Partial<Copy> = {
   appTitle: "您的申请",
-  appSubtitle: "RealDoor 帮您准备并核对材料，绝不判定资格。",
+  appSubtitle: "RealDoor 帮您准备并核对波士顿可负担住房的申请材料，绝不判定资格。",
   getStarted: "开始",
   step1: "个人资料", step2: "了解", step3: "准备",
   step1Info: "上传并确认", step2Info: "收入与规则", step3Info: "检查并导出",
@@ -291,7 +291,7 @@ const zh: Partial<Copy> = {
 
 const tl: Partial<Copy> = {
   appTitle: "Ang iyong aplikasyon",
-  appSubtitle: "Inihahanda at sinusuri ng RealDoor ang iyong mga papeles. Hindi ito nagpapasya ng eligibility.",
+  appSubtitle: "Inihahanda at sinusuri ng RealDoor ang iyong mga papeles para sa abot-kayang pabahay sa Boston. Hindi ito nagpapasya ng eligibility.",
   getStarted: "Magsimula",
   step1: "Profile", step2: "Unawain", step3: "Maghanda",
   step1Info: "I-upload at kumpirmahin", step2Info: "Kita at patakaran", step3Info: "Suriin at i-export",
@@ -360,7 +360,7 @@ const tl: Partial<Copy> = {
 
 const vi: Partial<Copy> = {
   appTitle: "Hồ sơ của bạn",
-  appSubtitle: "RealDoor chuẩn bị và kiểm tra giấy tờ của bạn. Không bao giờ quyết định điều kiện.",
+  appSubtitle: "RealDoor chuẩn bị và kiểm tra giấy tờ của bạn cho nhà ở giá phải chăng tại Boston. Không bao giờ quyết định điều kiện.",
   getStarted: "Bắt đầu",
   step1: "Hồ sơ", step2: "Tìm hiểu", step3: "Chuẩn bị",
   step1Info: "Tải lên & xác nhận", step2Info: "Thu nhập & quy định", step3Info: "Kiểm tra & xuất",
