@@ -10,9 +10,10 @@ import s from "@/components/pipeline/pipeline.module.css";
 type Props = {
   response: AiChatResponse;
   documents?: readonly DocumentRecord[];
+  onSuggestion?: (question: string) => void;
 };
 
-export default function AiAnswer({ response, documents = [] }: Props) {
+export default function AiAnswer({ response, documents = [], onSuggestion }: Props) {
   const c = useCopy();
   const fieldLabel = useFieldLabel();
   const outcomeLabel: Record<AiOutcome, string> = {
@@ -21,18 +22,44 @@ export default function AiAnswer({ response, documents = [] }: Props) {
     abstained: c.aiOutcomeAbstained,
     needs_confirmation: c.aiOutcomeNeedsConfirmation,
   };
+  const outcomeClass: Record<AiOutcome, string> = {
+    answered: s.aiOutcomeAnswered,
+    refused: s.aiOutcomeRefused,
+    abstained: s.aiOutcomeAbstained,
+    needs_confirmation: s.aiOutcomeNeeds,
+  };
   const authorityLabel: Record<RuleAuthority, string> = {
     official_hud: c.authOfficialHud,
     official_federal: c.authOfficialFederal,
     hackathon_simulation: c.authChallenge,
   };
+  const isOutOfScope = response.outcome === "abstained" && response.policyCode === "OUT_OF_DOMAIN";
   return (
     <div className={s.qaAnswer} aria-live="polite">
       <div className={s.aiOutcomeRow}>
-        <span className={s.aiOutcome}>{outcomeLabel[response.outcome]}</span>
-        {response.policyCode !== "NONE" && <span className={s.hint}>{response.policyCode}</span>}
+        <span className={`${s.aiOutcome} ${outcomeClass[response.outcome]}`}>
+          {isOutOfScope ? c.aiOutcomeOutOfScope : outcomeLabel[response.outcome]}
+        </span>
+        {response.policyCode !== "NONE" && !isOutOfScope && (
+          <span className={s.aiCodeRef}>{response.policyCode}</span>
+        )}
       </div>
       <p className={s.aiAnswerText}>{response.answer}</p>
+      {isOutOfScope && onSuggestion && (
+        <div className={s.sampleRow}>
+          <span className={s.hint}>{c.tryAsking}:</span>
+          {[c.sampleQ1, c.sampleQ2].map((question) => (
+            <button
+              key={question}
+              type="button"
+              className={s.sampleChip}
+              onClick={() => onSuggestion(question)}
+            >
+              {question}
+            </button>
+          ))}
+        </div>
+      )}
       {response.citations.length > 0 && (
         <div className={s.aiCitations} aria-label={c.aiSources}>
           {response.citations.map((citation, index) => {

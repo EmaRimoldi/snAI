@@ -257,7 +257,7 @@ export default function UnderstandStep() {
                 </p>
               )}
               <div className={s.chatAnswer}>
-                <AiAnswer response={entry.response} documents={documents} />
+                <AiAnswer response={entry.response} documents={documents} onSuggestion={(question) => void runAsk(question)} />
               </div>
             </div>
           ))}

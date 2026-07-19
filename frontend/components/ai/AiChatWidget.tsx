@@ -68,8 +68,8 @@ export default function AiChatWidget() {
     return id;
   };
 
-  const send = async () => {
-    const question = input.trim();
+  const ask = async (raw: string) => {
+    const question = raw.trim();
     if (!question || asking) return;
     setEntries((current) => [...current, { id: newId(), role: "user", text: question }]);
     setInput("");
@@ -91,6 +91,8 @@ export default function AiChatWidget() {
     setEntries((current) => [...current, { id: newId(), role: "assistant", response, fallback }]);
     setAsking(false);
   };
+
+  const send = () => ask(input);
 
   return (
     <>
@@ -127,7 +129,7 @@ export default function AiChatWidget() {
               ) : (
                 <div key={entry.id} className={s.assistantMessage}>
                   {entry.fallback && <p className={s.fallback}>{t("aiChat.fallback")}</p>}
-                  <AiAnswer response={entry.response} documents={documents} />
+                  <AiAnswer response={entry.response} documents={documents} onSuggestion={(question) => void ask(question)} />
                 </div>
               ))}
               {asking && <p className={s.thinking}>{t("aiChat.thinking")}</p>}

@@ -298,6 +298,11 @@
   border: 1px solid var(--input); color: var(--primary-dark);
   font-size: 0.72rem; font-weight: 800; text-transform: uppercase;
 }
+.aiOutcomeAnswered { background: color-mix(in srgb, var(--secondary) 35%, var(--background)); }
+.aiOutcomeRefused { border-color: var(--primary-dark); }
+.aiOutcomeAbstained { color: var(--muted-foreground); border-style: dashed; }
+.aiOutcomeNeeds { background: color-mix(in srgb, var(--secondary) 20%, var(--background)); border-color: var(--primary-dark); }
+.aiCodeRef { color: var(--muted-foreground); font-size: 0.7rem; font-weight: 700; letter-spacing: 0.02em; }
 .aiAnswerText { margin: 0.65rem 0 0; line-height: 1.65; }
 .aiCitations { display: flex; flex-wrap: wrap; gap: 0.45rem; margin-top: 0.75rem; }
 .aiCitationChip {
