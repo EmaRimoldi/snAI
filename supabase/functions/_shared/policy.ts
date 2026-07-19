@@ -24,7 +24,8 @@ type MessageKey =
   | "injection"
   | "legal"
   | "missingContext"
-  | "rulesOverview";
+  | "rulesOverview"
+  | "greeting";
 
 const MESSAGES: Record<SupportedLocale, Record<MessageKey, string>> = {
   en: {
@@ -38,6 +39,7 @@ const MESSAGES: Record<SupportedLocale, Record<MessageKey, string>> = {
     legal: "I can't provide legal advice or extend the frozen challenge rules with an uncited legal interpretation.",
     missingContext: "I don't have a confirmed RealDoor value for that yet. Confirm or correct it in Profile, then ask again.",
     rulesOverview: "RealDoor answers from a frozen corpus of 11 cited rules: the FY 2026 MTSP income limits and their effective date, LIHTC dataset boundaries and geocode guidance from HUD, the federal LIHTC statute anchor, and hackathon conventions for income annualization, file readiness, document safety, and the human-decision boundary. Ask about any of them for the exact text and source.",
+    greeting: "Hi! I'm the RealDoor assistant. I can explain the frozen rules, your confirmed values, and what your file still needs. How can I help?",
   },
   es: {
     outOfDomain: "Solo puedo ayudar con RealDoor, sus reglas congeladas, tus documentos actuales y el proceso de preparación de la solicitud.",
@@ -50,6 +52,7 @@ const MESSAGES: Record<SupportedLocale, Record<MessageKey, string>> = {
     legal: "No puedo dar asesoramiento legal ni ampliar las reglas congeladas con una interpretación jurídica sin fuente.",
     missingContext: "Todavía no tengo un valor confirmado de RealDoor. Confírmalo o corrígelo en Perfil y vuelve a preguntar.",
     rulesOverview: "RealDoor responde a partir de un corpus congelado de 11 reglas citadas: los límites de ingresos MTSP del año fiscal 2026 y su fecha de vigencia, los límites del conjunto de datos LIHTC y la guía de geocodificación de HUD, el ancla del estatuto federal LIHTC y las convenciones del hackathon sobre anualización de ingresos, preparación del expediente, seguridad documental y el límite de decisión humana. Pregunta por cualquiera de ellas para ver el texto exacto y su fuente.",
+    greeting: "¡Hola! Soy el asistente de RealDoor. Puedo explicarte las reglas congeladas, tus valores confirmados y lo que aún le falta a tu expediente. ¿Cómo puedo ayudarte?",
   },
   zh: {
     outOfDomain: "我只能帮助解答 RealDoor、冻结规则、您当前的文件以及申请材料准备流程相关的问题。",
@@ -62,6 +65,7 @@ const MESSAGES: Record<SupportedLocale, Record<MessageKey, string>> = {
     legal: "我不能提供法律建议，也不能用无来源的法律解释扩展冻结规则。",
     missingContext: "我还没有经过确认的 RealDoor 数值。请先在“个人资料”中确认或更正，然后再提问。",
     rulesOverview: "RealDoor 依据一个冻结的语料库回答，共 11 条带引用的规则：2026 财年 MTSP 收入限额及其生效日期、HUD 的 LIHTC 数据集边界与地理编码指引、联邦 LIHTC 法规锚点，以及关于收入年化、材料就绪、文件安全和人工决策边界的挑战约定。询问任意一条即可查看原文和来源。",
+    greeting: "你好！我是 RealDoor 助手。我可以为你解释冻结规则、你已确认的数值，以及你的材料还缺什么。有什么可以帮你？",
   },
   tl: {
     outOfDomain: "Makatutulong lang ako tungkol sa RealDoor, sa frozen rules nito, sa kasalukuyan mong mga dokumento, at sa application-readiness workflow.",
@@ -74,6 +78,7 @@ const MESSAGES: Record<SupportedLocale, Record<MessageKey, string>> = {
     legal: "Hindi ako maaaring magbigay ng legal advice o magdagdag ng uncited legal interpretation sa frozen rules.",
     missingContext: "Wala pa akong confirmed na RealDoor value para riyan. Kumpirmahin o iwasto muna ito sa Profile at magtanong ulit.",
     rulesOverview: "Sumasagot ang RealDoor mula sa frozen corpus na may 11 na-cite na patakaran: ang FY 2026 MTSP income limits at ang kanilang effective date, ang mga hangganan ng LIHTC dataset at geocode guidance mula sa HUD, ang federal LIHTC statute anchor, at ang mga kombensiyon ng hackathon para sa income annualization, file readiness, document safety, at ang human-decision boundary. Itanong ang alinman sa mga ito para sa eksaktong teksto at pinagmulan.",
+    greeting: "Kumusta! Ako ang RealDoor assistant. Maipapaliwanag ko ang frozen rules, ang iyong mga kumpirmadong halaga, at kung ano pa ang kulang sa iyong file. Paano kita matutulungan?",
   },
   vi: {
     outOfDomain: "Tôi chỉ có thể hỗ trợ về RealDoor, các quy tắc đã đóng băng, giấy tờ hiện tại của bạn và quy trình chuẩn bị hồ sơ.",
@@ -86,6 +91,7 @@ const MESSAGES: Record<SupportedLocale, Record<MessageKey, string>> = {
     legal: "Tôi không thể tư vấn pháp lý hoặc mở rộng quy tắc đã đóng băng bằng diễn giải pháp luật không có nguồn.",
     missingContext: "Tôi chưa có giá trị RealDoor đã xác nhận cho nội dung đó. Hãy xác nhận hoặc sửa trong phần Hồ sơ rồi hỏi lại.",
     rulesOverview: "RealDoor trả lời dựa trên bộ quy tắc đã đóng băng gồm 11 quy tắc có trích dẫn: giới hạn thu nhập MTSP FY 2026 và ngày hiệu lực, ranh giới bộ dữ liệu LIHTC và hướng dẫn mã hóa địa lý của HUD, điểm neo đạo luật LIHTC liên bang, cùng các quy ước hackathon về quy đổi thu nhập theo năm, mức độ sẵn sàng của hồ sơ, an toàn tài liệu và ranh giới quyết định của con người. Hãy hỏi bất kỳ quy tắc nào để xem nguyên văn và nguồn.",
+    greeting: "Xin chào! Tôi là trợ lý RealDoor. Tôi có thể giải thích các quy tắc đã đóng băng, các giá trị bạn đã xác nhận và hồ sơ của bạn còn thiếu gì. Tôi có thể giúp gì cho bạn?",
   },
 };
 
@@ -105,6 +111,10 @@ const DIRECT_DECISION_PATTERNS = [
   /\bis (?:this|the) (?:applicant|household|family|person).{0,30}(?:eligible|qualified|approved|denied)/i,
   /\b(?:approved|denied|eligible|ineligible)(?:\s*\/\s*|\s+or\s+|\s+and\s+)(?:approved|denied|eligible|ineligible)\s+decision\b/i,
 ];
+// Plain greetings get a friendly deterministic reply (grounded on the flow
+// guide) instead of an OUT_OF_DOMAIN abstain. Anchored to the whole message so
+// "hi, what are the rules?" still routes to the real question.
+const GREETING_RE = /^\s*(?:(?:hi+|hello|hey|howdy)(?: there)?|good (?:morning|afternoon|evening)|greetings|ciao|salve|hola|buenos días|buenas(?: tardes| noches)?|kumusta|kamusta|magandang (?:umaga|hapon|gabi)|xin chào|chào(?: bạn)?|你好|您好|嗨|哈喽)\s*[!.。！？?]*\s*$/iu;
 // Bare "what are the rules" meta questions get a deterministic cited overview
 // instead of a model call — gpt-4o-mini is unreliable on this shape (it flips
 // between abstaining and paraphrasing rules with verdict words the decision
@@ -139,6 +149,9 @@ export function classifyRequest(request: ChatRequest): PolicyDecision | null {
   }
   if (OTHER_YEAR_RE.test(q)) {
     return { outcome: "answered", policyCode: "FROZEN_CORPUS_ONLY", answer: m.frozen, citationRefs: ["rule:HUD-MTSP-001", "rule:HUD-MTSP-002"] };
+  }
+  if (GREETING_RE.test(q)) {
+    return { outcome: "answered", policyCode: "NONE", answer: m.greeting, citationRefs: ["guide:GUIDE-FLOW-001"] };
   }
   if (RULES_OVERVIEW_RE.test(q)) {
     return {

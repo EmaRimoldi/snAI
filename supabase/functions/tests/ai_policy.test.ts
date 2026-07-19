@@ -237,11 +237,29 @@ test("decomposed (NFD) unicode questions still pass the domain gate", () => {
   assert.equal(classifyRequest(parsed), null);
 });
 
+test("greetings get a friendly localized answer instead of an abstain", () => {
+  const cases: Array<[string, ChatRequest["locale"]]> = [
+    ["hello", "en"],
+    ["Hi there!", "en"],
+    ["Hola", "es"],
+    ["你好", "zh"],
+    ["Kumusta!", "tl"],
+    ["Xin chào", "vi"],
+  ];
+  for (const [question, locale] of cases) {
+    const decision = classifyRequest(general(question, locale));
+    assert.equal(decision?.outcome, "answered", question);
+    assert.equal(decision?.policyCode, "NONE", question);
+    assert.ok((decision?.citationRefs.length ?? 0) > 0, question);
+  }
+  assert.equal(classifyRequest(general("hi, what are the rules?")), null);
+});
+
 test("broadened vocabulary still leaves generic chatter out of domain", () => {
   for (const question of [
     "What's trending on social media today?",
     "Tell me about the solar system",
-    "hello there",
+    "Tell me a story",
   ]) {
     const result = classifyRequest(general(question));
     assert.equal(result?.policyCode, "OUT_OF_DOMAIN", question);
