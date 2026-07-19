@@ -8,13 +8,17 @@ const SUPABASE_URL =
 const ENGINE = process.env.NEXT_PUBLIC_ENGINE ?? "http://127.0.0.1:8787";
 const ENGINE_ORIGIN = ENGINE.startsWith("http") ? new URL(ENGINE).origin : "";
 
+// Dev-only local AI chat server (see lib/ai/client.ts); unset in production.
+const AI_URL = process.env.NEXT_PUBLIC_AI_URL ?? "";
+const AI_ORIGIN = AI_URL.startsWith("http") ? new URL(AI_URL).origin : "";
+
 const isDev = process.env.NODE_ENV === "development";
 
 // Next.js needs inline scripts for hydration; dev mode additionally needs eval.
 const csp = [
   "default-src 'self'",
   `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""}`,
-  `connect-src 'self' ${SUPABASE_URL}${ENGINE_ORIGIN ? ` ${ENGINE_ORIGIN}` : ""}`,
+  `connect-src 'self' ${SUPABASE_URL}${ENGINE_ORIGIN ? ` ${ENGINE_ORIGIN}` : ""}${AI_ORIGIN ? ` ${AI_ORIGIN}` : ""}`,
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: https://*.tile.openstreetmap.org https://server.arcgisonline.com",
   "worker-src 'self'",

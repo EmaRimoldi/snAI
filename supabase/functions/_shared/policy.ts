@@ -38,8 +38,8 @@ const MESSAGES: Record<SupportedLocale, Record<MessageKey, string>> = {
     injection: "I can't follow requests to override RealDoor's instructions or reveal prompts, secrets, or hidden data.",
     legal: "I can't provide legal advice or extend the frozen challenge rules with an uncited legal interpretation.",
     missingContext: "I don't have a confirmed RealDoor value for that yet. Confirm or correct it in Profile, then ask again.",
-    rulesOverview: "RealDoor answers from a frozen corpus of 11 cited rules: the FY 2026 MTSP income limits and their effective date, LIHTC dataset boundaries and geocode guidance from HUD, the federal LIHTC statute anchor, and hackathon conventions for income annualization, file readiness, document safety, and the human-decision boundary. Ask about any of them for the exact text and source.",
-    greeting: "Hi! I'm the RealDoor assistant. I can explain the frozen rules, your confirmed values, and what your file still needs. How can I help?",
+    rulesOverview: "RealDoor answers from a frozen corpus of 11 cited rules: the FY 2026 MTSP income limits and their effective date, LIHTC dataset boundaries and geocode guidance from HUD, the federal LIHTC statute anchor, and hackathon conventions for income annualization, file readiness, document safety, and the human-decision boundary. Ask about any of them for the exact text and source. Whether a household meets the program requirements is determined by human reviewers — RealDoor never decides that.",
+    greeting: "Hi! Happy to help. Ask me anything about your application, the frozen rules, how your values were computed, or what your file still needs.",
   },
   es: {
     outOfDomain: "Solo puedo ayudar con RealDoor, sus reglas congeladas, tus documentos actuales y el proceso de preparación de la solicitud.",
@@ -51,8 +51,8 @@ const MESSAGES: Record<SupportedLocale, Record<MessageKey, string>> = {
     injection: "No puedo seguir solicitudes para anular las instrucciones de RealDoor ni revelar prompts, secretos o datos ocultos.",
     legal: "No puedo dar asesoramiento legal ni ampliar las reglas congeladas con una interpretación jurídica sin fuente.",
     missingContext: "Todavía no tengo un valor confirmado de RealDoor. Confírmalo o corrígelo en Perfil y vuelve a preguntar.",
-    rulesOverview: "RealDoor responde a partir de un corpus congelado de 11 reglas citadas: los límites de ingresos MTSP del año fiscal 2026 y su fecha de vigencia, los límites del conjunto de datos LIHTC y la guía de geocodificación de HUD, el ancla del estatuto federal LIHTC y las convenciones del hackathon sobre anualización de ingresos, preparación del expediente, seguridad documental y el límite de decisión humana. Pregunta por cualquiera de ellas para ver el texto exacto y su fuente.",
-    greeting: "¡Hola! Soy el asistente de RealDoor. Puedo explicarte las reglas congeladas, tus valores confirmados y lo que aún le falta a tu expediente. ¿Cómo puedo ayudarte?",
+    rulesOverview: "RealDoor responde a partir de un corpus congelado de 11 reglas citadas: los límites de ingresos MTSP del año fiscal 2026 y su fecha de vigencia, los límites del conjunto de datos LIHTC y la guía de geocodificación de HUD, el ancla del estatuto federal LIHTC y las convenciones del hackathon sobre anualización de ingresos, preparación del expediente, seguridad documental y el límite de decisión humana. Pregunta por cualquiera de ellas para ver el texto exacto y su fuente. Si un hogar cumple los requisitos del programa lo determinan revisores humanos — RealDoor nunca lo decide.",
+    greeting: "¡Hola! Encantado de ayudarte. Pregúntame lo que quieras sobre tu solicitud, las reglas congeladas, cómo se calcularon tus valores o lo que aún le falta a tu expediente.",
   },
   zh: {
     outOfDomain: "我只能帮助解答 RealDoor、冻结规则、您当前的文件以及申请材料准备流程相关的问题。",
@@ -64,8 +64,8 @@ const MESSAGES: Record<SupportedLocale, Record<MessageKey, string>> = {
     injection: "我不能执行覆盖 RealDoor 指令或泄露提示词、秘密或隐藏数据的请求。",
     legal: "我不能提供法律建议，也不能用无来源的法律解释扩展冻结规则。",
     missingContext: "我还没有经过确认的 RealDoor 数值。请先在“个人资料”中确认或更正，然后再提问。",
-    rulesOverview: "RealDoor 依据一个冻结的语料库回答，共 11 条带引用的规则：2026 财年 MTSP 收入限额及其生效日期、HUD 的 LIHTC 数据集边界与地理编码指引、联邦 LIHTC 法规锚点，以及关于收入年化、材料就绪、文件安全和人工决策边界的挑战约定。询问任意一条即可查看原文和来源。",
-    greeting: "你好！我是 RealDoor 助手。我可以为你解释冻结规则、你已确认的数值，以及你的材料还缺什么。有什么可以帮你？",
+    rulesOverview: "RealDoor 依据一个冻结的语料库回答，共 11 条带引用的规则：2026 财年 MTSP 收入限额及其生效日期、HUD 的 LIHTC 数据集边界与地理编码指引、联邦 LIHTC 法规锚点，以及关于收入年化、材料就绪、文件安全和人工决策边界的挑战约定。询问任意一条即可查看原文和来源。家庭是否满足项目要求由人工审核员判定——RealDoor 从不做这一决定。",
+    greeting: "你好！很高兴为你服务。欢迎询问你的申请、冻结规则、你的数值是如何计算的，或者你的材料还缺什么。",
   },
   tl: {
     outOfDomain: "Makatutulong lang ako tungkol sa RealDoor, sa frozen rules nito, sa kasalukuyan mong mga dokumento, at sa application-readiness workflow.",
@@ -77,8 +77,8 @@ const MESSAGES: Record<SupportedLocale, Record<MessageKey, string>> = {
     injection: "Hindi ko maaaring sundin ang kahilingang i-override ang mga tagubilin ng RealDoor o ibunyag ang prompts, secrets, o hidden data.",
     legal: "Hindi ako maaaring magbigay ng legal advice o magdagdag ng uncited legal interpretation sa frozen rules.",
     missingContext: "Wala pa akong confirmed na RealDoor value para riyan. Kumpirmahin o iwasto muna ito sa Profile at magtanong ulit.",
-    rulesOverview: "Sumasagot ang RealDoor mula sa frozen corpus na may 11 na-cite na patakaran: ang FY 2026 MTSP income limits at ang kanilang effective date, ang mga hangganan ng LIHTC dataset at geocode guidance mula sa HUD, ang federal LIHTC statute anchor, at ang mga kombensiyon ng hackathon para sa income annualization, file readiness, document safety, at ang human-decision boundary. Itanong ang alinman sa mga ito para sa eksaktong teksto at pinagmulan.",
-    greeting: "Kumusta! Ako ang RealDoor assistant. Maipapaliwanag ko ang frozen rules, ang iyong mga kumpirmadong halaga, at kung ano pa ang kulang sa iyong file. Paano kita matutulungan?",
+    rulesOverview: "Sumasagot ang RealDoor mula sa frozen corpus na may 11 na-cite na patakaran: ang FY 2026 MTSP income limits at ang kanilang effective date, ang mga hangganan ng LIHTC dataset at geocode guidance mula sa HUD, ang federal LIHTC statute anchor, at ang mga kombensiyon ng hackathon para sa income annualization, file readiness, document safety, at ang human-decision boundary. Itanong ang alinman sa mga ito para sa eksaktong teksto at pinagmulan. Kung natutugunan ng isang household ang mga kinakailangan ng programa ay pinagpapasyahan ng mga human reviewer — hindi ito kailanman pinagpapasyahan ng RealDoor.",
+    greeting: "Kumusta! Masaya akong tumulong. Itanong mo ang kahit ano tungkol sa iyong aplikasyon, sa frozen rules, kung paano nakalkula ang iyong mga halaga, o kung ano pa ang kulang sa iyong file.",
   },
   vi: {
     outOfDomain: "Tôi chỉ có thể hỗ trợ về RealDoor, các quy tắc đã đóng băng, giấy tờ hiện tại của bạn và quy trình chuẩn bị hồ sơ.",
@@ -90,8 +90,8 @@ const MESSAGES: Record<SupportedLocale, Record<MessageKey, string>> = {
     injection: "Tôi không thể làm theo yêu cầu ghi đè hướng dẫn của RealDoor hoặc tiết lộ prompt, bí mật hay dữ liệu ẩn.",
     legal: "Tôi không thể tư vấn pháp lý hoặc mở rộng quy tắc đã đóng băng bằng diễn giải pháp luật không có nguồn.",
     missingContext: "Tôi chưa có giá trị RealDoor đã xác nhận cho nội dung đó. Hãy xác nhận hoặc sửa trong phần Hồ sơ rồi hỏi lại.",
-    rulesOverview: "RealDoor trả lời dựa trên bộ quy tắc đã đóng băng gồm 11 quy tắc có trích dẫn: giới hạn thu nhập MTSP FY 2026 và ngày hiệu lực, ranh giới bộ dữ liệu LIHTC và hướng dẫn mã hóa địa lý của HUD, điểm neo đạo luật LIHTC liên bang, cùng các quy ước hackathon về quy đổi thu nhập theo năm, mức độ sẵn sàng của hồ sơ, an toàn tài liệu và ranh giới quyết định của con người. Hãy hỏi bất kỳ quy tắc nào để xem nguyên văn và nguồn.",
-    greeting: "Xin chào! Tôi là trợ lý RealDoor. Tôi có thể giải thích các quy tắc đã đóng băng, các giá trị bạn đã xác nhận và hồ sơ của bạn còn thiếu gì. Tôi có thể giúp gì cho bạn?",
+    rulesOverview: "RealDoor trả lời dựa trên bộ quy tắc đã đóng băng gồm 11 quy tắc có trích dẫn: giới hạn thu nhập MTSP FY 2026 và ngày hiệu lực, ranh giới bộ dữ liệu LIHTC và hướng dẫn mã hóa địa lý của HUD, điểm neo đạo luật LIHTC liên bang, cùng các quy ước hackathon về quy đổi thu nhập theo năm, mức độ sẵn sàng của hồ sơ, an toàn tài liệu và ranh giới quyết định của con người. Hãy hỏi bất kỳ quy tắc nào để xem nguyên văn và nguồn. Việc một hộ gia đình có đáp ứng yêu cầu của chương trình hay không do người xét duyệt quyết định — RealDoor không bao giờ quyết định điều đó.",
+    greeting: "Xin chào! Rất vui được hỗ trợ bạn. Hãy hỏi tôi bất cứ điều gì về hồ sơ của bạn, các quy tắc đã đóng băng, cách các giá trị được tính, hoặc hồ sơ còn thiếu gì.",
   },
 };
 
@@ -111,20 +111,32 @@ const DIRECT_DECISION_PATTERNS = [
   /\bis (?:this|the) (?:applicant|household|family|person).{0,30}(?:eligible|qualified|approved|denied)/i,
   /\b(?:approved|denied|eligible|ineligible)(?:\s*\/\s*|\s+or\s+|\s+and\s+)(?:approved|denied|eligible|ineligible)\s+decision\b/i,
 ];
-// Plain greetings get a friendly deterministic reply (grounded on the flow
-// guide) instead of an OUT_OF_DOMAIN abstain. Anchored to the whole message so
-// "hi, what are the rules?" still routes to the real question.
-const GREETING_RE = /^\s*(?:(?:hi+|hello|hey|howdy)(?: there)?|good (?:morning|afternoon|evening)|greetings|ciao|salve|hola|buenos días|buenas(?: tardes| noches)?|kumusta|kamusta|magandang (?:umaga|hapon|gabi)|xin chào|chào(?: bạn)?|你好|您好|嗨|哈喽)\s*[!.。！？?]*\s*$/iu;
+// Plain greetings — optionally followed by a courtesy phrase ("hi, how are
+// you?"), or a standalone courtesy phrase — get a friendly deterministic reply
+// (grounded on the flow guide) instead of an OUT_OF_DOMAIN abstain. Anchored to
+// the whole message so "hi, what are the rules?" still routes to the real
+// question.
+const GREETING_PART =
+  "(?:(?:hi+|hello|hey|howdy)(?: there)?|good (?:morning|afternoon|evening)|greetings|ciao|salve|hola|buenos días|buenas(?: tardes| noches)?|kumusta|kamusta|magandang (?:umaga|hapon|gabi)|xin chào|chào(?: bạn)?|你好|您好|嗨|哈喽)";
+const COURTESY_PART =
+  "(?:how (?:are|r) (?:you|u)(?: doing)?(?: today)?|how's it going|how is it going|what's up|nice to meet you|cómo estás|como estas|qué tal|que tal|come stai|你好吗|最近好吗|kumusta ka(?: na)?|musta(?: ka)?|bạn (?:có )?khỏe không|khỏe không)";
+const GREETING_RE = new RegExp(
+  `^[\\s¿¡]*(?:${GREETING_PART}(?:[\\s,.!。！，、¿¡]+${COURTESY_PART})?|${COURTESY_PART})\\s*[!.。！？?]*\\s*$`,
+  "iu",
+);
 // Bare "what are the rules" meta questions get a deterministic cited overview
 // instead of a model call — gpt-4o-mini is unreliable on this shape (it flips
 // between abstaining and paraphrasing rules with verdict words the decision
 // lint then rejects). Anchored so specific rule questions still reach the model.
-const RULES_OVERVIEW_RE = /^\s*(?:what (?:are|is)|list|show(?: me)?|tell me)\s+(?:the\s+|all\s+|your\s+|realdoor(?:'s)?\s+)*rules\s*\??\s*$|^\s*ano ang (?:mga )?(?:patakaran|panuntunan)\s*\??\s*$|^\s*¿?cu[aá]les son las reglas\??\s*$|^\s*(?:有哪些规则|规则是什么|有什么规则)[?？]?\s*$|^\s*(?:các )?quy tắc (?:là gì|nào)\s*\??\s*$/iu;
+// Includes "rules for eligibility" phrasings: they ask for the RULES, so they
+// get the cited overview (which ends on the human-decision note) — the model
+// path would trip the verdict-word lint just by echoing the question's wording.
+const RULES_OVERVIEW_RE = /^\s*(?:what (?:are|is)|list|show(?: me)?|tell me)\s+(?:the\s+|all\s+|your\s+|main\s+|key\s+|eligibility\s+|income\s+|program\s+|realdoor(?:'s)?\s+)*rules(?:\s+(?:for|about|on)\s+(?:eligibility|qualif\w+|income(?:\s+limits)?|the\s+program|this\s+program|housing))?\s*\??\s*$|^\s*ano ang (?:mga )?(?:pangunahing\s+)?(?:patakaran|panuntunan)(?:\s+(?:para\s+sa|sa)\s+(?:pagiging karapat-dapat|kita|programa))?\s*\??\s*$|^\s*¿?cu[aá]les son las reglas(?:\s+principales)?(?:\s+(?:de|para)\s+(?:elegibilidad|ingresos|el programa))?\??\s*$|^\s*(?:有哪些(?:主要)?(?:资格)?规则|(?:主要)?(?:资格)?规则(?:是什么|有哪些)|有什么规则)[?？]?\s*$|^\s*(?:các )?quy tắc(?:\s+chính)?(?:\s+về\s+(?:điều kiện|thu nhập|chương trình))?\s+(?:là gì|nào)\s*\??\s*$/iu;
 // In-domain vocabulary gate. JS \b is ASCII-only, so any term that ends in an
 // accented or CJK character must live in the boundary-free tail after the
 // \b(...)\b group or it can never match (e.g. "giấy tờ", "hồ sơ").
-const DOMAIN_RE = /\b(?:realdoor|lihtc|hud|mtsp|ami|income|threshold|limits?|rules?|document\w*|paperwork|applications?|profile|understand|prepare|readiness|review|checklist|letters?|stubs?|paystubs?|pay|payments?|earn\w*|salar\w*|wages?|money|rent\w*|housing|afford\w*|household|employ\w*|benefit\w*|gigs?|citation|source|geocode|vacan\w*|waitlist|eligib\w*|approv\w*|deni\w*|qualif\w*|upload|confirm|correct|delete|sessions?|deadline|effective|annualiz\w*|evidence|expire\w*|errors?|status|steps?|phases?|packet|export|download|privac\w*|private|help\w*|assist\w*|regla\w*|regol\w*|soglia|reddito|redditi|ingreso\w*|umbral\w*|vivienda|papeleo|hogar\w*|solicitud|perfil|dokumento|patakaran|tulong|sahod|upa|pabahay|bahay|kita|aplikasyon|thu nhập|quy tắc)\b|giấy tờ|hồ sơ|ngưỡng|thuê|giúp|bước|ayuda|ayúd|文件|收入|申请|规则|门槛|限额|住房|租金|帮助|步骤/iu;
-const CONTEXTUAL_FOLLOWUP_RE = /^\s*(?:why\??|why (?:is|does|did) (?:this|that|it)|how (?:do|does|did|can) .{0,30}(?:this|that|it)|what does (?:this|that|it) mean|explain (?:this|that|it)|tell me more|por qué|qué significa (?:esto|eso)|explícame (?:esto|eso)|为什么|这是什么意思|请解释这个|bakit|ipaliwanag (?:ito|iyan)|tại sao|điều này nghĩa là gì)/i;
+const DOMAIN_RE = /\b(?:realdoor|lihtc|hud|mtsp|ami|income|threshold|limits?|rules?|document\w*|paperwork|applications?|profile|understand|prepare|readiness|review|checklist|letters?|stubs?|paystubs?|pay|payments?|earn\w*|salar\w*|wages?|money|rent\w*|housing|afford\w*|household|employ\w*|benefit\w*|gigs?|citation|source|geocode|vacan\w*|waitlist|eligib\w*|approv\w*|deni\w*|qualif\w*|upload|confirm\w*|correct\w*|houses?|extract\w*|pars\w*|delete|sessions?|deadline|effective|annualiz\w*|evidence|expire\w*|errors?|status|steps?|phases?|packet|export|download|privac\w*|private|help\w*|assist\w*|calculat\w*|comput\w*|formulas?|totals?|sums?|amounts?|values?|numbers?|figures?|defin\w*|meanings?|regla\w*|regol\w*|soglia|reddito|redditi|ingreso\w*|umbral\w*|vivienda|papeleo|hogar\w*|solicitud|perfil|dokumento|patakaran|tulong|sahod|upa|pabahay|bahay|kita|aplikasyon|thu nhập|quy tắc)\b|giấy tờ|hồ sơ|ngưỡng|thuê|giúp|bước|tính|ayuda|ayúd|cálculo|fórmula|kuwenta|kalkula|文件|收入|申请|规则|门槛|限额|住房|租金|帮助|步骤|计算|公式|定义|\$\s?\d|\b\d{1,3}k\b/iu;
+const CONTEXTUAL_FOLLOWUP_RE = /^[\s¿¡]*(?:why\??|why (?:is|does|did) (?:this|that|it)|how (?:do|does|did|can) .{0,30}(?:this|that|it)|how (?:was|is|were) .{0,40}(?:computed|calculated|determined|worked out|annualized)|how did you (?:compute|calculate|determine|annualize|work out|arrive at|get)|where (?:does|did|do) .{0,30}(?:number|value|amount|total|figure|come from)|what does (?:this|that|it) mean|explain (?:this|that|it)|tell me more|por qué|cómo (?:lo|se) calcul\w*|qué significa (?:esto|eso)|explícame (?:esto|eso)|为什么|这是什么意思|请解释这个|这(?:是|个)?(?:如何|怎么)(?:计算|算)|怎么算|如何计算|bakit|paano (?:mo |ito )?(?:ito |iyan )?(?:kinalkula|kinuwenta|na?compute)|ipaliwanag (?:ito|iyan)|tại sao|tính như thế nào|làm sao .{0,12}tính|điều này nghĩa là gì|\d{1,3}\s*$)/iu;
 
 export function classifyRequest(request: ChatRequest): PolicyDecision | null {
   const q = request.question;
@@ -170,7 +182,11 @@ export function classifyRequest(request: ChatRequest): PolicyDecision | null {
       ],
     };
   }
-  const inDomain = DOMAIN_RE.test(q) || (request.mode === "personalized" && CONTEXTUAL_FOLLOWUP_RE.test(q));
+  // Contextual follow-ups ("how did you compute that?") reach the model in any
+  // mode: with context the model explains the supplied math; without it, the
+  // model returns needs_confirmation/MISSING_CONTEXT — better than a hard
+  // OUT_OF_DOMAIN bounce for a question that is clearly about the app.
+  const inDomain = DOMAIN_RE.test(q) || CONTEXTUAL_FOLLOWUP_RE.test(q);
   if (OFF_TOPIC_RE.test(q) || /^\s*(?:what is|calculate|compute)?\s*\d+\s*[-+*/]\s*\d+/i.test(q) || !inDomain) {
     return { outcome: "abstained", policyCode: "OUT_OF_DOMAIN", answer: m.outOfDomain, citationRefs: [] };
   }

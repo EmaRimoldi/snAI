@@ -43,7 +43,20 @@ function parseResponse(value: unknown): AiChatResponse {
   };
 }
 
+// Dev-only override: point the chat at a locally-served understand-chat
+// (same shared modules, no Supabase auth). Unset in production builds.
+const LOCAL_AI_URL = process.env.NEXT_PUBLIC_AI_URL;
+
 export async function askRealDoor(request: AiChatRequest): Promise<AiChatResponse> {
+  if (LOCAL_AI_URL) {
+    const response = await fetch(LOCAL_AI_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(request),
+    });
+    if (!response.ok) throw new Error("RealDoor couldn't reach the AI guide. Please try again.");
+    return parseResponse(await response.json());
+  }
   await ensureAiSession();
   const { data, error } = await supabase.functions.invoke("understand-chat", { body: request });
   if (error) {

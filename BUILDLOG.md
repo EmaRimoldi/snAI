@@ -350,3 +350,14 @@ changes: official 6/6 exact.
   green: batch_run 1132/1132 + 59/59, oracle route official 6/6 + dev splits 53/53, E2E site
   workflow HH-001/HH-002 PASS, degraded-mode E2E PASS, vitest 23/23, next build clean. Prod's
   /api/engine function lives outside the repo — needs a redeploy to pick this up.
+- 2026-07-19 · Chatbot loosened without moving the red line: greeting+courtesy handled deterministically
+  (×5 locales), "how did you compute that?" follow-ups reach the model in any mode, calc/definition
+  vocabulary added to the domain gate, prompt v3 with few-shot examples (verdict-word-free definitions).
+  22/22 policy tests + organizer 36 QA / 24 adversarial green; live gpt-4o eval 7/7; browser E2E: greeting
+  answered, computation explained with rule+evidence citations, "Am I eligible?" still refused.
+- 2026-07-19 (2) · Chat scope round 2 from live feedback: "rules for eligibility" phrasings (×5 locales)
+  now get the deterministic cited overview closing on the human-decision note; typo'd threshold
+  follow-ups, value-supplying replies ("1 house confirmation" → points to Profile confirm), and
+  "how did you extract the 56k?" (explained by document type/field/page only — context stays
+  anonymized) all reach the model with few-shot guidance. 27/27 policy+eval tests, live gpt-4o 6/6,
+  browser E2E green; "Am I eligible?" still refused.
