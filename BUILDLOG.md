@@ -237,3 +237,15 @@ overflow comes from the pre-existing header nav, not the receipt), ES localizati
 - Result: all six households reproduce the oracle EXACTLY through the frontend path (income,
   readiness status, blocking codes, comparison). Engine path re-verified separately after the
   classifier fix (batch_run official: 159/159 fields, 6/6 households, 0 LLM calls).
+
+## 2026-07-19 — AI chat: greetings, softer out-of-scope card, suggestion chips
+
+Plain greetings (hi / hola / kumusta / xin chào / 你好…, anchored so "hi, what are the rules?"
+still routes to the real question) now get a localized deterministic reply citing
+GUIDE-FLOW-001 (`understand-chat` v6). `AiAnswer`: per-outcome pill styling; OUT_OF_DOMAIN
+abstains show a soft dashed "Out of scope" pill (×5 languages) with two tappable
+sample-question chips (reuses `sampleChip`, re-asks through the existing handlers) instead of
+the raw policy code; other non-NONE codes demoted to small muted text. Policy tests 22/22;
+greeting verified live in en/es; poem control still abstains. Verified at API + tsc level —
+an in-panel visual pass on the unlocked Understand chat is still worth a click-through.
+>>>>>>> 24779bd (docs: BUILDLOG entry for AI greetings and softer answer cards)
