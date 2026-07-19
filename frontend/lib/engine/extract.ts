@@ -76,7 +76,11 @@ const STREETS = ["Blue Hill Ave", "Dorchester Ave", "Massachusetts Ave", "Centre
 // ---- public API -------------------------------------------------------------
 
 export async function classifyDocument(file: File): Promise<ClassifyResult> {
-  if (ENGINE !== "mock") throw new Error("Real engine not wired; set NEXT_PUBLIC_ENGINE=mock");
+  if (ENGINE.startsWith("http")) {
+    const { httpClassify } = await import("@/lib/engine/http");
+    return httpClassify(ENGINE, file);
+  }
+  if (ENGINE !== "mock") throw new Error(`Unknown NEXT_PUBLIC_ENGINE "${ENGINE}" — use "mock" or an engine URL`);
   await delay(180);
   const { type, matched } = guessType(file.name);
   const rng = mulberry32(hashString(file.name));
@@ -88,7 +92,11 @@ export async function extractFields(doc: {
   fileName: string;
   documentType: DocumentType;
 }): Promise<ExtractResult> {
-  if (ENGINE !== "mock") throw new Error("Real engine not wired; set NEXT_PUBLIC_ENGINE=mock");
+  if (ENGINE.startsWith("http")) {
+    const { httpExtract } = await import("@/lib/engine/http");
+    return httpExtract(doc);
+  }
+  if (ENGINE !== "mock") throw new Error(`Unknown NEXT_PUBLIC_ENGINE "${ENGINE}" — use "mock" or an engine URL`);
   await delay(260);
   const rng = mulberry32(hashString(doc.fileName) ^ 0x9e3779b9);
   const type = doc.documentType === "unknown" ? pick(rng, DOC_TYPES) : doc.documentType;

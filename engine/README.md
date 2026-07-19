@@ -243,3 +243,20 @@ The guide requires teams to disclose model/provider and applicable terms:
 Wrap `pipeline.run_pack()` / `process_household()` / `qa.answer()` behind an
 API and build the review UI (PDF viewer with source-box highlights from
 `Submission.citations`).
+
+## Frontend bridge (Profile step)
+
+```bash
+cd engine
+.venv/bin/uvicorn server:app --port 8787          # engine HTTP bridge
+# in another shell:
+cd frontend
+NEXT_PUBLIC_ENGINE=http://127.0.0.1:8787 npm run dev
+```
+
+`server.py` exposes `POST /extract` (multipart PDFs -> the same editable
+extraction artifact as the CLI). The frontend adapter
+(`frontend/lib/engine/http.ts`) maps it onto the pipeline UI: real fields,
+confidence, bottom-left-points -> top-left-normalized bbox conversion (§7),
+`untrusted_instruction_text` -> quarantine display. Without
+`NEXT_PUBLIC_ENGINE` the frontend stays on the standalone mock.
