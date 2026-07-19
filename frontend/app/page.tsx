@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { ArrowRight } from "lucide-react";
 import { I18nProvider, useI18n } from "@/lib/i18n";
 import { useCopy } from "@/lib/pipeline/copy";
 import { AppStateProvider } from "@/lib/pipeline/state";
@@ -8,6 +9,7 @@ import SiteHeader from "@/components/SiteHeader";
 import HeroSellingPoints from "@/components/HeroSellingPoints";
 import PhaseCards from "@/components/PhaseCards";
 import PipelineApp from "@/components/pipeline/PipelineApp";
+import { Button } from "@/components/ui/button";
 
 export default function Page() {
   return (
@@ -23,7 +25,7 @@ const AUTOLOAD_DEMO =
   process.env.NODE_ENV === "development" && process.env.NEXT_PUBLIC_DEMO_HOUSEHOLD === "HH-001";
 
 function RealDoorApp() {
-  const { language, t } = useI18n();
+  const { language, t, tList } = useI18n();
   const c = useCopy();
   const [view, setView] = useState<View>(AUTOLOAD_DEMO ? "app" : "landing");
 
@@ -70,12 +72,27 @@ function RealDoorApp() {
         >
           <div id="top" className="hero-section">
             <HeroSellingPoints headingRef={heroHeadingRef} />
-            <p className="hero-subheadline">{t("hero.subheadline")}</p>
             <div className="hero-cta">
-              <button type="button" className="primary-button" onClick={showApp}>
+              <Button
+                type="button"
+                size="lg"
+                className="group hero-start-button"
+                onClick={showApp}
+              >
                 {c.getStarted}
-              </button>
+                <ArrowRight
+                  className="hero-start-icon"
+                  size={17}
+                  strokeWidth={2.25}
+                  aria-hidden="true"
+                />
+              </Button>
             </div>
+            <ul className="hero-assurances" aria-label={t("hero.assurancesLabel")}>
+              {tList("hero.assurances").map((point) => (
+                <li key={point}>{point}</li>
+              ))}
+            </ul>
           </div>
 
           <PhaseCards />

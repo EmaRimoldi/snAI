@@ -29,13 +29,17 @@ const en = {
     signout: "Sign out",
   },
   hero: {
-    rotatingHeadline: "Housing paperwork in minutes.",
-    subheadline: "Housing paperwork, made clear.",
-    rotatingSellingPoints: [
-      "Catch missing details early.",
-      "Save on preparation fees.",
-      "Safe checks. Published rules.",
+    primaryHeadlineLines: [
+      "Preparing your housing paperwork",
+      "has never been this easy.",
     ],
+    rotatingSupportingLines: [
+      "One step at a time",
+      "See your next step in minutes, not days",
+      "Catch errors before they cost you weeks",
+    ],
+    assurancesLabel: "Get started details",
+    assurances: ["No account needed", "Your documents stay private", "Free to use"],
   },
   input: {
     sectionLabel: "Document assistant",
@@ -109,13 +113,17 @@ const es: Dictionary = {
     signout: "Cerrar sesión",
   },
   hero: {
-    rotatingHeadline: "Documentos listos en minutos.",
-    subheadline: "Los trámites de vivienda, más claros.",
-    rotatingSellingPoints: [
-      "Detecta a tiempo lo que falta.",
-      "Ahorra en la preparación.",
-      "Revisiones seguras. Reglas vigentes.",
+    primaryHeadlineLines: [
+      "Preparar tus documentos de vivienda",
+      "nunca había sido tan fácil.",
     ],
+    rotatingSupportingLines: [
+      "Un paso a la vez",
+      "Descubre tu siguiente paso en minutos, no en días",
+      "Detecta errores antes de que te cuesten semanas",
+    ],
+    assurancesLabel: "Detalles para comenzar",
+    assurances: ["No necesitas una cuenta", "Tus documentos son privados", "Uso gratuito"],
   },
   input: {
     sectionLabel: "Asistente de documentos",
@@ -187,13 +195,10 @@ const zh: Dictionary = {
     signout: "退出登录",
   },
   hero: {
-    rotatingHeadline: "住房文件，几分钟完成。",
-    subheadline: "住房手续，一目了然。",
-    rotatingSellingPoints: [
-      "尽早发现缺失信息。",
-      "节省准备费用。",
-      "安全检查，依据公开规则。",
-    ],
+    primaryHeadlineLines: ["准备住房申请材料", "从未如此简单。"],
+    rotatingSupportingLines: ["一步一步来", "几分钟内了解下一步，而不是等上几天", "尽早发现错误，避免耽误数周"],
+    assurancesLabel: "开始使用详情",
+    assurances: ["无需账户", "您的文件保持私密", "免费使用"],
   },
   input: {
     sectionLabel: "文件助手",
@@ -265,13 +270,17 @@ const tl: Dictionary = {
     signout: "Mag-sign out",
   },
   hero: {
-    rotatingHeadline: "Papeles, handa sa ilang minuto.",
-    subheadline: "Mga papeles sa pabahay, ginawang malinaw.",
-    rotatingSellingPoints: [
-      "Maagang makita ang kulang.",
-      "Makatipid sa paghahanda.",
-      "Ligtas. Ayon sa patakaran.",
+    primaryHeadlineLines: [
+      "Paghahanda ng mga papeles sa pabahay",
+      "hindi pa naging ganito kadali.",
     ],
+    rotatingSupportingLines: [
+      "Isang hakbang sa bawat pagkakataon",
+      "Alamin ang susunod mong hakbang sa loob ng ilang minuto, hindi araw",
+      "Mahuli ang mga pagkakamali bago ka maantala nang ilang linggo",
+    ],
+    assurancesLabel: "Mga detalye bago magsimula",
+    assurances: ["Hindi kailangan ng account", "Pribado ang iyong mga dokumento", "Libreng gamitin"],
   },
   input: {
     sectionLabel: "Katulong sa dokumento",
@@ -343,13 +352,14 @@ const vi: Dictionary = {
     signout: "Đăng xuất",
   },
   hero: {
-    rotatingHeadline: "Hồ sơ sẵn sàng trong vài phút.",
-    subheadline: "Thủ tục nhà ở, rõ ràng hơn.",
-    rotatingSellingPoints: [
-      "Phát hiện sớm phần còn thiếu.",
-      "Tiết kiệm phí chuẩn bị.",
-      "Kiểm tra an toàn. Theo quy định.",
+    primaryHeadlineLines: ["Chuẩn bị giấy tờ nhà ở", "chưa bao giờ dễ dàng đến thế."],
+    rotatingSupportingLines: [
+      "Từng bước một",
+      "Biết bước tiếp theo chỉ trong vài phút, không phải vài ngày",
+      "Phát hiện lỗi trước khi chúng khiến bạn mất hàng tuần",
     ],
+    assurancesLabel: "Thông tin trước khi bắt đầu",
+    assurances: ["Không cần tài khoản", "Giấy tờ của bạn luôn riêng tư", "Sử dụng miễn phí"],
   },
   input: {
     sectionLabel: "Trợ lý giấy tờ",
