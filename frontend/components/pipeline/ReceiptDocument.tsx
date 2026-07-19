@@ -14,7 +14,13 @@ import { useCopy, fmt } from "@/lib/pipeline/copy";
 import { useI18n } from "@/lib/i18n";
 import { formatMoneyCents, compareToThreshold, thresholdCentsForSize } from "@/lib/pipeline/calc";
 import { MTSP_2026 } from "@/lib/data/mtsp2026";
-import { humanize, useDocLabels, useFieldLabel, useReasonTexts } from "@/lib/pipeline/labels";
+import {
+  humanize,
+  useDocLabels,
+  useFieldLabel,
+  useReasonTexts,
+  useReasonTitles,
+} from "@/lib/pipeline/labels";
 import s from "./pipeline.module.css";
 import r from "./receipt.module.css";
 
@@ -129,6 +135,7 @@ export default function ReceiptDocument() {
   const docLabels = useDocLabels();
   const fieldLabel = useFieldLabel();
   const reasonTexts = useReasonTexts();
+  const reasonTitles = useReasonTitles();
   const money = (cents: number): string => formatMoneyCents(cents, language);
 
   const [editingId, setEditingId] = useState<string | null>(null);
