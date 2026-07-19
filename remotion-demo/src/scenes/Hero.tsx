@@ -33,7 +33,7 @@ const AnimatedWords: React.FC<{
               display: 'inline-block',
               opacity: s,
               transform: `translateY(${(1 - s) * 34}px)`,
-              marginRight: '0.24em',
+              marginRight: i < words.length - 1 ? '0.24em' : 0,
             }}
           >
             {word}
@@ -105,7 +105,9 @@ export const Hero: React.FC = () => {
           }}
         >
           {typed}
-          {frame >= typeStart && (!doneTyping || caretVisible) ? (
+          {frame >= typeStart ? (
+            // Kept mounted while blinking via opacity — unmounting would change
+            // the centered line's width and make the text jitter.
             <span
               style={{
                 display: 'inline-block',
@@ -114,6 +116,7 @@ export const Hero: React.FC = () => {
                 background: 'currentColor',
                 marginLeft: 6,
                 verticalAlign: '-0.08em',
+                opacity: !doneTyping || caretVisible ? 1 : 0,
               }}
             />
           ) : null}

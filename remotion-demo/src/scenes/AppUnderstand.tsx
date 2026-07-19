@@ -146,15 +146,24 @@ export const AppUnderstand: React.FC = () => {
                 ) : null}
 
                 {frame >= 48 ? (
+                  // The wrapper animates layout height from the thinking
+                  // bubble's size, so the chat card grows smoothly instead of
+                  // popping taller the moment the full answer mounts.
                   <div
                     style={{
                       alignSelf: 'flex-start',
                       maxWidth: '86%',
+                      overflow: 'hidden',
+                      borderRadius: '18px 18px 18px 5px',
+                      maxHeight: 46 + answerIn * 240,
+                    }}
+                  >
+                  <div
+                    style={{
                       background: colors.background,
                       borderRadius: '18px 18px 18px 5px',
                       padding: '18px 24px',
                       opacity: answerIn,
-                      transform: `translateY(${(1 - answerIn) * 24}px)`,
                     }}
                   >
                     <div
@@ -209,6 +218,7 @@ export const AppUnderstand: React.FC = () => {
                         HUD
                       </span>
                     </div>
+                  </div>
                   </div>
                 ) : null}
               </div>

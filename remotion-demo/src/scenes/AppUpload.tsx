@@ -2,6 +2,7 @@ import React from 'react';
 import {
   AbsoluteFill,
   interpolate,
+  interpolateColors,
   spring,
   useCurrentFrame,
   useVideoConfig,
@@ -92,13 +93,16 @@ export const AppUpload: React.FC = () => {
                 <div
                   style={{
                     marginTop: 18,
-                    border: `2.5px dashed ${
-                      dropzoneActive > 0.5 ? colors.primary : colors.input
-                    }`,
-                    background:
-                      dropzoneActive > 0.5
-                        ? 'rgba(232, 223, 207, 0.42)'
-                        : colors.background,
+                    border: `2.5px dashed ${interpolateColors(
+                      dropzoneActive,
+                      [0, 1],
+                      [colors.input, colors.primary]
+                    )}`,
+                    background: interpolateColors(
+                      dropzoneActive,
+                      [0, 1],
+                      [colors.background, 'rgba(232, 223, 207, 0.42)']
+                    ),
                     borderRadius: 26,
                     padding: '26px 30px',
                     display: 'flex',
