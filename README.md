@@ -1,4 +1,4 @@
-# RealDoor — Application-Readiness Copilot (Hack-Nation Challenge 03)
+# RealDoor — Application-Readiness Copilot (Hack-Nation 2026 Challenge 03)
 
 Renter-side copilot that turns synthetic household documents into a human-confirmed
 profile, explains one affordable-housing program's rules with citations, identifies
