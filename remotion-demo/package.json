@@ -1,0 +1,23 @@
+{
+  "name": "realdoor-remotion-demo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "30-second Remotion demo video of RealDoor (https://realdoor-boston.vercel.app/)",
+  "scripts": {
+    "dev": "remotion studio",
+    "render": "remotion render RealDoorDemo out/realdoor-demo.mp4",
+    "still": "remotion still RealDoorDemo out/still.png"
+  },
+  "dependencies": {
+    "@remotion/cli": "^4.0.0",
+    "@remotion/fonts": "^4.0.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "remotion": "^4.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "typescript": "^5.5.0"
+  }
+}
