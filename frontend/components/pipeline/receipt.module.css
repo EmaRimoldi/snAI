@@ -58,11 +58,25 @@
 }
 .inner { position: relative; z-index: 1; }
 
-/* Document header */
+/* Document header — text block left, RealDoor brand top-right */
 .docHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
   border-bottom: 2px solid var(--foreground);
   padding-bottom: 0.75rem;
 }
+.docHeadText { min-width: 0; }
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  flex: none;
+  padding-top: 0.15rem;
+}
+.brandLogo { width: 1.7rem; height: 1.7rem; }
+.brandName { font-weight: 800; letter-spacing: -0.02em; color: var(--primary-dark); }
 .kicker {
   margin: 0;
   font-size: 0.72rem;
@@ -97,7 +111,7 @@
   padding: 0.4rem 0;
   border-bottom: 1px dotted color-mix(in srgb, var(--input) 70%, transparent);
 }
-.rowKey { color: var(--muted-foreground); font-weight: 700; font-size: 0.88rem; text-transform: capitalize; }
+.rowKey { color: var(--muted-foreground); font-weight: 700; font-size: 0.88rem; }
 .rowVal { font-weight: 700; overflow-wrap: anywhere; font-variant-numeric: tabular-nums; }
 .missingVal { color: var(--danger); }
 .errorText { flex-basis: 100%; color: var(--danger); font-size: 0.85rem; font-weight: 700; }

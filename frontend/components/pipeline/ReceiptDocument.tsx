@@ -14,7 +14,7 @@ import { useCopy, fmt } from "@/lib/pipeline/copy";
 import { useI18n } from "@/lib/i18n";
 import { formatMoneyCents, compareToThreshold, thresholdCentsForSize } from "@/lib/pipeline/calc";
 import { MTSP_2026 } from "@/lib/data/mtsp2026";
-import { humanize, useDocLabels, useReasonTexts } from "@/lib/pipeline/labels";
+import { useDocLabels, useFieldLabel, useReasonTexts } from "@/lib/pipeline/labels";
 import s from "./pipeline.module.css";
 import r from "./receipt.module.css";
 
@@ -72,12 +72,16 @@ type RowSpec =
 
 /** Resolve a document's expected entries against its actually-parsed fields;
  * parsed-but-unexpected extras are appended so no real data is hidden. */
-function buildDocRows(doc: DocumentRecord, docFields: readonly ExtractedField[]): RowSpec[] {
+function buildDocRows(
+  doc: DocumentRecord,
+  docFields: readonly ExtractedField[],
+  fieldLabel: (key: string) => string,
+): RowSpec[] {
   const rows: RowSpec[] = [];
   const used = new Set<string>();
   for (const entry of EXPECTED_DOC_FIELDS[doc.documentType]) {
     const match = docFields.find((f) => entry.keys.includes(f.key));
-    const label = humanize(entry.label);
+    const label = fieldLabel(entry.label);
     if (match) {
       used.add(match.id);
       rows.push(
@@ -93,8 +97,8 @@ function buildDocRows(doc: DocumentRecord, docFields: readonly ExtractedField[])
     if (used.has(f.id)) continue;
     rows.push(
       f.reviewStatus === "extracted"
-        ? { kind: "unconfirmed", id: f.id, label: humanize(f.key) }
-        : { kind: "present", id: f.id, label: humanize(f.key), field: f },
+        ? { kind: "unconfirmed", id: f.id, label: fieldLabel(f.key) }
+        : { kind: "present", id: f.id, label: fieldLabel(f.key), field: f },
     );
   }
   return rows;
@@ -123,6 +127,7 @@ export default function ReceiptDocument() {
   } = useApp();
   const docLabels = useDocLabels();
   const reasonTexts = useReasonTexts();
+  const fieldLabel = useFieldLabel();
 
   const [editingId, setEditingId] = useState<string | null>(null);
   const [draft, setDraft] = useState("");
@@ -250,13 +255,19 @@ export default function ReceiptDocument() {
           </span>
           <div className={r.inner}>
             <header className={r.docHeader}>
-              <p className={r.kicker}>{c.receiptKicker}</p>
-              <h3 id="receipt-doc-h" className={r.docTitle}>
-                {c.receiptDocTitle}
-              </h3>
-              <p className={r.meta}>
-                {c.receiptFileLabel}: {applicationId} · {fmt(c.receiptGenerated, { date: generatedDate })}
-              </p>
+              <div className={r.docHeadText}>
+                <p className={r.kicker}>{c.receiptKicker}</p>
+                <h3 id="receipt-doc-h" className={r.docTitle}>
+                  {c.receiptDocTitle}
+                </h3>
+                <p className={r.meta}>
+                  {c.receiptFileLabel}: {applicationId} · {fmt(c.receiptGenerated, { date: generatedDate })}
+                </p>
+              </div>
+              <div className={r.brand}>
+                <img className={r.brandLogo} src="/logo.svg" alt="" />
+                <span className={r.brandName}>RealDoor</span>
+              </div>
             </header>
 
             <section className={r.section}>
@@ -280,7 +291,7 @@ export default function ReceiptDocument() {
             </section>
 
             {documents.map((doc) => {
-              const rows = buildDocRows(doc, fields.filter((f) => f.documentId === doc.id));
+              const rows = buildDocRows(doc, fields.filter((f) => f.documentId === doc.id), fieldLabel);
               return (
                 <section key={doc.id} className={r.section}>
                   <h4 className={r.secTitle}>
@@ -342,7 +353,7 @@ export default function ReceiptDocument() {
                     <li key={`${reason.code}-${i}`} className={r.note}>
                       <strong>{reason.code}</strong> — {reasonTexts[reason.code]}
                       {reason.detail && reason.code === "MISSING_REQUIRED_DOCUMENT"
-                        ? ` (${humanize(reason.detail)})`
+                        ? ` (${docLabels[reason.detail as DocumentType] ?? reason.detail})`
                         : ""}
                     </li>
                   ))}

@@ -9,8 +9,9 @@
 import { useState } from "react";
 import { useApp } from "@/lib/pipeline/state";
 import type { DeletionProof } from "@/lib/pipeline/state";
+import type { DocumentType } from "@/lib/pipeline/types";
 import { useCopy, fmt } from "@/lib/pipeline/copy";
-import { humanize, useReasonTexts } from "@/lib/pipeline/labels";
+import { useDocLabels, useReasonTexts } from "@/lib/pipeline/labels";
 import ReceiptDocument from "./ReceiptDocument";
 import s from "./pipeline.module.css";
 
@@ -29,6 +30,7 @@ export default function PrepareStep() {
   } = useApp();
 
   const reasonText = useReasonTexts();
+  const docLabels = useDocLabels();
   const [proof, setProof] = useState<DeletionProof | null>(null);
   const [showRaw, setShowRaw] = useState(false);
   const [confirmingDelete, setConfirmingDelete] = useState(false);
@@ -109,7 +111,7 @@ export default function PrepareStep() {
               </button>
             )}
           </div>
-          <p className={s.hint}>{locked ? c.lockedNote : c.verdictNote}</p>
+          {locked && <p className={s.hint}>{c.lockedNote}</p>}
           {readiness.reasons.length > 0 && (
             <>
               <h3 style={{ margin: "1rem 0 0", fontSize: "1rem" }}>{c.reasonsTitle}</h3>
@@ -119,7 +121,9 @@ export default function PrepareStep() {
                     <span className={s.reasonCode}>{r.code}</span>
                     <span>
                       {reasonText[r.code]}
-                      {r.detail && r.code === "MISSING_REQUIRED_DOCUMENT" ? ` (${humanize(r.detail)})` : ""}
+                      {r.detail && r.code === "MISSING_REQUIRED_DOCUMENT"
+                        ? ` (${docLabels[r.detail as DocumentType] ?? r.detail})`
+                        : ""}
                     </span>
                   </li>
                 ))}

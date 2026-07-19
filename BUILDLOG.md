@@ -170,6 +170,25 @@ screen (all steps get the wider canvas). Verified: doc pane ≈592px right-of-ra
 rail pinned at ~88px mid-scroll, mobile stacks controls→document, print still emits only the
 receipt.
 
+**Full i18n pass on Prepare (user-directed, same day):** audited every string on the step against
+all five languages. Added the 17 missing keys to each of es/zh/tl/vi (`doc*` ×6, `rc_*` ×6,
+`reasonsTitle`, `stExtracted`, `quarantineTitle`, `effective`, `cmpNone`, `lockedNote`, `unlockBtn`,
+`deletedProof`, `noDocs`). New `FIELD_LABELS` map in `copy.ts` (25 parsed-field keys × 5 languages)
+with `useFieldLabel()` in `labels.ts` (fallback language → en → humanize) — receipt rows no longer
+show humanized-English keys in other languages. Reason `detail` doc names now use localized
+`docLabels` instead of `humanize`. Dropped `text-transform: capitalize` on `.rowKey` (wrong for
+es/vi casing; labels carry their own). Verified live in all four non-English languages (field
+labels, red markers, doc sections, quarantine flag, rail) with a zero-residual-English sweep.
+Still English-only elsewhere (pre-existing, outside Prepare): ProfileStep field-review headings and
+`FIELD_EXPLAIN` explanations — `useFieldLabel` is ready for Profile as a follow-up.
+
+**Brand + leaner rail (user-directed, same day):** the receipt's document header now carries the
+RealDoor brand (logo.svg + name) top-right opposite the kicker/title (`.brand` in
+`receipt.module.css`; prints with the page). Left rail slimmed: `prepareIntro` shortened in all five
+languages ("Correct anything marked in red, then save your receipt as a PDF."), and the
+`verdictNote` line dropped from the rail — the non-decisional note remains on the document's
+readiness section, and `lockedNote` still appears when locked.
+
 **Known quirk (pre-existing, unchanged):** the DeletionProof panel in PrepareStep is unreachable —
 `deleteSession()` navigates back to Profile, unmounting PrepareStep before the proof renders. Also
 pre-existing: ProfileStep's correction input still lacks the numeric guard (same crash path), and

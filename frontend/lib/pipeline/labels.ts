@@ -5,10 +5,17 @@
 // Profile, Prepare, and Receipt views (previously copy-pasted per component).
 
 import type { DocumentType, ReviewReasonCode } from "@/lib/pipeline/types";
-import { useCopy } from "@/lib/pipeline/copy";
+import { useCopy, FIELD_LABELS } from "@/lib/pipeline/copy";
+import { useI18n } from "@/lib/i18n";
 
 export function humanize(key: string): string {
   return key.replace(/_/g, " ").replace(/\b\w/g, (m) => m.toUpperCase());
+}
+
+/** Localized label for a parsed-document field key (falls back en → humanized). */
+export function useFieldLabel(): (key: string) => string {
+  const { language } = useI18n();
+  return (key: string) => FIELD_LABELS[language]?.[key] ?? FIELD_LABELS.en[key] ?? humanize(key);
 }
 
 export function useDocLabels(): Record<DocumentType, string> {
