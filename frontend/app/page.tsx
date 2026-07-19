@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { I18nProvider, useI18n } from "@/lib/i18n";
 import { useCopy } from "@/lib/pipeline/copy";
 import SiteHeader from "@/components/SiteHeader";
+import HeroSellingPoints from "@/components/HeroSellingPoints";
 import PhaseCards from "@/components/PhaseCards";
 import PipelineApp from "@/components/pipeline/PipelineApp";
 
@@ -64,11 +65,9 @@ function RealDoorApp() {
           hidden={view !== "landing"}
         >
           <div id="top" className="hero-section">
-            <h1 id="hero-heading" className="hero-heading" ref={heroHeadingRef} tabIndex={-1}>
-              {t("hero.headline")}
-            </h1>
+            <HeroSellingPoints headingRef={heroHeadingRef} />
             <p className="hero-subheadline">{t("hero.subheadline")}</p>
-            <div style={{ marginTop: "1.75rem" }}>
+            <div className="hero-cta">
               <button type="button" className="primary-button" onClick={showApp}>
                 {c.getStarted}
               </button>

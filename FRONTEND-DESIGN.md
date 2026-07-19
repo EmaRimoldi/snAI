@@ -167,7 +167,7 @@ colors elsewhere; derive from these with `color-mix()`.
   `clamp(2rem, 7vw, 5rem)`.
 - **Radius scale:** `0.4rem` (small links), `0.75rem` / `0.8rem` (inputs, brand link), `1rem`
   (prompt shell, account panel), `1.25rem` (cards, login), `50%` (icon buttons, badges), `999px`
-  (pills: language select, primary/secondary buttons, skip link, file badge).
+  (pills: language menu, primary/secondary buttons, skip link, file badge).
 - **Elevation: none.** There are **no `box-shadow`s** in the system. Depth is expressed with **1px
   `--input` borders** and **tinted `color-mix` fills** over the cream background. Do not add shadows.
 - **Max-width ladder:** nested `min(100%, Nrem)` containers step down to keep line lengths and grids
@@ -186,9 +186,9 @@ plus a visually-hidden `role="status"` live region.
 **Header** (`.site-header`, both views): flex row, space-between, `min-height: 6rem`,
 `width: min(100%, 80rem)`, `padding: 1rem 2.5rem`, `z-index: 20`.
 - Left: brand link = 2rem logo + "RealDoor" wordmark (`gap 0.65rem`, `--primary`).
-- Right (`.nav-actions`, gap `1.25rem`): globe-icon language `<select>` (EN / ES / 中文 / TL / VI,
-  pill, `appearance: none`, custom chevron) + either a "Log in" text link (signed-out) or a circular
-  account icon button (signed-in) toggling a `.account-panel` dropdown.
+- Right (`.nav-actions`, gap `1.25rem`): custom language menu (EN / ES / 中文 / TL / VI, pill,
+  custom chevron) showing the selected language's SVG flag in the trigger and every language's flag
+  inside the website-styled dropdown (`LanguageFlag.tsx`).
 
 **(a) Landing / signed-in view** — single centered column:
 1. **Hero** (`.hero-section`, `min(100%, 58rem)`, centered): H1 + subheadline.
@@ -222,8 +222,12 @@ All measurements are the shipped values; match them when extending.
 - **Inputs** (login): `min-height: 48px`, `padding: 0.7rem 0.85rem`, 1px `--input` border,
   `border-radius: 0.8rem`, bg `--background`; `aria-invalid="true"` → 2px `--danger` border. Labels
   are block, weight 700, `0.35rem` gap.
-- **Language select:** pill, `appearance: none`, globe icon on the left, custom chevron on the right,
-  `min-height: 44px`, `--muted-foreground` text.
+- **Language menu:** a custom button and `role="menu"` dropdown, with a pill trigger, custom
+  chevron, `min-height: 44px`, and `--muted-foreground` text. The trigger and each option show a
+  simplified inline SVG flag (`LanguageFlag.tsx`, `aria-hidden` — identical on every OS, unlike
+  emoji flags, which Windows renders as letters). It closes on selection, outside click, Escape,
+  or Tab; arrow keys and Home/End move between options. Flag↔language mapping (en→US, es→ES,
+  zh→CN, tl→PH, vi→VN) is a pragmatic demo convention — flags denote countries, not languages.
 - **Account panel:** absolutely-positioned dropdown, `min-width: 14rem`, 1px `--input` border,
   `border-radius: 1rem`, bg `--background`; closes on Escape (restoring focus to its trigger) and on
   outside click; exposes `aria-expanded` + `aria-controls`.
@@ -258,15 +262,16 @@ all of the following:
   error string is text-prefixed **"Error: …"** — never color-only.
 - **Semantic HTML:** `<header> <main> <section aria-labelledby|aria-label> <article>`; one `<h1>` per
   view → `<h2>` per card.
-- **Labeled controls:** the language `<select>`, and all icon-only buttons (upload, send, account),
+- **Labeled controls:** the language menu button, and all icon-only buttons (upload, send, account),
   carry `aria-label`; decorative SVGs are `aria-hidden="true" focusable="false"`.
-- **Keyboard:** native `<select> <button> <input> <a>`; menus close on Escape and restore focus;
-  hidden file input is `tabIndex={-1}` (reached via its labeled button).
+- **Keyboard:** native `<button> <input> <a>` behavior; the language menu supports arrow keys and
+  Home/End, and menus close on Escape and restore focus; hidden file input is `tabIndex={-1}`
+  (reached via its labeled button).
 - **Touch targets ≥ 44px** across all interactive elements (login inputs are 48px).
 - **`lang`:** `<html lang>` is kept in sync with the active language
   (`document.documentElement.lang = language`).
 - **Reduced motion:** `@media (prefers-reduced-motion: reduce)` disables smooth scroll and near-zeroes
-  transitions; the typewriter placeholder renders statically.
+  transitions; typewriter content renders statically.
 - **Contrast:** warm near-black `#2a211c` on cream `#faf6ef`, white on terracotta buttons. When
   adding UI, re-check ratios — especially `--muted-foreground` `#6f6259` on `--background` for small
   text.
@@ -300,7 +305,7 @@ Verify layouts at **320 / 375 / 768 / 1024 / 1440px** with no horizontal overflo
 
 - **Transitions:** only the prompt shell animates (border/background, 160ms ease). Keep motion this
   restrained.
-- **Hover states:** language select, icon buttons, login/back links, secondary/primary/send buttons
+- **Hover states:** language menu, icon buttons, login/back links, secondary/primary/send buttons
   all have designed hover states (see §8). Every interactive element should have one.
 - **Scroll:** `html { scroll-behavior: smooth }` (auto under reduced motion).
 - **Typewriter placeholder** (`PromptShell.tsx`): cycles localized phrases — type 55ms/char, delete
@@ -337,7 +342,8 @@ Verify layouts at **320 / 375 / 768 / 1024 / 1440px** with no horizontal overflo
 | `frontend/app/globals.css` | **The entire design system** — tokens (`:root`) + all component rules |
 | `frontend/app/layout.tsx` | Root layout, `<html lang>`, metadata, favicon (`icons: "/logo.svg"`) |
 | `frontend/app/page.tsx` | View switching, Supabase session, focus management, live-region status |
-| `frontend/components/SiteHeader.tsx` | Header: brand, language select, login/account menu |
+| `frontend/components/SiteHeader.tsx` | Header: brand and custom language menu |
+| `frontend/components/HeroSellingPoints.tsx` | Hero headline and delayed selling-point typewriter cycle |
 | `frontend/components/LoginView.tsx` | Accessible email/password sign-in |
 | `frontend/components/PromptShell.tsx` | Prompt input, drag-drop upload, typewriter placeholder |
 | `frontend/components/PhaseCards.tsx` | The 3 phase cards |

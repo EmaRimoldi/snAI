@@ -1,13 +1,9 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
 import { SUPPORTED_LANGUAGES, useI18n } from "@/lib/i18n";
 import type { Language } from "@/lib/i18n";
-
-const LANGUAGE_CODES = new Set<string>(SUPPORTED_LANGUAGES.map((entry) => entry.code));
-
-function isLanguage(value: string): value is Language {
-  return LANGUAGE_CODES.has(value);
-}
+import LanguageFlag from "@/components/LanguageFlag";
 
 type SiteHeaderProps = {
   onHome: () => void;
@@ -15,6 +11,54 @@ type SiteHeaderProps = {
 
 export default function SiteHeader({ onHome }: SiteHeaderProps) {
   const { language, setLanguage, t } = useI18n();
+  const [isLanguageMenuOpen, setIsLanguageMenuOpen] = useState(false);
+  const [activeLanguage, setActiveLanguage] = useState(language);
+  const languageControlRef = useRef<HTMLDivElement>(null);
+  const languageButtonRef = useRef<HTMLButtonElement>(null);
+  const languageOptionRefs = useRef<Partial<Record<Language, HTMLButtonElement>>>({});
+
+  const openLanguageMenu = (focusLanguage: Language = language) => {
+    setActiveLanguage(focusLanguage);
+    setIsLanguageMenuOpen(true);
+  };
+
+  const closeLanguageMenu = (restoreFocus = false) => {
+    setIsLanguageMenuOpen(false);
+    if (restoreFocus) languageButtonRef.current?.focus();
+  };
+
+  const chooseLanguage = (nextLanguage: Language) => {
+    setLanguage(nextLanguage);
+    setActiveLanguage(nextLanguage);
+    closeLanguageMenu(true);
+  };
+
+  const moveOptionFocus = (direction: 1 | -1) => {
+    const currentIndex = SUPPORTED_LANGUAGES.findIndex(
+      (entry) => entry.code === activeLanguage,
+    );
+    const nextIndex =
+      (currentIndex + direction + SUPPORTED_LANGUAGES.length) % SUPPORTED_LANGUAGES.length;
+    setActiveLanguage(SUPPORTED_LANGUAGES[nextIndex].code);
+  };
+
+  useEffect(() => {
+    if (!isLanguageMenuOpen) return;
+    languageOptionRefs.current[activeLanguage]?.focus();
+  }, [activeLanguage, isLanguageMenuOpen]);
+
+  useEffect(() => {
+    if (!isLanguageMenuOpen) return;
+
+    const closeOnOutsideClick = (event: PointerEvent) => {
+      if (!languageControlRef.current?.contains(event.target as Node)) {
+        closeLanguageMenu();
+      }
+    };
+
+    document.addEventListener("pointerdown", closeOnOutsideClick);
+    return () => document.removeEventListener("pointerdown", closeOnOutsideClick);
+  }, [isLanguageMenuOpen]);
 
   return (
     <header className="site-header">
@@ -34,34 +78,107 @@ export default function SiteHeader({ onHome }: SiteHeaderProps) {
       </a>
 
       <div className="nav-actions">
-        <label className="language-control">
-          <span className="visually-hidden">{t("nav.languageLabel")}</span>
-          <svg className="nav-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-            <path d="M21.54 15H17a2 2 0 0 0-2 2v4.54" />
-            <path d="M7 3.34V5a3 3 0 0 0 3 3a2 2 0 0 1 2 2c0 1.1.9 2 2 2a2 2 0 0 0 2-2c0-1.1.9-2 2-2h3.17" />
-            <path d="M11 21.95V18a2 2 0 0 0-2-2a2 2 0 0 1-2-2v-1a2 2 0 0 0-2-2H2.05" />
-            <circle cx="12" cy="12" r="10" />
-          </svg>
-          <select
+        <div className="language-control" ref={languageControlRef}>
+          <button
+            ref={languageButtonRef}
+            type="button"
             id="language-select"
-            className="language-select"
-            aria-label={t("nav.languageLabel")}
-            value={language}
-            onChange={(event) => {
-              const next = event.target.value;
-              if (isLanguage(next)) setLanguage(next);
+            className="language-button"
+            aria-label={`${t("nav.languageLabel")}: ${
+              SUPPORTED_LANGUAGES.find((entry) => entry.code === language)?.nativeName
+            }`}
+            aria-haspopup="menu"
+            aria-expanded={isLanguageMenuOpen}
+            aria-controls="language-menu"
+            onClick={() => {
+              if (isLanguageMenuOpen) closeLanguageMenu();
+              else openLanguageMenu();
+            }}
+            onKeyDown={(event) => {
+              if (event.key !== "ArrowDown" && event.key !== "ArrowUp") return;
+              event.preventDefault();
+              const selectedIndex = SUPPORTED_LANGUAGES.findIndex(
+                (entry) => entry.code === language,
+              );
+              const offset = event.key === "ArrowDown" ? 1 : -1;
+              const nextIndex =
+                (selectedIndex + offset + SUPPORTED_LANGUAGES.length) %
+                SUPPORTED_LANGUAGES.length;
+              openLanguageMenu(SUPPORTED_LANGUAGES[nextIndex].code);
             }}
           >
-            {SUPPORTED_LANGUAGES.map((entry) => (
-              <option key={entry.code} value={entry.code}>
-                {entry.label}
-              </option>
-            ))}
-          </select>
-          <svg className="select-chevron" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-            <path d="m6 9 6 6 6-6" />
-          </svg>
-        </label>
+            <LanguageFlag language={language} />
+            <span>{SUPPORTED_LANGUAGES.find((entry) => entry.code === language)?.label}</span>
+            <svg
+              className="select-chevron"
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+              focusable="false"
+            >
+              <path d="m6 9 6 6 6-6" />
+            </svg>
+          </button>
+
+          {isLanguageMenuOpen && (
+            <ul
+              id="language-menu"
+              className="language-menu"
+              role="menu"
+              aria-labelledby="language-select"
+            >
+              {SUPPORTED_LANGUAGES.map((entry) => (
+                <li key={entry.code} role="none">
+                  <button
+                    ref={(node) => {
+                      if (node) languageOptionRefs.current[entry.code] = node;
+                      else delete languageOptionRefs.current[entry.code];
+                    }}
+                    type="button"
+                    className="language-option"
+                    role="menuitemradio"
+                    aria-checked={entry.code === language}
+                    tabIndex={entry.code === activeLanguage ? 0 : -1}
+                    onClick={() => chooseLanguage(entry.code)}
+                    onFocus={() => setActiveLanguage(entry.code)}
+                    onKeyDown={(event) => {
+                      if (event.key === "ArrowDown") {
+                        event.preventDefault();
+                        moveOptionFocus(1);
+                      } else if (event.key === "ArrowUp") {
+                        event.preventDefault();
+                        moveOptionFocus(-1);
+                      } else if (event.key === "Home") {
+                        event.preventDefault();
+                        setActiveLanguage(SUPPORTED_LANGUAGES[0].code);
+                      } else if (event.key === "End") {
+                        event.preventDefault();
+                        setActiveLanguage(SUPPORTED_LANGUAGES.at(-1)!.code);
+                      } else if (event.key === "Escape") {
+                        event.preventDefault();
+                        closeLanguageMenu(true);
+                      } else if (event.key === "Tab") {
+                        closeLanguageMenu();
+                      }
+                    }}
+                  >
+                    <LanguageFlag language={entry.code} />
+                    <span className="language-option-name">{entry.nativeName}</span>
+                    {entry.code === language && (
+                      <svg
+                        className="language-option-check"
+                        viewBox="0 0 24 24"
+                        aria-hidden="true"
+                        focusable="false"
+                      >
+                        <path d="m5 12 4 4 10-10" />
+                      </svg>
+                    )}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
       </div>
     </header>
   );

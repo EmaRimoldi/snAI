@@ -31,6 +31,12 @@ const en = {
   hero: {
     headline: "Preparing your documents has never been this easy.",
     subheadline: "Housing paperwork, made clear.",
+    sellingPoints: [
+      "Housing paperwork in minutes.",
+      "Catch missing details early.",
+      "Save on preparation fees.",
+      "Safe checks. Published rules.",
+    ],
   },
   input: {
     sectionLabel: "Document assistant",
@@ -95,6 +101,12 @@ const es: Dictionary = {
   hero: {
     headline: "Preparar tus documentos nunca había sido tan fácil.",
     subheadline: "Los trámites de vivienda, más claros.",
+    sellingPoints: [
+      "Documentos listos en minutos.",
+      "Detecta a tiempo lo que falta.",
+      "Ahorra en la preparación.",
+      "Revisiones seguras. Reglas vigentes.",
+    ],
   },
   input: {
     sectionLabel: "Asistente de documentos",
@@ -157,6 +169,12 @@ const zh: Dictionary = {
   hero: {
     headline: "准备文件从未如此简单。",
     subheadline: "住房手续，一目了然。",
+    sellingPoints: [
+      "住房文件，几分钟完成。",
+      "尽早发现缺失信息。",
+      "节省准备费用。",
+      "安全检查，依据公开规则。",
+    ],
   },
   input: {
     sectionLabel: "文件助手",
@@ -219,6 +237,12 @@ const tl: Dictionary = {
   hero: {
     headline: "Hindi pa naging ganito kadali ang paghahanda ng iyong mga dokumento.",
     subheadline: "Mga papeles sa pabahay, ginawang malinaw.",
+    sellingPoints: [
+      "Papeles, handa sa ilang minuto.",
+      "Maagang makita ang kulang.",
+      "Makatipid sa paghahanda.",
+      "Ligtas. Ayon sa patakaran.",
+    ],
   },
   input: {
     sectionLabel: "Katulong sa dokumento",
@@ -281,6 +305,12 @@ const vi: Dictionary = {
   hero: {
     headline: "Chuẩn bị giấy tờ chưa bao giờ dễ dàng đến thế.",
     subheadline: "Thủ tục nhà ở, rõ ràng hơn.",
+    sellingPoints: [
+      "Hồ sơ sẵn sàng trong vài phút.",
+      "Phát hiện sớm phần còn thiếu.",
+      "Tiết kiệm phí chuẩn bị.",
+      "Kiểm tra an toàn. Theo quy định.",
+    ],
   },
   input: {
     sectionLabel: "Trợ lý giấy tờ",

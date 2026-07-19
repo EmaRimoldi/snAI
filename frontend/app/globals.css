@@ -6,6 +6,16 @@
   font-display: swap;
 }
 
+/* Public Sans does not contain CJK glyphs. This local subset covers all
+   Simplified Chinese UI copy so rendering does not depend on OS fonts. */
+@font-face {
+  font-family: "Noto Sans SC UI";
+  src: url("/fonts/NotoSansSC-UI.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+}
+
 :root {
   color-scheme: light;
   --background: #faf6ef;
@@ -36,7 +46,8 @@ body {
   overflow-x: hidden;
   background: var(--background);
   color: var(--foreground);
-  font: 16px/1.5 "Public Sans", system-ui, sans-serif;
+  font: 16px/1.5 "Public Sans", "Noto Sans SC UI", "PingFang SC", "Microsoft YaHei",
+    system-ui, sans-serif;
 }
 
 button,
@@ -138,47 +149,98 @@ a { -webkit-tap-highlight-color: transparent; }
   align-items: center;
 }
 
-.nav-icon {
-  position: absolute;
-  left: 0.65rem;
-  width: 1rem;
-  height: 1rem;
-  pointer-events: none;
-  fill: none;
-  stroke: currentColor;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  stroke-width: 2;
+.flag-icon {
+  display: block;
+  flex: none;
+  width: 1.15rem;
+  height: auto;
+  border-radius: 2px;
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--foreground) 16%, transparent);
 }
 
-.language-select {
+.language-button {
+  display: inline-flex;
   min-height: 44px;
-  appearance: none;
+  align-items: center;
+  gap: 0.45rem;
   cursor: pointer;
   border: 1px solid transparent;
   border-radius: 999px;
   background: transparent;
   color: var(--muted-foreground);
-  padding: 0.4rem 1.85rem 0.4rem 2rem;
+  padding: 0.4rem 0.65rem;
   font-size: 0.875rem;
   font-weight: 700;
 }
 
-.language-select:hover { background: color-mix(in srgb, var(--secondary) 60%, transparent); }
+.language-button:hover,
+.language-button[aria-expanded="true"] {
+  background: color-mix(in srgb, var(--secondary) 60%, transparent);
+}
 
 .select-chevron {
-  position: absolute;
-  right: 0.65rem;
-  top: 50%;
   width: 0.875rem;
   height: 0.875rem;
-  pointer-events: none;
-  transform: translateY(-50%);
+  margin-left: 0.1rem;
   fill: none;
   stroke: currentColor;
   stroke-linecap: round;
   stroke-linejoin: round;
   stroke-width: 2;
+  transition: transform 150ms ease;
+}
+
+.language-button[aria-expanded="true"] .select-chevron { transform: rotate(180deg); }
+
+.language-menu {
+  position: absolute;
+  top: calc(100% + 0.4rem);
+  right: 0;
+  z-index: 30;
+  min-width: 12.5rem;
+  margin: 0;
+  padding: 0.4rem;
+  list-style: none;
+  border: 1px solid color-mix(in srgb, var(--foreground) 12%, transparent);
+  border-radius: 0.9rem;
+  background: var(--background);
+  box-shadow: 0 0.75rem 2rem color-mix(in srgb, var(--foreground) 14%, transparent);
+}
+
+.language-option {
+  display: flex;
+  width: 100%;
+  min-height: 42px;
+  align-items: center;
+  gap: 0.7rem;
+  cursor: pointer;
+  border: 0;
+  border-radius: 0.6rem;
+  background: transparent;
+  color: var(--foreground);
+  padding: 0.55rem 0.65rem;
+  text-align: left;
+}
+
+.language-option:hover,
+.language-option:focus-visible {
+  background: var(--muted);
+}
+
+.language-option:focus-visible {
+  outline-offset: -2px;
+}
+
+.language-option-name { flex: 1; font-weight: 650; }
+
+.language-option-check {
+  width: 1rem;
+  height: 1rem;
+  fill: none;
+  stroke: var(--primary-dark);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2.5;
 }
 
 .login-link,
@@ -279,10 +341,12 @@ a { -webkit-tap-highlight-color: transparent; }
 .hero-section {
   width: min(100%, 58rem);
   margin: 0 auto;
+  padding: clamp(0.35rem, 1.2vh, 0.75rem) clamp(0.25rem, 1.5vw, 1rem);
   text-align: center;
 }
 
 .hero-heading {
+  min-height: 2.12em;
   max-width: 58rem;
   margin: 0;
   color: var(--foreground);
@@ -293,11 +357,40 @@ a { -webkit-tap-highlight-color: transparent; }
   text-wrap: balance;
 }
 
+.hero-heading.is-typing {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  font-size: clamp(1rem, 5.2vw, 3.5rem);
+}
+
+.hero-heading.is-typing::after {
+  content: "";
+  display: inline-block;
+  width: 3px;
+  height: 0.82em;
+  margin-left: 0.12em;
+  vertical-align: -0.04em;
+  background: currentColor;
+  animation: typing-cursor 800ms steps(1, end) infinite;
+}
+
 .hero-subheadline {
-  margin: clamp(0.5rem, 1.5vh, 1rem) 0 0;
+  min-height: 2.1rem;
+  margin: clamp(0.9rem, 2.4vh, 1.4rem) 0 0;
   color: var(--muted-foreground);
-  font-size: clamp(1rem, min(2vw, 2.6vh), 1.25rem);
+  font-size: clamp(1.15rem, min(2.5vw, 3.2vh), 1.55rem);
+  font-weight: 550;
   letter-spacing: -0.01em;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+
+.hero-cta { margin-top: clamp(1.6rem, 3.2vh, 2.15rem); }
+
+@keyframes typing-cursor {
+  50% { opacity: 0; }
 }
 
 .prompt-section {
@@ -430,7 +523,24 @@ a { -webkit-tap-highlight-color: transparent; }
   padding: clamp(1.25rem, 3.5vh, 2.5rem) 2.25rem;
   border-radius: 1.25rem;
   background: color-mix(in srgb, var(--secondary) 55%, transparent);
+  box-shadow: 0 0.25rem 0.75rem color-mix(in srgb, var(--foreground) 4%, transparent);
   text-align: center;
+  animation: phase-card-enter 600ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  transition: transform 220ms ease, box-shadow 220ms ease, background-color 220ms ease;
+}
+
+.phase-card:nth-child(2) { animation-delay: 90ms; }
+.phase-card:nth-child(3) { animation-delay: 180ms; }
+
+@keyframes phase-card-enter {
+  from {
+    opacity: 0;
+    transform: translateY(1.25rem) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 .phase-number {
@@ -444,6 +554,7 @@ a { -webkit-tap-highlight-color: transparent; }
   color: var(--primary-foreground);
   font-size: 1.25rem;
   font-weight: 800;
+  transition: transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .phase-card h2 {
@@ -458,6 +569,18 @@ a { -webkit-tap-highlight-color: transparent; }
   color: var(--muted-foreground);
   font-size: 0.95rem;
   line-height: 1.6;
+}
+
+.phase-card p span { display: block; }
+
+@media (hover: hover) {
+  .phase-card:hover {
+    transform: translateY(-0.4rem);
+    background: color-mix(in srgb, var(--secondary) 70%, transparent);
+    box-shadow: 0 1rem 2rem color-mix(in srgb, var(--foreground) 11%, transparent);
+  }
+
+  .phase-card:hover .phase-number { transform: scale(1.08) rotate(-4deg); }
 }
 
 .login-view {
@@ -528,11 +651,11 @@ a { -webkit-tap-highlight-color: transparent; }
   .site-main { padding-left: 1rem; padding-right: 1rem; }
   .landing-view { padding-top: 1.25rem; }
   .nav-actions { gap: 0.35rem; }
-  .language-select { padding-left: 1.9rem; padding-right: 1.7rem; }
   .prompt-shell { padding: 0.45rem; }
   .prompt-input { font-size: 0.93rem; }
   .login-view { padding: 1.5rem 1.25rem; }
   .account-panel { right: 1rem; left: 1rem; min-width: 0; }
+  .hero-subheadline { white-space: normal; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -541,4 +664,6 @@ a { -webkit-tap-highlight-color: transparent; }
     scroll-behavior: auto !important;
     transition-duration: 0.01ms !important;
   }
+  .phase-card { animation: none; }
+  .hero-heading.is-typing::after { animation: none; }
 }
