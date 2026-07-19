@@ -248,4 +248,3 @@ sample-question chips (reuses `sampleChip`, re-asks through the existing handler
 the raw policy code; other non-NONE codes demoted to small muted text. Policy tests 22/22;
 greeting verified live in en/es; poem control still abstains. Verified at API + tsc level —
 an in-panel visual pass on the unlocked Understand chat is still worth a click-through.
->>>>>>> 24779bd (docs: BUILDLOG entry for AI greetings and softer answer cards)
