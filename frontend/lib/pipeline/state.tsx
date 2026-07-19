@@ -49,6 +49,7 @@ export type DeletionProof = { documentsRemoved: number; fieldsRemoved: number; a
 
 type AppValue = {
   step: Step;
+  stepUnlocked: Record<Step, boolean>;
   documents: DocumentRecord[];
   fields: ExtractedField[];
   busy: boolean;
@@ -110,6 +111,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
   const [busy, setBusy] = useState(false);
   const [locked, setLocked] = useState(false);
   const [pendingReviewFieldId, setPendingReviewFieldId] = useState<string | null>(null);
+  const [understandVisited, setUnderstandVisited] = useState(false);
 
   const requestReviewField = useCallback((id: string) => {
     setStep("profile");
@@ -118,6 +120,26 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
   const clearReviewRequest = useCallback(() => setPendingReviewFieldId(null), []);
   const applicationIdRef = useRef<string>(`APP-${shortId()}`);
   const demoStartedRef = useRef(false);
+
+  // Sequential pipeline: Understand opens with the first upload, Prepare only
+  // after the renter has actually passed through Understand.
+  const stepUnlocked: Record<Step, boolean> = useMemo(() => {
+    const understandOpen = documents.length > 0;
+    return {
+      profile: true,
+      understand: understandOpen,
+      prepare: understandOpen && understandVisited,
+    };
+  }, [documents.length, understandVisited]);
+
+  const goToStep = useCallback(
+    (next: Step) => {
+      if (!stepUnlocked[next]) return;
+      if (next === "understand") setUnderstandVisited(true);
+      setStep(next);
+    },
+    [stepUnlocked],
+  );
 
   const addFiles = useCallback(async (files: File[]) => {
     if (files.length === 0) return;
@@ -207,6 +229,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
     setDocuments([]);
     setFields([]);
     setLocked(false);
+    setUnderstandVisited(false);
     setStep("profile");
     return proof;
   }, [documents, fields]);
@@ -270,6 +293,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
   const value: AppValue = useMemo(
     () => ({
       step,
+      stepUnlocked,
       documents,
       fields,
       busy,
@@ -286,7 +310,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
       householdSize: household.size,
       householdSizeConfirmed: household.confirmed,
       pendingReviewFieldId,
-      goToStep: setStep,
+      goToStep,
       requestReviewField,
       clearReviewRequest,
       addFiles,
@@ -298,10 +322,10 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
       buildSubmission,
     }),
     [
-      step, documents, fields, busy, locked, quarantineCount, grossIncomeCents, errorCount,
-      readiness, displayStatus, unresolvedCount, missingRequired, presentTypes,
+      step, stepUnlocked, documents, fields, busy, locked, quarantineCount, grossIncomeCents,
+      errorCount, readiness, displayStatus, unresolvedCount, missingRequired, presentTypes,
       household.size, household.confirmed, pendingReviewFieldId,
-      addFiles, confirmField, correctField, deleteSession, buildSubmission,
+      goToStep, addFiles, confirmField, correctField, deleteSession, buildSubmission,
       requestReviewField, clearReviewRequest,
     ],
   );

@@ -56,6 +56,7 @@ export default function HeaderStatus() {
     missingRequired,
     requestReviewField,
     goToStep,
+    stepUnlocked,
   } = useApp();
   const [open, setOpen] = useState(false);
   const wrapRef = useRef<HTMLDivElement>(null);
@@ -131,7 +132,7 @@ export default function HeaderStatus() {
         onSelect: () => {
           setOpen(false);
           if (target) requestReviewField(target.id);
-          else goToStep("prepare");
+          else goToStep(stepUnlocked.prepare ? "prepare" : "understand");
         },
       };
     });
