@@ -72,7 +72,13 @@ type AppValue = {
   requestReviewField: (id: string) => void;
   clearReviewRequest: () => void;
   setDocumentPageCount: (id: string, pageCount: number) => void;
-  addFiles: (files: File[]) => Promise<void>;
+  addFiles: (files: File[]) => Promise<DocumentRecord[]>;
+  addManualField: (
+    documentId: string,
+    key: string,
+    value: string,
+    options?: { isIncome?: boolean; incomeFrequency?: ExtractedField["incomeFrequency"] },
+  ) => void;
   confirmField: (id: string) => void;
   correctField: (id: string, value: string) => void;
   lock: () => void;
@@ -123,7 +129,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
   // One batched engine call per drop: the real engine's /extract accepts all
   // files in a single request (and caps its LLM backup per batch).
   const addFiles = useCallback(async (files: File[]) => {
-    if (files.length === 0) return;
+    if (files.length === 0) return [];
     setBusy(true);
     try {
       const inputs = files.map((file) => ({ id: `doc-${shortId()}`, file }));
@@ -141,6 +147,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
       }));
       setDocuments((prev) => [...prev, ...records]);
       setFields((prev) => [...prev, ...results.flatMap((r) => r.fields)]);
+      return records;
     } finally {
       setBusy(false);
     }
@@ -189,6 +196,31 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
       demoStartedRef.current = false;
     };
   }, [addFiles]);
+
+  const addManualField = useCallback((
+    documentId: string,
+    key: string,
+    value: string,
+    options?: { isIncome?: boolean; incomeFrequency?: ExtractedField["incomeFrequency"] },
+  ) => {
+    const cleanValue = value.trim();
+    if (!cleanValue) return;
+    setFields((prev) => [
+      ...prev,
+      {
+        id: `${documentId}:manual:${key}:${shortId()}`,
+        documentId,
+        key,
+        value: cleanValue,
+        page: 1,
+        bbox: [0, 0, 0, 0],
+        confidence: 1,
+        reviewStatus: "renter_entered",
+        isIncome: options?.isIncome,
+        incomeFrequency: options?.incomeFrequency,
+      },
+    ]);
+  }, []);
 
   const confirmField = useCallback((id: string) => {
     setFields((prev) =>
@@ -296,6 +328,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
       clearReviewRequest,
       setDocumentPageCount,
       addFiles,
+      addManualField,
       confirmField,
       correctField,
       lock: () => setLocked(true),
@@ -307,7 +340,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
       step, documents, fields, busy, locked, quarantineCount, grossIncomeCents, errorCount,
       readiness, displayStatus, unresolvedCount, missingRequired, presentTypes,
       household.size, household.confirmed, pendingReviewFieldId,
-      addFiles, confirmField, correctField, deleteSession, buildSubmission,
+      addFiles, addManualField, confirmField, correctField, deleteSession, buildSubmission,
       requestReviewField, clearReviewRequest, setDocumentPageCount,
     ],
   );

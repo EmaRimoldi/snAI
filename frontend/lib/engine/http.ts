@@ -81,8 +81,8 @@ function incomeFrequencyFor(
   if (doc.document_type === "pay_stub" && fieldName === "gross_pay") {
     return normalizeFrequency(fieldValue("pay_frequency"));
   }
-  if (doc.document_type === "benefit_letter" && fieldName === "monthly_benefit") {
-    return normalizeFrequency(fieldValue("benefit_frequency")) ?? "monthly";
+  if (doc.document_type === "benefit_letter" && fieldName.endsWith("_benefit")) {
+    return normalizeFrequency(fieldValue("benefit_frequency")) ?? normalizeFrequency(fieldName.replace("_benefit", ""));
   }
   if (doc.document_type === "gig_statement" && fieldName === "gross_receipts") {
     return "monthly"; // §5: gig gross_receipts × 12
