@@ -661,6 +661,21 @@ def _recognition_conf(tokens: list[Token]) -> float:
     return min((t.conf if t.conf is not None else 1.0) for t in tokens)
 
 
+# Words that alone can never be a field label: layout filler prefixes,
+# calendar chrome, and tiny generic tokens.  A label is only sent to the
+# classifier if at least one word falls OUTSIDE this list ("RECORD HOLDER"
+# survives via HOLDER; "PIN", "SUN", "JULY" do not).
+_LABEL_STOPWORDS = {
+    "DESK", "EVENT", "NODE", "PIN", "PANEL", "STATION", "ROW", "ITEM",
+    "SLOT", "CELL", "STOP", "LINE", "FEATURE", "CHECK", "QUICK", "STEP",
+    "MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN",
+    "JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE", "JULY",
+    "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER",
+    "IDENTITY", "COPY", "PLANNER", "BOARD", "MAP", "REGISTER", "WORKFLOW",
+    "THE", "AND", "FOR", "NOT", "REAL", "ONE", "MANY", "YTD",
+}
+
+
 def _unknown_label_texts(
     line: list[Token], document_type: str | None,
 ) -> list[tuple[str, str]]:
@@ -687,6 +702,10 @@ def _unknown_label_texts(
         # phrase zero-shot.
         words = [t.text.strip(":?.,;()_").upper() for t in group]
         if all(any(noise in w for noise in _NOISE_WORDS)
+               for w in words if w):
+            continue
+        # Every word is stop-listed filler/chrome -> never a field label.
+        if all((w in _LABEL_STOPWORDS or len(w) <= 2)
                for w in words if w):
             continue
         out.append((key, " ".join(t.text for t in group)))

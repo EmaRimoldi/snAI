@@ -18,7 +18,7 @@ from realdoor.models import load_document_records
 from realdoor.pipeline import group_by_household, process_household
 from score_extraction import bbox_hit, value_match
 
-ALL_SETS = ["official", "dev", "dev2", "dev3", "dev4"]
+ALL_SETS = ["official", "dev", "dev2", "dev3", "dev4", "dev5"]
 
 
 def _paths(name):
@@ -113,7 +113,7 @@ def main() -> int:
         extraction = f"{r['field_ok']}/{r['field_total']}"
         households = f"{r['hh_ok']}/{r['households']}"
         ok &= (r["field_ok"] == r["field_total"]
-               and r["hh_ok"] == r["households"] and r["llm_calls"] <= 1)
+               and r["hh_ok"] == r["households"] and r["llm_calls"] <= 2)   # <=1 per LLM tier
         print(f"{r['set']:9} {r['docs']:>4} {extraction:>12} "
               f"{households:>10} {r['total_s']:>6.2f}s "
               f"{r['tokenize_s']:>8.2f}s {r['match_s']:>6.2f}s "
