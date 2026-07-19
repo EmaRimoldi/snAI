@@ -46,6 +46,20 @@ export type DocumentRecord = {
 export type Comparison = "below_or_equal" | "above" | "no_frozen_threshold";
 export type ReadinessStatus = "READY_TO_REVIEW" | "NEEDS_REVIEW";
 
+/**
+ * UI-only progress ladder derived from what has been parsed/confirmed so far.
+ * Display vocabulary only — the exported submission always maps down to the
+ * organizer's binary ReadinessStatus, and none of these imply eligibility.
+ */
+export type DisplayStatus =
+  | "NOT_STARTED"
+  | "PROCESSING"
+  | "AWAITING_CONFIRMATION"
+  | "EVIDENCE_ISSUES"
+  | "DOCUMENTS_MISSING"
+  | "READY"
+  | "PACKET_LOCKED";
+
 export type ReviewReasonCode =
   | "PAY_STUB_TOTAL_CONFLICT"
   | "GIG_INCOME_UNCORROBORATED"

@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { I18nProvider, useI18n } from "@/lib/i18n";
 import { useCopy } from "@/lib/pipeline/copy";
+import { AppStateProvider } from "@/lib/pipeline/state";
 import SiteHeader from "@/components/SiteHeader";
 import HeroSellingPoints from "@/components/HeroSellingPoints";
 import PhaseCards from "@/components/PhaseCards";
@@ -18,10 +19,13 @@ export default function Page() {
 
 type View = "landing" | "app";
 
+const AUTOLOAD_DEMO =
+  process.env.NODE_ENV === "development" && process.env.NEXT_PUBLIC_DEMO_HOUSEHOLD === "HH-001";
+
 function RealDoorApp() {
   const { language, t } = useI18n();
   const c = useCopy();
-  const [view, setView] = useState<View>("landing");
+  const [view, setView] = useState<View>(AUTOLOAD_DEMO ? "app" : "landing");
 
   const heroHeadingRef = useRef<HTMLHeadingElement>(null);
   const appHeadingRef = useRef<HTMLHeadingElement>(null);
@@ -50,12 +54,12 @@ function RealDoorApp() {
   };
 
   return (
-    <>
+    <AppStateProvider>
       <a className="skip-link" href="#main">
         {t("accessibility.skip")}
       </a>
 
-      <SiteHeader onHome={showLanding} />
+      <SiteHeader onHome={showLanding} showStatus={view === "app"} />
 
       <main id="main" className="site-main">
         <section
@@ -81,6 +85,6 @@ function RealDoorApp() {
           <PipelineApp headingRef={appHeadingRef} />
         </section>
       </main>
-    </>
+    </AppStateProvider>
   );
 }

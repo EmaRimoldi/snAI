@@ -5,9 +5,8 @@
 // needs to mount it.
 
 import type { RefObject } from "react";
-import { AppStateProvider, useApp } from "@/lib/pipeline/state";
+import { useApp } from "@/lib/pipeline/state";
 import { useCopy } from "@/lib/pipeline/copy";
-import GlobalValues from "./GlobalValues";
 import Stepper from "./Stepper";
 import ProfileStep from "./ProfileStep";
 import UnderstandStep from "./UnderstandStep";
@@ -29,7 +28,6 @@ function PipelineInner({ headingRef, headingId }: Props) {
         <p className={s.subtitle}>{c.appSubtitle}</p>
       </div>
 
-      <GlobalValues />
       <Stepper />
 
       {step === "profile" && <ProfileStep />}
@@ -39,10 +37,8 @@ function PipelineInner({ headingRef, headingId }: Props) {
   );
 }
 
+// The state provider now lives in app/page.tsx (above SiteHeader) so the
+// header status chips share the same application record.
 export default function PipelineApp({ headingRef, headingId }: Props) {
-  return (
-    <AppStateProvider>
-      <PipelineInner headingRef={headingRef} headingId={headingId} />
-    </AppStateProvider>
-  );
+  return <PipelineInner headingRef={headingRef} headingId={headingId} />;
 }

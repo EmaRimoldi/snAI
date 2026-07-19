@@ -9,12 +9,14 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useRef,
   useState,
 } from "react";
 import type { ReactNode } from "react";
 import type {
+  DisplayStatus,
   DocumentRecord,
   DocumentType,
   ExtractedField,
@@ -27,6 +29,8 @@ import {
   computeReadiness,
   computeErrorCount,
   compareToThreshold,
+  countUnresolved,
+  deriveDisplayStatus,
   thresholdCentsForSize,
   centsToDollars,
 } from "@/lib/pipeline/calc";
@@ -55,12 +59,18 @@ type AppValue = {
   grossIncomeCents: number;
   errorCount: number;
   readiness: ReadinessResult;
+  displayStatus: DisplayStatus;
+  unresolvedCount: number;
   missingRequired: DocumentType[];
   presentTypes: DocumentType[];
   householdSize: number;
   householdSizeConfirmed: boolean;
+  /** Field the header error menu asked to open in Profile (null = none). */
+  pendingReviewFieldId: string | null;
   // actions
   goToStep: (step: Step) => void;
+  requestReviewField: (id: string) => void;
+  clearReviewRequest: () => void;
   addFiles: (files: File[]) => Promise<void>;
   confirmField: (id: string) => void;
   correctField: (id: string, value: string) => void;
@@ -71,6 +81,14 @@ type AppValue = {
 };
 
 const AppContext = createContext<AppValue | null>(null);
+
+const AUTOLOAD_HOUSEHOLD =
+  process.env.NODE_ENV === "development" ? process.env.NEXT_PUBLIC_DEMO_HOUSEHOLD : undefined;
+
+type DemoHouseholdResponse = {
+  householdId: string;
+  files: Array<{ name: string; type: string; contentBase64: string }>;
+};
 
 function shortId(): string {
   const uuid = typeof crypto !== "undefined" && crypto.randomUUID ? crypto.randomUUID() : "0000";
@@ -91,7 +109,15 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
   const [fields, setFields] = useState<ExtractedField[]>([]);
   const [busy, setBusy] = useState(false);
   const [locked, setLocked] = useState(false);
+  const [pendingReviewFieldId, setPendingReviewFieldId] = useState<string | null>(null);
+
+  const requestReviewField = useCallback((id: string) => {
+    setStep("profile");
+    setPendingReviewFieldId(id);
+  }, []);
+  const clearReviewRequest = useCallback(() => setPendingReviewFieldId(null), []);
   const applicationIdRef = useRef<string>(`APP-${shortId()}`);
+  const demoStartedRef = useRef(false);
 
   const addFiles = useCallback(async (files: File[]) => {
     if (files.length === 0) return;
@@ -122,6 +148,42 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
       setBusy(false);
     }
   }, []);
+
+  useEffect(() => {
+    if (AUTOLOAD_HOUSEHOLD !== "HH-001" || demoStartedRef.current) return;
+    demoStartedRef.current = true;
+    let cancelled = false;
+
+    const loadDemoHousehold = async () => {
+      const response = await fetch("/api/dev-household", { cache: "no-store" });
+      if (!response.ok) throw new Error(`Demo household request failed (${response.status})`);
+      const payload = (await response.json()) as DemoHouseholdResponse;
+      const files = payload.files.map(({ name, type, contentBase64 }) => {
+        const binary = window.atob(contentBase64);
+        const bytes = new Uint8Array(binary.length);
+        for (let index = 0; index < binary.length; index += 1) {
+          bytes[index] = binary.charCodeAt(index);
+        }
+        return new File([bytes.buffer], name, { type });
+      });
+      await addFiles(files);
+    };
+
+    // Deferring one task avoids doing the expensive extraction twice during
+    // React's development-only mount/cleanup/remount safety pass.
+    const timer = window.setTimeout(() => {
+      if (cancelled) return;
+      void loadDemoHousehold().catch((error: unknown) => {
+        console.error("Could not auto-load HH-001:", error);
+      });
+    }, 0);
+
+    return () => {
+      cancelled = true;
+      window.clearTimeout(timer);
+      demoStartedRef.current = false;
+    };
+  }, [addFiles]);
 
   const confirmField = useCallback((id: string) => {
     setFields((prev) =>
@@ -162,14 +224,24 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
     () => computeReadiness(documents, fields, missingRequired),
     [documents, fields, missingRequired],
   );
-  const errorCount = useMemo(
-    () => computeErrorCount(fields, missingRequired),
-    [fields, missingRequired],
-  );
+  const errorCount = useMemo(() => computeErrorCount(readiness.reasons), [readiness.reasons]);
   const household = useMemo(() => readHouseholdSize(fields), [fields]);
   const quarantineCount = useMemo(
     () => documents.filter((d) => d.quarantinedText).length,
     [documents],
+  );
+  const unresolvedCount = useMemo(() => countUnresolved(fields), [fields]);
+  const displayStatus = useMemo(
+    () =>
+      deriveDisplayStatus({
+        documentCount: documents.length,
+        busy,
+        locked,
+        unresolvedCount,
+        reasons: readiness.reasons,
+        missingRequiredCount: missingRequired.length,
+      }),
+    [documents.length, busy, locked, unresolvedCount, readiness.reasons, missingRequired.length],
   );
 
   const buildSubmission = useCallback((): Submission => {
@@ -207,11 +279,16 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
       grossIncomeCents,
       errorCount,
       readiness,
+      displayStatus,
+      unresolvedCount,
       missingRequired,
       presentTypes,
       householdSize: household.size,
       householdSizeConfirmed: household.confirmed,
+      pendingReviewFieldId,
       goToStep: setStep,
+      requestReviewField,
+      clearReviewRequest,
       addFiles,
       confirmField,
       correctField,
@@ -222,8 +299,10 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
     }),
     [
       step, documents, fields, busy, locked, quarantineCount, grossIncomeCents, errorCount,
-      readiness, missingRequired, presentTypes, household.size, household.confirmed,
+      readiness, displayStatus, unresolvedCount, missingRequired, presentTypes,
+      household.size, household.confirmed, pendingReviewFieldId,
       addFiles, confirmField, correctField, deleteSession, buildSubmission,
+      requestReviewField, clearReviewRequest,
     ],
   );
 

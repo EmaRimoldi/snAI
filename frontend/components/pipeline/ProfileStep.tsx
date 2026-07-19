@@ -4,7 +4,7 @@
 // or correct each extracted field one at a time — with its source region, page,
 // and confidence. Only confirmed values flow downstream. Injected text is quarantined.
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useApp, REQUIRED_CHECKLIST } from "@/lib/pipeline/state";
 import type { DocumentType } from "@/lib/pipeline/types";
 import { useCopy, fmt, FIELD_EXPLAIN } from "@/lib/pipeline/copy";
@@ -18,7 +18,10 @@ function humanize(key: string): string {
 
 export default function ProfileStep() {
   const c = useCopy();
-  const { documents, fields, busy, addFiles, confirmField, correctField, goToStep } = useApp();
+  const {
+    documents, fields, busy, addFiles, confirmField, correctField, goToStep,
+    pendingReviewFieldId, clearReviewRequest,
+  } = useApp();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [dragging, setDragging] = useState(false);
   const [index, setIndex] = useState(0);
@@ -58,7 +61,54 @@ export default function ProfileStep() {
   const go = (next: number) => {
     setCorrecting(false);
     setIndex(next);
+    scrollAfterNavRef.current = true;
   };
+
+  // After confirming/correcting a value, move on to the next field that still
+  // needs a check (searching forward, wrapping); stay put when none remain.
+  const advanceAfterResolve = (fromIndex: number) => {
+    for (let offset = 1; offset < fields.length; offset += 1) {
+      const i = (fromIndex + offset) % fields.length;
+      if (fields[i].reviewStatus === "extracted") {
+        go(i);
+        return;
+      }
+    }
+  };
+
+  // The header error menu can ask Profile to show a specific field; after the
+  // jump, move focus onto the field heading so keyboard/AT users land there.
+  const fieldHeadingRef = useRef<HTMLHeadingElement>(null);
+  const reviewSectionRef = useRef<HTMLElement>(null);
+  const focusAfterJumpRef = useRef(false);
+  const scrollAfterNavRef = useRef(false);
+  useEffect(() => {
+    if (!pendingReviewFieldId) return;
+    const i = fields.findIndex((f) => f.id === pendingReviewFieldId);
+    if (i >= 0) {
+      setCorrecting(false);
+      setIndex(i);
+      focusAfterJumpRef.current = true;
+      scrollAfterNavRef.current = true;
+    }
+    clearReviewRequest();
+  }, [pendingReviewFieldId, fields, clearReviewRequest]);
+  // After any field navigation (confirm auto-advance, prev/next, menu jump),
+  // center the review card — with the PDF preview — in the viewport.
+  useEffect(() => {
+    if (focusAfterJumpRef.current) {
+      focusAfterJumpRef.current = false;
+      fieldHeadingRef.current?.focus({ preventScroll: true });
+    }
+    if (scrollAfterNavRef.current) {
+      scrollAfterNavRef.current = false;
+      const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      reviewSectionRef.current?.scrollIntoView({
+        block: "center",
+        behavior: reduce ? "auto" : "smooth",
+      });
+    }
+  }, [safeIndex]);
 
   return (
     <>
@@ -133,7 +183,7 @@ export default function ProfileStep() {
 
       {/* Field review */}
       {field && doc ? (
-        <section className={s.card} aria-labelledby="review-h">
+        <section className={s.card} aria-labelledby="review-h" ref={reviewSectionRef}>
           <h2 id="review-h" className={s.cardTitle}>
             {c.reviewTitle}
           </h2>
@@ -163,7 +213,9 @@ export default function ProfileStep() {
 
           <div className={s.reviewGrid}>
             <div>
-              <h3 className={s.fieldKey}>{humanize(field.key)}</h3>
+              <h3 className={s.fieldKey} ref={fieldHeadingRef} tabIndex={-1}>
+                {humanize(field.key)}
+              </h3>
               <p className={s.fieldExplain}>
                 <strong>{c.whyNeeded}: </strong>
                 {FIELD_EXPLAIN[field.key] ?? `${humanize(field.key)} — extracted from ${docLabel(doc.documentType)}.`}
@@ -198,6 +250,7 @@ export default function ProfileStep() {
                       onClick={() => {
                         correctField(field.id, draft.trim());
                         setCorrecting(false);
+                        advanceAfterResolve(safeIndex);
                       }}
                     >
                       {c.saveCorrection}
@@ -229,7 +282,10 @@ export default function ProfileStep() {
                     <button
                       type="button"
                       className="primary-button"
-                      onClick={() => confirmField(field.id)}
+                      onClick={() => {
+                        confirmField(field.id);
+                        advanceAfterResolve(safeIndex);
+                      }}
                       disabled={field.reviewStatus !== "extracted"}
                     >
                       {c.confirm}

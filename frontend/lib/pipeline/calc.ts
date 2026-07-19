@@ -7,6 +7,7 @@ import type {
   DocumentRecord,
   ExtractedField,
   Comparison,
+  DisplayStatus,
   ReadinessResult,
   ReviewReason,
 } from "@/lib/pipeline/types";
@@ -106,29 +107,36 @@ export function computeReadiness(
 ): ReadinessResult {
   const reasons: ReviewReason[] = [];
 
-  // Employment letter currency (60-day window).
+  // Evidence checks run on CONFIRMED values only — an unconfirmed extraction is
+  // "pending", not yet an inconsistency. Once the renter confirms (or corrects)
+  // the involved values, the checks below fire independently of the rest.
+
+  // Employment letter currency (60-day window) — once its date is confirmed.
   for (const doc of documents) {
     if (doc.documentType !== "employment_letter") continue;
     const dateField = fields.find((f) => f.documentId === doc.id && f.key === "document_date");
-    if (dateField && isExpired(dateField.value)) {
+    if (dateField && isResolved(dateField) && isExpired(dateField.value)) {
       reasons.push({ code: "EMPLOYMENT_LETTER_EXPIRED", blocking: true, documentId: doc.id });
     }
   }
 
-  // Gig income is always corroboration-flagged.
+  // Gig income corroboration — flagged once its receipts are confirmed.
   for (const doc of documents) {
-    if (doc.documentType === "gig_statement") {
+    if (doc.documentType !== "gig_statement") continue;
+    const receipts = fields.find((f) => f.documentId === doc.id && f.key === "gross_receipts");
+    if (receipts && isResolved(receipts)) {
       reasons.push({ code: "GIG_INCOME_UNCORROBORATED", blocking: true, documentId: doc.id });
     }
   }
 
-  // Pay-stub internal conflict: stated gross vs hourly_rate * regular_hours.
+  // Pay-stub internal conflict: stated gross vs hourly_rate * regular_hours,
+  // once all three values are confirmed.
   for (const doc of documents) {
     if (doc.documentType !== "pay_stub") continue;
     const gross = fields.find((f) => f.documentId === doc.id && f.key === "gross_pay");
     const rate = fields.find((f) => f.documentId === doc.id && f.key === "hourly_rate");
     const hours = fields.find((f) => f.documentId === doc.id && f.key === "regular_hours");
-    if (gross && rate && hours) {
+    if (gross && rate && hours && isResolved(gross) && isResolved(rate) && isResolved(hours)) {
       const stated = toCents(gross.value);
       const computed = Math.round(toCents(rate.value) * Number(hours.value)) / 1; // cents
       if (stated !== computed) {
@@ -156,15 +164,43 @@ export function computeReadiness(
   return { status, reasons };
 }
 
-/** Errors metric = missing required docs + unresolved/low-confidence fields. */
-export function computeErrorCount(
-  fields: readonly ExtractedField[],
-  missingRequired: readonly string[],
-): number {
-  const unresolvedOrLow = fields.filter(
-    (f) => !isResolved(f) || f.confidence < LOW_CONFIDENCE,
-  ).length;
-  return unresolvedOrLow + missingRequired.length;
+/** Extracted fields the renter has not yet confirmed/corrected/entered. */
+export function countUnresolved(fields: readonly ExtractedField[]): number {
+  return fields.filter((f) => !isResolved(f)).length;
+}
+
+/**
+ * Progress-aware display status, first match wins. UI vocabulary only: the
+ * exported readiness stays the organizer's binary and is computed separately
+ * in computeReadiness().
+ */
+export function deriveDisplayStatus(args: {
+  documentCount: number;
+  busy: boolean;
+  locked: boolean;
+  unresolvedCount: number;
+  reasons: readonly ReviewReason[];
+  missingRequiredCount: number;
+}): DisplayStatus {
+  if (args.documentCount === 0) return "NOT_STARTED";
+  if (args.busy) return "PROCESSING";
+  if (args.locked) return "PACKET_LOCKED";
+  // Detected inconsistencies outrank pending confirmations (red beats yellow).
+  if (args.reasons.some((r) => r.blocking && r.code !== "UNCONFIRMED_FIELDS")) {
+    return "EVIDENCE_ISSUES";
+  }
+  if (args.unresolvedCount > 0) return "AWAITING_CONFIRMATION";
+  if (args.missingRequiredCount > 0) return "DOCUMENTS_MISSING";
+  return "READY";
+}
+
+/**
+ * Errors = detected inconsistencies / rule flags on confirmed values.
+ * Independent of confirmation progress: unconfirmed fields and missing
+ * documents are "pending"/informational, never errors.
+ */
+export function computeErrorCount(reasons: readonly ReviewReason[]): number {
+  return reasons.filter((r) => r.blocking && r.code !== "UNCONFIRMED_FIELDS").length;
 }
 
 export { LOW_CONFIDENCE };

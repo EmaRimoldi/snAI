@@ -28,6 +28,8 @@
   --muted-foreground: #6f6259;
   --input: #d5c6b4;
   --danger: #a92d2d;
+  --success: #366e45; /* status-ok green — always paired with text, never color-only */
+  --warn: #8a5a00; /* status-pending amber — always paired with text/icon, never color-only */
 }
 
 * { box-sizing: border-box; }
@@ -43,7 +45,10 @@ body {
   margin: 0;
   display: flex;
   flex-direction: column;
+  /* clip (with hidden fallback) — unlike hidden, clip does not create a scroll
+     container, so position: sticky keeps working for descendants. */
   overflow-x: hidden;
+  overflow-x: clip;
   background: var(--background);
   color: var(--foreground);
   font: 16px/1.5 "Public Sans", "Noto Sans SC UI", "PingFang SC", "Microsoft YaHei",
@@ -98,9 +103,11 @@ a { -webkit-tap-highlight-color: transparent; }
 
 .skip-link:focus { top: 1rem; }
 
+/* Pinned to the top of the window — the status chips stay visible on scroll. */
 .site-header {
-  position: relative;
-  z-index: 20;
+  position: sticky;
+  top: 0;
+  z-index: 40;
   display: flex;
   min-height: clamp(4.5rem, 10vh, 6rem);
   width: min(100%, 80rem);
@@ -109,6 +116,7 @@ a { -webkit-tap-highlight-color: transparent; }
   justify-content: space-between;
   gap: 1rem;
   padding: clamp(0.5rem, 1.5vh, 1rem) 2.5rem;
+  background: var(--background);
 }
 
 .brand-link {
@@ -140,6 +148,156 @@ a { -webkit-tap-highlight-color: transparent; }
   color: var(--muted-foreground);
   font-size: 0.875rem;
   font-weight: 650;
+}
+
+/* Header status chips — simple tinted boxes, no borders, no container. */
+.header-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+.status-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-width: 0;
+  padding: 0.3rem 0.7rem;
+  border-radius: 0.6rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.status-chip-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.status-chip svg {
+  width: 0.95rem;
+  height: 0.95rem;
+  flex: none;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.status-dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  flex: none;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.status-chip.is-neutral {
+  color: var(--muted-foreground);
+  background: color-mix(in srgb, var(--muted) 75%, transparent);
+}
+
+.status-chip.is-action {
+  color: var(--primary-dark);
+  background: color-mix(in srgb, var(--primary) 12%, transparent);
+}
+
+.status-chip.is-danger {
+  color: var(--danger);
+  background: color-mix(in srgb, var(--danger) 10%, transparent);
+}
+
+.status-chip.is-ok {
+  color: var(--success);
+  background: color-mix(in srgb, var(--success) 12%, transparent);
+}
+
+.status-chip.is-warn {
+  color: var(--warn);
+  background: color-mix(in srgb, var(--warn) 13%, transparent);
+}
+
+/* Errors chip is a disclosure button; its menu explains and jumps to each problem. */
+.status-chip-button {
+  cursor: pointer;
+  border: 0;
+}
+
+.error-menu-wrap {
+  position: relative;
+  display: inline-flex;
+}
+
+.error-menu {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 0.4rem);
+  z-index: 45;
+  display: grid;
+  gap: 2px;
+  min-width: 17rem;
+  max-width: min(90vw, 24rem);
+  max-height: min(60vh, 22rem);
+  overflow-y: auto;
+  margin: 0;
+  padding: 0.4rem;
+  border: 1px solid color-mix(in srgb, var(--foreground) 12%, transparent);
+  border-radius: 0.9rem;
+  background: var(--background);
+  box-shadow: 0 0.75rem 2rem color-mix(in srgb, var(--foreground) 14%, transparent);
+}
+
+.error-menu-title {
+  margin: 0;
+  padding: 0.35rem 0.65rem 0.1rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+}
+
+.error-item {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.1rem;
+  cursor: pointer;
+  border: 0;
+  border-radius: 0.6rem;
+  background: transparent;
+  color: var(--foreground);
+  padding: 0.5rem 0.65rem;
+  text-align: left;
+}
+
+.error-item:hover,
+.error-item:focus-visible {
+  background: var(--muted);
+}
+
+.error-item:focus-visible { outline-offset: -2px; }
+
+.error-item-label {
+  font-weight: 700;
+  font-size: 0.88rem;
+}
+
+.error-item-explain {
+  font-size: 0.8rem;
+  color: var(--muted-foreground);
+  white-space: normal;
+}
+
+.error-empty {
+  margin: 0;
+  padding: 0.5rem 0.65rem;
+  font-size: 0.85rem;
+  color: var(--muted-foreground);
+  white-space: normal;
 }
 
 .language-control {
