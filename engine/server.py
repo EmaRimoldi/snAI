@@ -25,7 +25,7 @@ from fastapi import FastAPI, File, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 
 from realdoor import settings
-from realdoor.cli import infer_document_type
+from realdoor.cli import infer_document_type, refine_document_type
 from realdoor.extract.batch import batch_extract
 
 ALLOWED_ORIGINS = [
@@ -73,6 +73,10 @@ async def extract(files: list[UploadFile] = File(...)) -> dict:
             docs, stats = batch_extract(jobs)
         except Exception as exc:  # surface a clean error, never a traceback
             raise HTTPException(status_code=422, detail=f"extraction failed: {exc}") from exc
+        # Types were inferred (no manifest on uploads) — refine from the
+        # extracted fields, a much stronger signal than filename/keyword hints.
+        for doc in docs:
+            doc.document_type = refine_document_type(doc.document_type, doc.fields)
 
     return {
         "artifact": "realdoor.extraction",

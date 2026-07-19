@@ -248,3 +248,19 @@ sample-question chips (reuses `sampleChip`, re-asks through the existing handler
 the raw policy code; other non-NONE codes demoted to small muted text. Policy tests 22/22;
 greeting verified live in en/es; poem control still abstains. Verified at API + tsc level —
 an in-panel visual pass on the unlocked Understand chat is still worth a click-through.
+
+## 2026-07-19 — Dev-split verification: frontend now matches gold on ALL splits' calculations
+
+- Engine: batch_run across official+dev1–dev6 = 1132/1132 fields, 59/59 households, LLM ≤2/set.
+- Frontend (real pipeline via dev-oracle-check?set=…): **53/53 dev-split incomes and comparisons
+  correct** after three fixes: (1) adapter counts any `<freq>_benefit` field (engine names the
+  amount by frequency — annual_benefit was dropped); (2) employment-letter-only households derive
+  the wage source from confirmed weekly_hours × hourly_rate (weekly) when no stub exists; (3)
+  household size is now nullable — never defaulted to 1; absent/unreadable size ⇒ no frozen
+  threshold ⇒ `no_frozen_threshold` (display shows "—"). Engine server also gained
+  `refine_document_type`: inferred types are corrected from extracted fields (hintless dev3-style
+  filenames had classified stubs/letters as application summaries on the upload path).
+- Remaining, deliberate: 9/53 dev households differ ONLY by reason codes the frontend demo does not
+  implement (BENEFIT_LETTER/PAY_STUB/GIG_STATEMENT_EXPIRED, EMPLOYMENT_RATE_CONFLICT,
+  MISSING_HOUSEHOLD_SIZE, MISSING_INCOME_EVIDENCE, NO_FROZEN_THRESHOLD, UNVERIFIED_INCOME_CLAIM) —
+  the engine implements all of them and stays the authority for submission scoring.

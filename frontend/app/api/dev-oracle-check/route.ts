@@ -23,17 +23,30 @@ const REQUIRED_CHECKLIST: readonly DocumentType[] = [
 
 export const dynamic = "force-dynamic";
 
-export async function GET() {
+export async function GET(request: Request) {
   if (process.env.NODE_ENV !== "development") {
     return Response.json({ error: "Not available" }, { status: 404 });
   }
 
+  const set = new URL(request.url).searchParams.get("set") ?? "official";
+  if (!/^(official|dev[1-9]?)$/.test(set)) {
+    return Response.json({ error: `Unknown set "${set}"` }, { status: 400 });
+  }
   const dir = path.resolve(
     process.cwd(),
-    "../engine/tests/fixtures/synthetic_documents/documents",
+    set === "official"
+      ? "../engine/tests/fixtures/synthetic_documents/documents"
+      : `../engine/tests/fixtures/${set === "dev1" ? "dev" : set}/documents`,
   );
   const allNames = (await readdir(dir)).sort();
-  const households = ["hh-001", "hh-002", "hh-003", "hh-004", "hh-005", "hh-006"];
+  // Group by household prefix — everything before the "_dNN" document suffix.
+  const households = [
+    ...new Set(
+      allNames
+        .map((n) => n.match(/^(.*?)_d\d+/)?.[1])
+        .filter((p): p is string => Boolean(p)),
+    ),
+  ].sort();
 
   const results = [];
   for (const hh of households) {
@@ -62,7 +75,8 @@ export async function GET() {
     }
 
     const sizeField = fields.find((f) => f.key === "household_size");
-    const householdSize = sizeField ? parseInt(sizeField.value, 10) : 1;
+    const parsedSize = sizeField ? parseInt(sizeField.value, 10) : NaN;
+    const householdSize = Number.isFinite(parsedSize) && parsedSize > 0 ? parsedSize : null;
     const present = new Set<DocumentType>(documents.map((d) => d.documentType));
     const missingRequired = REQUIRED_CHECKLIST.filter((t) => !present.has(t));
 

@@ -81,8 +81,14 @@ function incomeFrequencyFor(
   if (doc.document_type === "pay_stub" && fieldName === "gross_pay") {
     return normalizeFrequency(fieldValue("pay_frequency"));
   }
-  if (doc.document_type === "benefit_letter" && fieldName === "monthly_benefit") {
-    return normalizeFrequency(fieldValue("benefit_frequency")) ?? "monthly";
+  // The engine names the benefit amount by its frequency (monthly_benefit,
+  // annual_benefit, weekly_benefit, …) — any of them is the income field.
+  const benefitMatch = fieldName.match(/^(weekly|biweekly|semimonthly|monthly|annual)_benefit$/);
+  if (doc.document_type === "benefit_letter" && benefitMatch) {
+    return (
+      normalizeFrequency(fieldValue("benefit_frequency")) ??
+      (benefitMatch[1] as PayFrequency)
+    );
   }
   if (doc.document_type === "gig_statement" && fieldName === "gross_receipts") {
     return "monthly"; // §5: gig gross_receipts × 12

@@ -64,7 +64,7 @@ type AppValue = {
   unresolvedCount: number;
   missingRequired: DocumentType[];
   presentTypes: DocumentType[];
-  householdSize: number;
+  householdSize: number | null;
   householdSizeConfirmed: boolean;
   /** Field the header error menu asked to open in Profile (null = none). */
   pendingReviewFieldId: string | null;
@@ -100,12 +100,16 @@ function shortId(): string {
   return uuid.replace(/-/g, "").slice(0, 8).toUpperCase();
 }
 
-function readHouseholdSize(fields: readonly ExtractedField[]): { size: number; confirmed: boolean } {
+/** Household size comes ONLY from the documents (never inferred, never
+ *  defaulted): null when absent/unreadable, which yields no frozen threshold. */
+function readHouseholdSize(
+  fields: readonly ExtractedField[],
+): { size: number | null; confirmed: boolean } {
   const candidates = fields.filter((f) => f.key === "household_size");
   const confirmed = candidates.find((f) => f.reviewStatus === "confirmed" || f.reviewStatus === "corrected");
   const chosen = confirmed ?? candidates[0];
   const n = chosen ? parseInt(chosen.value, 10) : NaN;
-  return { size: Number.isFinite(n) && n > 0 ? n : 1, confirmed: Boolean(confirmed) };
+  return { size: Number.isFinite(n) && n > 0 ? n : null, confirmed: Boolean(confirmed) };
 }
 
 export function AppStateProvider({ children }: { children: ReactNode }) {

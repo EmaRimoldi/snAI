@@ -10,7 +10,7 @@ import {
 type ContextInput = {
   documents: readonly DocumentRecord[];
   fields: readonly ExtractedField[];
-  householdSize: number;
+  householdSize: number | null;
   householdSizeConfirmed: boolean;
   grossIncomeCents: number;
   missingRequired: readonly string[];

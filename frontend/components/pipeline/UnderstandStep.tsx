@@ -74,9 +74,9 @@ export default function UnderstandStep() {
   const fieldLabel = useFieldLabel();
   const money = (cents: number): string => formatMoneyCents(cents, language);
   const srcName = (key: string): string =>
-    key === "gross_pay"
+    key === "gross_pay" || key === "letter_wage"
       ? c.srcPay
-      : key === "monthly_benefit"
+      : key.endsWith("_benefit")
         ? c.srcBenefit
         : key === "gross_receipts"
           ? c.srcGig
@@ -88,7 +88,7 @@ export default function UnderstandStep() {
     monthly: c.freqMonthly,
     annual: c.freqAnnual,
   };
-  const thresholdDollars = thresholdForSize(householdSize);
+  const thresholdDollars = householdSize === null ? null : thresholdForSize(householdSize);
   const comparison = compareToThreshold(grossIncomeCents, thresholdCentsForSize(householdSize));
   const cmpText =
     comparison === "below_or_equal" ? c.cmpBelow : comparison === "above" ? c.cmpAbove : c.cmpNone;
@@ -169,7 +169,7 @@ export default function UnderstandStep() {
           <li className={s.flatRow}>
             <span className={s.summaryKey}>{c.householdSize}</span>
             <span className={s.summaryVal}>
-              {householdSize}
+              {householdSize ?? "—"}
               {!householdSizeConfirmed && ` — ${c.confirmSizeNote}`}
             </span>
           </li>

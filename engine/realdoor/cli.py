@@ -52,6 +52,24 @@ _FILENAME_HINTS = [
 ]
 
 
+def refine_document_type(doc_type: str, fields) -> str:
+    """Post-extraction correction for INFERRED types (upload path, no manifest):
+    the extracted fields are a far stronger signal than filename hints or the
+    first-page keyword vote (e.g. hintless layout-variant stubs)."""
+    names = {f.field for f in fields}
+    if "gross_pay" in names:
+        return "pay_stub"
+    if "monthly_benefit" in names:
+        return "benefit_letter"
+    if "gross_receipts" in names:
+        return "gig_statement"
+    if "household_size" in names:
+        return "application_summary"
+    if "weekly_hours" in names or {"hourly_rate", "document_date"} <= names:
+        return "employment_letter"
+    return doc_type
+
+
 def infer_document_type(pdf_path: Path) -> str:
     name = pdf_path.stem.lower()
     for doc_type, hints in _FILENAME_HINTS:

@@ -49,7 +49,8 @@ export function compareToThreshold(annualCents: number, thresholdCents: number |
   return annualCents <= thresholdCents ? "below_or_equal" : "above";
 }
 
-export function thresholdCentsForSize(size: number): number | null {
+export function thresholdCentsForSize(size: number | null): number | null {
+  if (size === null) return null;
   const dollars = thresholdForSize(size);
   return dollars === null ? null : dollars * 100;
 }
@@ -123,7 +124,7 @@ export function deriveIncomeSources(
     return toCents(f.value);
   };
 
-  return resolvedIncome.map((f) => {
+  const entries: IncomeSourceEntry[] = resolvedIncome.map((f) => {
     const documentType = docType(f.documentId);
     const frequency = f.incomeFrequency ?? "monthly";
     const periodCents = documentType === "pay_stub" ? stubBasisCents(f) : toCents(f.value);
@@ -139,6 +140,50 @@ export function deriveIncomeSources(
       counted,
     };
   });
+
+  // No pay stub at all: an employment letter's confirmed weekly_hours ×
+  // hourly_rate stands as the recurring wage source (weekly). With stubs
+  // present the letter only corroborates — it is never added on top.
+  if (stubs.length === 0) {
+    const letterDocs = documents.filter((d) => d.documentType === "employment_letter");
+    const letterDate = (docId: string): number => {
+      const raw = fields.find((x) => x.documentId === docId && x.key === "document_date")?.value;
+      const parsed = Date.parse(raw ?? "");
+      return Number.isNaN(parsed) ? 0 : parsed;
+    };
+    const candidates = letterDocs
+      .map((d) => {
+        const hours = fields.find(
+          (x) => x.documentId === d.id && x.key === "weekly_hours" && isResolved(x),
+        );
+        const rate = fields.find(
+          (x) => x.documentId === d.id && x.key === "hourly_rate" && isResolved(x),
+        );
+        return hours && rate ? { doc: d, hours, rate } : null;
+      })
+      .filter((x): x is NonNullable<typeof x> => x !== null)
+      .sort((a, b) => letterDate(b.doc.id) - letterDate(a.doc.id));
+    const pick = candidates[0];
+    if (pick) {
+      const hoursNum = Number(pick.hours.value);
+      const rateCents = toCents(pick.rate.value);
+      if (Number.isFinite(hoursNum) && hoursNum > 0 && rateCents > 0) {
+        const periodCents = Math.round(rateCents * hoursNum);
+        entries.push({
+          fieldId: pick.hours.id,
+          documentId: pick.doc.id,
+          key: "letter_wage",
+          documentType: "employment_letter",
+          periodCents,
+          frequency: "weekly",
+          annualCents: annualizeCents(periodCents, "weekly"),
+          counted: true,
+        });
+      }
+    }
+  }
+
+  return entries;
 }
 
 /** Gross annual income (cents): the sum of COUNTED sources only. */
