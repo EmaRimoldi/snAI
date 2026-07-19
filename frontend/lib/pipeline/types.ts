@@ -43,6 +43,8 @@ export type DocumentRecord = {
   pageCount: number;
   /** Untrusted / injected text found in the document — quarantined, never a field. */
   quarantinedText?: string;
+  /** Parser/OCR failure for this specific document; other documents may still parse. */
+  extractionError?: string;
 };
 
 export type Comparison = "below_or_equal" | "above" | "no_frozen_threshold";

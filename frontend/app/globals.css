@@ -366,6 +366,23 @@ a { -webkit-tap-highlight-color: transparent; }
   white-space: normal;
 }
 
+.nav-link-button {
+  min-height: 44px;
+  cursor: pointer;
+  border: 0;
+  border-radius: 0.4rem;
+  background: transparent;
+  color: var(--muted-foreground);
+  padding: 0 0.25rem;
+  font: inherit;
+  font-weight: 750;
+}
+
+.nav-link-button:hover,
+.nav-link-button[aria-current="page"] {
+  color: var(--foreground);
+}
+
 .language-control {
   position: relative;
   display: inline-flex;
@@ -545,9 +562,13 @@ a { -webkit-tap-highlight-color: transparent; }
   flex: 1;
   display: flex;
   flex-direction: column;
-  width: min(100%, 72rem);
+  width: min(100%, 86rem);
   margin: 0 auto;
   padding: 0 2.5rem clamp(0.75rem, 2vh, 2rem);
+}
+
+.site-main-discover {
+  width: min(100%, 96rem);
 }
 
 /* The landing fills the space under the header and distributes its three
