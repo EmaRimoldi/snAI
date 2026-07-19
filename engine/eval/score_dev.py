@@ -24,8 +24,10 @@ from realdoor.models import DocumentRecord, load_document_records
 from realdoor.pipeline import group_by_household, process_household
 from score_extraction import bbox_hit, value_match
 
-# Fixture-set root: `score_dev.py [dev|dev2|dev3]` (default dev).
+# Fixture-set root: `score_dev.py [dev|dev2|...|dev5]` (default dev;
+# `dev1` accepted as an alias for the unnumbered first set).
 _SET = sys.argv[1] if len(sys.argv) > 1 else "dev"
+_SET = {"dev1": "dev"}.get(_SET, _SET)
 DEV = config.PACK_ROOT / _SET
 DEV_MANIFEST = DEV / "gold" / "document_manifest.csv"
 DEV_DOCS = DEV / "documents"

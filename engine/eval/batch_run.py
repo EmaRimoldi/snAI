@@ -19,6 +19,8 @@ from realdoor.pipeline import group_by_household, process_household
 from score_extraction import bbox_hit, value_match
 
 ALL_SETS = ["official", "dev", "dev2", "dev3", "dev4", "dev5"]
+# The first fixture set predates the numbering; accept both spellings.
+_ALIASES = {"dev1": "dev", "synthetic_documents": "official"}
 
 
 def _paths(name):
@@ -31,7 +33,19 @@ def _paths(name):
             root / "gold" / "application_checklists.json")
 
 
+def _resolve_set(name: str) -> str:
+    name = _ALIASES.get(name, name)
+    if not _paths(name)[0].exists():
+        available = ["official"] + sorted(
+            p.name for p in config.PACK_ROOT.glob("dev*")
+            if (p / "gold" / "document_manifest.csv").exists())
+        raise SystemExit(f"unknown set '{name}' -- available: "
+                         f"{', '.join(available)} (dev1 = dev)")
+    return name
+
+
 def run_set(name: str, workers: int | None) -> dict:
+    name = _resolve_set(name)
     manifest, docs_dir, gold_path, checklists_path = _paths(name)
     jobs = []
     with open(manifest, newline="", encoding="utf-8") as handle:
