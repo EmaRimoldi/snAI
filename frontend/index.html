@@ -1,0 +1,1137 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="A calm application-readiness assistant for affordable housing paperwork.">
+<title>RealDoor — Housing paperwork, made clear</title>
+<link rel="icon" href="./logo.svg" type="image/svg+xml">
+<style>
+  @font-face {
+    font-family: "Public Sans";
+    src: url("./fonts/PublicSans-Variable.ttf") format("truetype");
+    font-style: normal;
+    font-weight: 100 900;
+    font-display: swap;
+  }
+
+  :root {
+    color-scheme: light;
+    --background: #faf6ef;
+    --foreground: #2a211c;
+    --primary: #b5654a;
+    --primary-dark: #914b37;
+    --primary-foreground: #ffffff;
+    --secondary: #e8dfcf;
+    --muted: #f2eadc;
+    --muted-foreground: #6f6259;
+    --input: #d5c6b4;
+    --danger: #a92d2d;
+  }
+
+  * { box-sizing: border-box; }
+
+  html {
+    min-width: 320px;
+    scroll-behavior: smooth;
+    background: var(--background);
+  }
+
+  body {
+    min-height: 100vh;
+    margin: 0;
+    overflow-x: hidden;
+    background: var(--background);
+    color: var(--foreground);
+    font: 16px/1.5 "Public Sans", system-ui, sans-serif;
+  }
+
+  button,
+  input,
+  select { font: inherit; }
+
+  button,
+  select,
+  a { -webkit-tap-highlight-color: transparent; }
+
+  [hidden] { display: none !important; }
+
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  :focus-visible {
+    outline: 3px solid var(--primary-dark);
+    outline-offset: 3px;
+  }
+
+  .hero-heading:focus,
+  .hero-heading:focus-visible,
+  .login-view h1:focus,
+  .login-view h1:focus-visible {
+    outline: none;
+  }
+
+  .skip-link {
+    position: fixed;
+    left: 1rem;
+    top: -5rem;
+    z-index: 50;
+    border-radius: 999px;
+    background: var(--foreground);
+    color: var(--background);
+    padding: 0.65rem 1rem;
+    font-weight: 700;
+  }
+
+  .skip-link:focus { top: 1rem; }
+
+  .site-header {
+    position: relative;
+    z-index: 20;
+    display: flex;
+    min-height: 6rem;
+    width: min(100%, 80rem);
+    margin: 0 auto;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1rem 2.5rem;
+  }
+
+  .brand-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.65rem;
+    border-radius: 0.75rem;
+    color: var(--primary);
+    text-decoration: none;
+  }
+
+  .brand-logo {
+    display: block;
+    width: 2rem;
+    height: 2rem;
+    flex: none;
+  }
+
+  .brand-name {
+    font-size: 1.05rem;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+  }
+
+  .nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    color: var(--muted-foreground);
+    font-size: 0.875rem;
+    font-weight: 650;
+  }
+
+  .language-control {
+    position: relative;
+    display: inline-flex;
+    min-height: 44px;
+    align-items: center;
+  }
+
+  .nav-icon {
+    position: absolute;
+    left: 0.65rem;
+    width: 1rem;
+    height: 1rem;
+    pointer-events: none;
+    fill: none;
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 2;
+  }
+
+  .language-select {
+    min-height: 44px;
+    appearance: none;
+    cursor: pointer;
+    border: 1px solid transparent;
+    border-radius: 999px;
+    background: transparent;
+    color: var(--muted-foreground);
+    padding: 0.4rem 1.85rem 0.4rem 2rem;
+    font-size: 0.875rem;
+    font-weight: 700;
+  }
+
+  .language-select:hover { background: color-mix(in srgb, var(--secondary) 60%, transparent); }
+
+  .select-chevron {
+    position: absolute;
+    right: 0.65rem;
+    top: 50%;
+    width: 0.875rem;
+    height: 0.875rem;
+    pointer-events: none;
+    transform: translateY(-50%);
+    fill: none;
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 2;
+  }
+
+  .login-link,
+  .back-link {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    border-radius: 0.4rem;
+    color: var(--muted-foreground);
+    text-decoration: none;
+  }
+
+  .login-link:hover,
+  .back-link:hover { color: var(--foreground); }
+
+  .icon-button {
+    display: inline-flex;
+    width: 44px;
+    min-height: 44px;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border: 1px solid var(--input);
+    border-radius: 50%;
+    background: transparent;
+    color: var(--foreground);
+  }
+
+  .icon-button:hover { background: var(--secondary); }
+
+  .account-panel {
+    position: absolute;
+    right: 2.5rem;
+    top: calc(100% - 0.65rem);
+    z-index: 25;
+    display: grid;
+    min-width: 14rem;
+    gap: 0.75rem;
+    padding: 0.85rem;
+    border: 1px solid var(--input);
+    border-radius: 1rem;
+    background: var(--background);
+  }
+
+  .account-panel p {
+    margin: 0;
+    overflow-wrap: anywhere;
+    color: var(--muted-foreground);
+    font-size: 0.9rem;
+  }
+
+  .secondary-button,
+  .primary-button {
+    min-height: 44px;
+    cursor: pointer;
+    border-radius: 999px;
+    padding: 0.65rem 1rem;
+    font-weight: 700;
+  }
+
+  .secondary-button {
+    border: 1px solid var(--primary);
+    background: transparent;
+    color: var(--primary-dark);
+  }
+
+  .secondary-button:hover { background: var(--secondary); }
+
+  .primary-button {
+    border: 1px solid var(--primary-dark);
+    background: var(--primary-dark);
+    color: var(--primary-foreground);
+  }
+
+  .primary-button:hover { background: #7d3e2e; }
+
+  .site-main {
+    width: min(100%, 72rem);
+    margin: 0 auto;
+    padding: 0 2.5rem 2rem;
+  }
+
+  .hero-section {
+    width: min(100%, 58rem);
+    margin: 0 auto;
+    padding-top: 2.75rem;
+    text-align: center;
+  }
+
+  .hero-heading {
+    max-width: 58rem;
+    margin: 0;
+    color: var(--foreground);
+    font-size: clamp(2.55rem, 6.2vw, 4.65rem);
+    font-weight: 700;
+    letter-spacing: -0.045em;
+    line-height: 1.06;
+    text-wrap: balance;
+  }
+
+  .hero-subheadline {
+    margin: 1rem 0 0;
+    color: var(--muted-foreground);
+    font-size: clamp(1.05rem, 2vw, 1.25rem);
+    letter-spacing: -0.01em;
+  }
+
+  .prompt-section {
+    width: min(100%, 46rem);
+    margin: 1.75rem auto 0;
+  }
+
+  .prompt-shell {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.65rem 0.75rem;
+    border: 1px solid var(--input);
+    border-radius: 1rem;
+    background: var(--background);
+    transition: border-color 160ms ease, background-color 160ms ease;
+  }
+
+  .prompt-shell:focus-within {
+    border-color: var(--primary);
+    outline: 2px solid color-mix(in srgb, var(--primary) 22%, transparent);
+    outline-offset: 1px;
+  }
+
+  .prompt-shell.is-dragging {
+    border-color: var(--primary);
+    background: color-mix(in srgb, var(--secondary) 42%, var(--background));
+  }
+
+  .prompt-icon-button,
+  .send-button {
+    position: relative;
+    display: inline-flex;
+    width: 44px;
+    min-width: 44px;
+    height: 44px;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border: 0;
+    border-radius: 50%;
+  }
+
+  .prompt-icon-button {
+    background: transparent;
+    color: var(--muted-foreground);
+  }
+
+  .prompt-icon-button svg,
+  .send-button svg {
+    width: 1.125rem;
+    height: 1.125rem;
+    fill: none;
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .prompt-icon-button svg { stroke-width: 2; }
+  .send-button svg { stroke-width: 2.25; }
+
+  .prompt-icon-button:hover { background: var(--secondary); color: var(--foreground); }
+
+  .file-badge {
+    position: absolute;
+    right: -0.1rem;
+    top: -0.1rem;
+    display: flex;
+    min-width: 1.05rem;
+    height: 1.05rem;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    background: var(--primary);
+    color: var(--primary-foreground);
+    font-size: 0.625rem;
+    font-weight: 800;
+    line-height: 1;
+  }
+
+  .prompt-form {
+    display: flex;
+    min-width: 0;
+    flex: 1;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .prompt-input {
+    min-width: 0;
+    width: 100%;
+    min-height: 44px;
+    flex: 1;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    color: var(--foreground);
+    font-size: 1rem;
+  }
+
+  .prompt-input::placeholder { color: var(--muted-foreground); opacity: 1; }
+
+  .send-button {
+    background: var(--primary);
+    color: var(--primary-foreground);
+  }
+
+  .send-button:hover:not(:disabled) { background: var(--primary-dark); }
+
+  .send-button:disabled {
+    cursor: not-allowed;
+    background: var(--secondary);
+    color: var(--muted-foreground);
+  }
+
+  .phase-section {
+    display: grid;
+    width: min(100%, 64rem);
+    margin: clamp(3rem, 5vw, 4rem) auto 0;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: clamp(1.25rem, 3vw, 2.25rem);
+  }
+
+  .phase-card {
+    display: flex;
+    min-height: 16rem;
+    flex-direction: column;
+    align-items: center;
+    padding: 2.5rem 2.25rem;
+    border-radius: 1.25rem;
+    background: color-mix(in srgb, var(--secondary) 55%, transparent);
+    text-align: center;
+  }
+
+  .phase-number {
+    display: flex;
+    width: 2.75rem;
+    height: 2.75rem;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: var(--primary);
+    color: var(--primary-foreground);
+    font-size: 1.25rem;
+    font-weight: 800;
+  }
+
+  .phase-card h2 {
+    margin: 1.25rem 0 0;
+    font-size: 1.25rem;
+    letter-spacing: -0.025em;
+  }
+
+  .phase-card p {
+    max-width: 17rem;
+    margin: 0.7rem 0 0;
+    color: var(--muted-foreground);
+    font-size: 0.95rem;
+    line-height: 1.6;
+  }
+
+  .login-view {
+    width: min(100%, 28rem);
+    margin: clamp(2rem, 7vw, 5rem) auto 0;
+    padding: 2rem;
+    border: 1px solid var(--input);
+    border-radius: 1.25rem;
+    background: color-mix(in srgb, var(--secondary) 38%, var(--background));
+  }
+
+  .back-link { margin-bottom: 1.5rem; gap: 0.45rem; }
+
+  .login-view h1 {
+    margin: 0;
+    font-size: 1.75rem;
+    letter-spacing: -0.035em;
+  }
+
+  .login-tagline {
+    margin: 0.35rem 0 1.75rem;
+    color: var(--muted-foreground);
+  }
+
+  .login-form { display: grid; gap: 1rem; }
+
+  .login-form label {
+    display: block;
+    margin-bottom: 0.35rem;
+    font-weight: 700;
+  }
+
+  .login-form input {
+    width: 100%;
+    min-height: 48px;
+    padding: 0.7rem 0.85rem;
+    border: 1px solid var(--input);
+    border-radius: 0.8rem;
+    background: var(--background);
+    color: var(--foreground);
+  }
+
+  .login-form input[aria-invalid="true"] { border: 2px solid var(--danger); }
+
+  .error,
+  .field-error { color: var(--danger); }
+
+  .error { margin: 0; font-weight: 700; }
+  .field-error { margin: 0.3rem 0 0; font-size: 0.9rem; }
+
+  @media (max-width: 720px) {
+    .site-header {
+      min-height: 5rem;
+      padding: 0.75rem 1.25rem;
+    }
+
+    .site-main { padding: 0 1.25rem 4rem; }
+    .hero-section { padding-top: 3.5rem; }
+    .phase-section { grid-template-columns: 1fr; gap: 1rem; }
+    .phase-card { min-height: auto; padding: 2rem 1.75rem; }
+    .account-panel { right: 1.25rem; }
+  }
+
+  @media (max-width: 440px) {
+    .site-header,
+    .site-main { padding-left: 1rem; padding-right: 1rem; }
+    .hero-section { padding-top: 2.5rem; }
+    .nav-actions { gap: 0.35rem; }
+    .language-select { padding-left: 1.9rem; padding-right: 1.7rem; }
+    .prompt-shell { padding: 0.45rem; }
+    .prompt-input { font-size: 0.93rem; }
+    .login-view { padding: 1.5rem 1.25rem; }
+    .account-panel { right: 1rem; left: 1rem; min-width: 0; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after {
+      scroll-behavior: auto !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main" data-i18n="accessibility.skip">Skip to main content</a>
+
+<header class="site-header">
+  <a id="brand-link" class="brand-link" href="#top" data-i18n-aria="nav.homeLabel" aria-label="RealDoor home">
+    <img class="brand-logo" src="./logo.svg" alt="">
+    <span class="brand-name">RealDoor</span>
+  </a>
+
+  <div class="nav-actions">
+    <label class="language-control">
+      <span class="visually-hidden" data-i18n="nav.languageLabel">Choose language</span>
+      <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <path d="M21.54 15H17a2 2 0 0 0-2 2v4.54"/>
+        <path d="M7 3.34V5a3 3 0 0 0 3 3a2 2 0 0 1 2 2c0 1.1.9 2 2 2a2 2 0 0 0 2-2c0-1.1.9-2 2-2h3.17"/>
+        <path d="M11 21.95V18a2 2 0 0 0-2-2a2 2 0 0 1-2-2v-1a2 2 0 0 0-2-2H2.05"/>
+        <circle cx="12" cy="12" r="10"/>
+      </svg>
+      <select id="language-select" class="language-select" aria-label="Choose language">
+        <option value="en">EN</option>
+        <option value="es">ES</option>
+      </select>
+      <svg class="select-chevron" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <path d="m6 9 6 6 6-6"/>
+      </svg>
+    </label>
+
+    <a id="login-link" class="login-link" href="#login" data-i18n="nav.login">Log in</a>
+
+    <button id="account-button" class="icon-button" type="button"
+            aria-expanded="false" aria-controls="account-panel" aria-label="Account" hidden>
+      <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <circle cx="12" cy="8" r="4" fill="currentColor"/>
+        <path d="M4 20.5 a8 8 0 0 1 16 0 Z" fill="currentColor"/>
+      </svg>
+    </button>
+  </div>
+
+  <div id="account-panel" class="account-panel" hidden>
+    <p id="account-email"></p>
+    <button id="signout" class="secondary-button" type="button" data-i18n="nav.signout">Sign out</button>
+  </div>
+</header>
+
+<main id="main" class="site-main">
+  <section id="view-landing" aria-labelledby="hero-heading">
+    <div id="top" class="hero-section">
+      <h1 id="hero-heading" class="hero-heading" tabindex="-1" data-i18n="hero.headline">
+        Preparing your documents has never been this easy.
+      </h1>
+      <p class="hero-subheadline" data-i18n="hero.subheadline">Housing paperwork, made clear.</p>
+    </div>
+
+    <section class="prompt-section" data-i18n-aria="input.sectionLabel" aria-label="Document assistant">
+      <div id="prompt-shell" class="prompt-shell">
+        <button id="upload-button" class="prompt-icon-button" type="button" aria-label="Upload files">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="m16 6-8.414 8.586a2 2 0 0 0 2.829 2.829l8.414-8.586a4 4 0 1 0-5.657-5.657l-8.379 8.551a6 6 0 1 0 8.485 8.485l8.379-8.551"/>
+          </svg>
+          <span id="file-badge" class="file-badge" hidden></span>
+        </button>
+        <input id="file-input" class="visually-hidden" type="file"
+               accept="image/*,.pdf,.doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+               multiple tabindex="-1">
+        <form id="prompt-form" class="prompt-form">
+          <input id="prompt-input" class="prompt-input" type="text"
+                 aria-label="Upload or describe your documents" autocomplete="off">
+          <button id="send-button" class="send-button" type="submit" aria-label="Send message" disabled>
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path d="m5 12 7-7 7 7"/>
+              <path d="M12 19V5"/>
+            </svg>
+          </button>
+        </form>
+        <span id="attachment-status" class="visually-hidden" role="status" aria-live="polite"></span>
+      </div>
+    </section>
+
+    <section class="phase-section" data-i18n-aria="phases.ariaLabel" aria-label="How RealDoor helps">
+      <article class="phase-card">
+        <span class="phase-number">1</span>
+        <h2 data-i18n="phases.profile.name">Profile</h2>
+        <p data-i18n="phases.profile.description">Upload your documents. Confirm what's true.</p>
+      </article>
+      <article class="phase-card">
+        <span class="phase-number">2</span>
+        <h2 data-i18n="phases.understand.name">Understand</h2>
+        <p data-i18n="phases.understand.description">Ask about the rules. Get the answer, with its source.</p>
+      </article>
+      <article class="phase-card">
+        <span class="phase-number">3</span>
+        <h2 data-i18n="phases.prepare.name">Prepare</h2>
+        <p data-i18n="phases.prepare.description">See what's missing. Export when you're ready.</p>
+      </article>
+    </section>
+  </section>
+
+  <section id="view-login" class="login-view" aria-labelledby="login-heading" hidden>
+    <a id="back-link" class="back-link" href="#top">
+      <span aria-hidden="true">←</span>
+      <span data-i18n="login.back">Back to RealDoor</span>
+    </a>
+    <h1 id="login-heading" tabindex="-1" data-i18n="login.heading">Log in</h1>
+    <p class="login-tagline" data-i18n="login.tagline">Application-readiness assistant</p>
+    <form id="login-form" class="login-form" novalidate>
+      <p id="form-error" class="error" role="alert" hidden></p>
+      <div>
+        <label for="email" data-i18n="login.emailLabel">Email address</label>
+        <input id="email" name="email" type="email" autocomplete="email"
+               required aria-describedby="email-error" autocapitalize="none" spellcheck="false">
+        <p id="email-error" class="field-error" hidden></p>
+      </div>
+      <div>
+        <label for="password" data-i18n="login.passwordLabel">Password</label>
+        <input id="password" name="password" type="password"
+               autocomplete="current-password" required aria-describedby="password-error">
+        <p id="password-error" class="field-error" hidden></p>
+      </div>
+      <button type="submit" id="submit" class="primary-button" data-i18n="login.submit">Log in</button>
+    </form>
+  </section>
+
+  <p id="status" role="status" aria-live="polite" class="visually-hidden"></p>
+</main>
+
+<script type="module">
+  import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+
+  // Publishable key: safe to expose by design (like an anon key).
+  const SUPABASE_URL = "https://zgfanoruqwftbqhhvtwg.supabase.co";
+  const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_ThFBIsq2HyTAGwuWgdVuNw_bvfUh6Vy";
+
+  const supabase = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+
+  const TYPE_SPEED_MS = 55;
+  const DELETE_SPEED_MS = 32;
+  const FULL_PHRASE_PAUSE_MS = 1100;
+  const BETWEEN_PHRASES_PAUSE_MS = 250;
+
+  const dictionaries = {
+    en: {
+      accessibility: { skip: "Skip to main content" },
+      nav: {
+        homeLabel: "RealDoor home",
+        languageLabel: "Choose language",
+        login: "Log in",
+        account: "Account",
+        signout: "Sign out"
+      },
+      hero: {
+        headline: "Preparing your documents has never been this easy.",
+        subheadline: "Housing paperwork, made clear."
+      },
+      input: {
+        sectionLabel: "Document assistant",
+        ariaLabel: "Upload or describe your documents",
+        uploadLabel: "Upload files",
+        sendLabel: "Send message",
+        attachmentStatus: "{count} files attached",
+        placeholders: [
+          "Drag your documents here",
+          "Ready when you are",
+          "One step at a time",
+          "Nothing is decided without you"
+        ]
+      },
+      phases: {
+        ariaLabel: "How RealDoor helps",
+        profile: {
+          name: "Profile",
+          description: "Upload your documents. Confirm what's true."
+        },
+        understand: {
+          name: "Understand",
+          description: "Ask about the rules. Get the answer, with its source."
+        },
+        prepare: {
+          name: "Prepare",
+          description: "See what's missing. Export when you're ready."
+        }
+      },
+      login: {
+        back: "Back to RealDoor",
+        heading: "Log in",
+        tagline: "Application-readiness assistant",
+        emailLabel: "Email address",
+        passwordLabel: "Password",
+        submit: "Log in",
+        emailRequired: "Error: Enter your email address.",
+        passwordRequired: "Error: Enter your password.",
+        incorrect: "Error: Incorrect email or password.",
+        genericError: "Error: We couldn't sign you in. Please try again.",
+        signingIn: "Signing in, please wait.",
+        signedIn: "Signed in successfully.",
+        signedOut: "Signed out."
+      },
+      titles: {
+        landing: "RealDoor — Housing paperwork, made clear",
+        login: "Log in — RealDoor"
+      }
+    },
+    es: {
+      accessibility: { skip: "Saltar al contenido principal" },
+      nav: {
+        homeLabel: "Inicio de RealDoor",
+        languageLabel: "Elegir idioma",
+        login: "Iniciar sesión",
+        account: "Cuenta",
+        signout: "Cerrar sesión"
+      },
+      hero: {
+        headline: "Preparar tus documentos nunca había sido tan fácil.",
+        subheadline: "Los trámites de vivienda, más claros."
+      },
+      input: {
+        sectionLabel: "Asistente de documentos",
+        ariaLabel: "Sube o describe tus documentos",
+        uploadLabel: "Subir archivos",
+        sendLabel: "Enviar mensaje",
+        attachmentStatus: "{count} archivos adjuntos",
+        placeholders: [
+          "Arrastra tus documentos aquí",
+          "Cuando tú quieras",
+          "Un paso a la vez",
+          "Nada se decide sin ti"
+        ]
+      },
+      phases: {
+        ariaLabel: "Cómo ayuda RealDoor",
+        profile: {
+          name: "Perfil",
+          description: "Sube tus documentos. Confirma qué es correcto."
+        },
+        understand: {
+          name: "Entender",
+          description: "Pregunta sobre las reglas. Recibe la respuesta con su fuente."
+        },
+        prepare: {
+          name: "Preparar",
+          description: "Revisa qué falta. Exporta cuando estés listo."
+        }
+      },
+      login: {
+        back: "Volver a RealDoor",
+        heading: "Iniciar sesión",
+        tagline: "Asistente para preparar tu solicitud",
+        emailLabel: "Correo electrónico",
+        passwordLabel: "Contraseña",
+        submit: "Iniciar sesión",
+        emailRequired: "Error: Introduce tu correo electrónico.",
+        passwordRequired: "Error: Introduce tu contraseña.",
+        incorrect: "Error: El correo o la contraseña son incorrectos.",
+        genericError: "Error: No pudimos iniciar sesión. Inténtalo de nuevo.",
+        signingIn: "Iniciando sesión, espera un momento.",
+        signedIn: "Sesión iniciada correctamente.",
+        signedOut: "Sesión cerrada."
+      },
+      titles: {
+        landing: "RealDoor — Los trámites de vivienda, más claros",
+        login: "Iniciar sesión — RealDoor"
+      }
+    }
+  };
+
+  const el = (id) => document.getElementById(id);
+  const viewLanding = el("view-landing");
+  const viewLogin = el("view-login");
+  const heroHeading = el("hero-heading");
+  const loginHeading = el("login-heading");
+  const loginLink = el("login-link");
+  const brandLink = el("brand-link");
+  const backLink = el("back-link");
+  const languageSelect = el("language-select");
+  const form = el("login-form");
+  const emailInput = el("email");
+  const passwordInput = el("password");
+  const formError = el("form-error");
+  const emailError = el("email-error");
+  const passwordError = el("password-error");
+  const statusEl = el("status");
+  const accountBtn = el("account-button");
+  const accountPanel = el("account-panel");
+  const accountEmail = el("account-email");
+  const signoutBtn = el("signout");
+  const promptShell = el("prompt-shell");
+  const promptForm = el("prompt-form");
+  const promptInput = el("prompt-input");
+  const uploadButton = el("upload-button");
+  const fileInput = el("file-input");
+  const fileBadge = el("file-badge");
+  const sendButton = el("send-button");
+  const attachmentStatus = el("attachment-status");
+
+  let language = "en";
+  let currentView = "landing";
+  let currentSession = null;
+  let busy = false;
+  let attachedFiles = [];
+  let dragDepth = 0;
+  let typewriterTimer = null;
+  let phraseIndex = 0;
+  let displayedText = "";
+  let deleting = false;
+
+  const reducedMotionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+  function translate(path) {
+    return path.split(".").reduce((value, part) => value?.[part], dictionaries[language]) ?? path;
+  }
+
+  function applyTranslations() {
+    document.documentElement.lang = language;
+    document.querySelectorAll("[data-i18n]").forEach((node) => {
+      node.textContent = translate(node.dataset.i18n);
+    });
+    document.querySelectorAll("[data-i18n-aria]").forEach((node) => {
+      node.setAttribute("aria-label", translate(node.dataset.i18nAria));
+    });
+    languageSelect.setAttribute("aria-label", translate("nav.languageLabel"));
+    accountBtn.setAttribute("aria-label", translate("nav.account"));
+    promptInput.setAttribute("aria-label", translate("input.ariaLabel"));
+    uploadButton.setAttribute("aria-label", translate("input.uploadLabel"));
+    sendButton.setAttribute("aria-label", translate("input.sendLabel"));
+    document.title = translate(currentView === "login" ? "titles.login" : "titles.landing");
+    clearErrors();
+    updateAttachmentState();
+    restartTypewriter();
+  }
+
+  function announce(message) { statusEl.textContent = message; }
+
+  function clearErrors() {
+    formError.hidden = true;
+    formError.textContent = "";
+    emailError.hidden = true;
+    emailError.textContent = "";
+    passwordError.hidden = true;
+    passwordError.textContent = "";
+    emailInput.removeAttribute("aria-invalid");
+    passwordInput.removeAttribute("aria-invalid");
+  }
+
+  function closeAccountPanel() {
+    accountPanel.hidden = true;
+    accountBtn.setAttribute("aria-expanded", "false");
+  }
+
+  function showLanding(session = currentSession, moveFocus = false) {
+    currentView = "landing";
+    currentSession = session;
+    viewLogin.hidden = true;
+    viewLanding.hidden = false;
+    closeAccountPanel();
+
+    if (session) {
+      accountEmail.textContent = session.user.email;
+      accountBtn.hidden = false;
+      loginLink.hidden = true;
+    } else {
+      accountEmail.textContent = "";
+      accountBtn.hidden = true;
+      loginLink.hidden = false;
+    }
+
+    document.title = translate("titles.landing");
+    if (moveFocus) heroHeading.focus();
+  }
+
+  function showLogin() {
+    currentView = "login";
+    viewLanding.hidden = true;
+    viewLogin.hidden = false;
+    loginLink.hidden = true;
+    accountBtn.hidden = true;
+    closeAccountPanel();
+    clearErrors();
+    document.title = translate("titles.login");
+    loginHeading.focus();
+  }
+
+  function updateAttachmentState() {
+    const count = attachedFiles.length;
+    fileBadge.hidden = count === 0;
+    fileBadge.textContent = count ? String(count) : "";
+    attachmentStatus.textContent = count
+      ? translate("input.attachmentStatus").replace("{count}", String(count))
+      : "";
+    updateSendState();
+  }
+
+  function updateSendState() {
+    sendButton.disabled = !promptInput.value.trim() && attachedFiles.length === 0;
+  }
+
+  function handleFiles(files) {
+    attachedFiles = Array.from(files);
+    console.log("Uploaded files:", attachedFiles.map((file) => file.name));
+    updateAttachmentState();
+  }
+
+  function stopTypewriter() {
+    if (typewriterTimer) window.clearTimeout(typewriterTimer);
+    typewriterTimer = null;
+  }
+
+  function restartTypewriter() {
+    stopTypewriter();
+    phraseIndex = 0;
+    displayedText = "";
+    deleting = false;
+    promptInput.placeholder = "";
+    runTypewriter();
+  }
+
+  function runTypewriter() {
+    stopTypewriter();
+    const phrases = translate("input.placeholders");
+
+    if (promptInput.value) {
+      promptInput.placeholder = "";
+      return;
+    }
+
+    if (reducedMotionQuery.matches) {
+      promptInput.placeholder = phrases[0] ?? "";
+      return;
+    }
+
+    const phrase = phrases[phraseIndex] ?? phrases[0] ?? "";
+    let delay = TYPE_SPEED_MS;
+
+    if (!deleting && displayedText.length < phrase.length) {
+      displayedText = phrase.slice(0, displayedText.length + 1);
+    } else if (!deleting) {
+      deleting = true;
+      delay = FULL_PHRASE_PAUSE_MS;
+    } else if (displayedText.length > 0) {
+      displayedText = phrase.slice(0, displayedText.length - 1);
+      delay = DELETE_SPEED_MS;
+    } else {
+      deleting = false;
+      phraseIndex = (phraseIndex + 1) % phrases.length;
+      delay = BETWEEN_PHRASES_PAUSE_MS;
+    }
+
+    promptInput.placeholder = displayedText;
+    typewriterTimer = window.setTimeout(runTypewriter, delay);
+  }
+
+  brandLink.addEventListener("click", (event) => {
+    event.preventDefault();
+    showLanding(currentSession, currentView === "login");
+  });
+
+  loginLink.addEventListener("click", (event) => {
+    event.preventDefault();
+    showLogin();
+  });
+
+  backLink.addEventListener("click", (event) => {
+    event.preventDefault();
+    showLanding(currentSession, true);
+  });
+
+  languageSelect.addEventListener("change", (event) => {
+    language = event.target.value === "es" ? "es" : "en";
+    applyTranslations();
+  });
+
+  accountBtn.addEventListener("click", () => {
+    const isOpen = !accountPanel.hidden;
+    accountPanel.hidden = isOpen;
+    accountBtn.setAttribute("aria-expanded", String(!isOpen));
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && !accountPanel.hidden) {
+      closeAccountPanel();
+      accountBtn.focus();
+    }
+  });
+
+  document.addEventListener("click", (event) => {
+    if (accountPanel.hidden) return;
+    if (!accountPanel.contains(event.target) && !accountBtn.contains(event.target)) {
+      closeAccountPanel();
+    }
+  });
+
+  uploadButton.addEventListener("click", () => fileInput.click());
+  fileInput.addEventListener("change", () => handleFiles(fileInput.files));
+
+  promptShell.addEventListener("dragenter", (event) => {
+    event.preventDefault();
+    dragDepth += 1;
+    promptShell.classList.add("is-dragging");
+  });
+
+  promptShell.addEventListener("dragover", (event) => {
+    event.preventDefault();
+    event.dataTransfer.dropEffect = "copy";
+  });
+
+  promptShell.addEventListener("dragleave", (event) => {
+    event.preventDefault();
+    dragDepth = Math.max(0, dragDepth - 1);
+    if (dragDepth === 0) promptShell.classList.remove("is-dragging");
+  });
+
+  promptShell.addEventListener("drop", (event) => {
+    event.preventDefault();
+    dragDepth = 0;
+    promptShell.classList.remove("is-dragging");
+    handleFiles(event.dataTransfer.files);
+  });
+
+  promptInput.addEventListener("input", () => {
+    updateSendState();
+    if (promptInput.value) {
+      stopTypewriter();
+      promptInput.placeholder = "";
+    } else {
+      restartTypewriter();
+    }
+  });
+
+  promptForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+    if (sendButton.disabled) return;
+    console.log("Submitted:", promptInput.value.trim(), attachedFiles);
+    promptInput.value = "";
+    attachedFiles = [];
+    fileInput.value = "";
+    updateAttachmentState();
+    restartTypewriter();
+  });
+
+  reducedMotionQuery.addEventListener("change", restartTypewriter);
+
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    if (busy) return;
+    clearErrors();
+
+    let firstInvalid = null;
+    if (!emailInput.value.trim()) {
+      emailError.textContent = translate("login.emailRequired");
+      emailError.hidden = false;
+      emailInput.setAttribute("aria-invalid", "true");
+      firstInvalid = emailInput;
+    }
+    if (!passwordInput.value) {
+      passwordError.textContent = translate("login.passwordRequired");
+      passwordError.hidden = false;
+      passwordInput.setAttribute("aria-invalid", "true");
+      firstInvalid = firstInvalid || passwordInput;
+    }
+    if (firstInvalid) {
+      announce("");
+      firstInvalid.focus();
+      return;
+    }
+
+    busy = true;
+    announce(translate("login.signingIn"));
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: emailInput.value.trim(),
+      password: passwordInput.value
+    });
+    busy = false;
+
+    if (error) {
+      announce("");
+      formError.textContent = error.message === "Invalid login credentials"
+        ? translate("login.incorrect")
+        : translate("login.genericError");
+      formError.hidden = false;
+      emailInput.focus();
+      return;
+    }
+
+    passwordInput.value = "";
+    showLanding(data.session);
+    announce(translate("login.signedIn"));
+    heroHeading.focus();
+  });
+
+  signoutBtn.addEventListener("click", async () => {
+    await supabase.auth.signOut();
+    showLanding(null);
+    announce(translate("login.signedOut"));
+    heroHeading.focus();
+  });
+
+  applyTranslations();
+  const { data: { session } } = await supabase.auth.getSession();
+  showLanding(session);
+</script>
+</body>
+</html>
