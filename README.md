@@ -1,126 +1,145 @@
-# RealDoor — Application-Readiness Copilot (Hack-Nation 2026 Challenge 03
+# RealDoor — Application-Readiness Copilot (Hack-Nation 2026, Challenge 03)
 
-Renter-side copilot that turns household documents into a human-confirmed profile, explains
-one affordable-housing program's rules with citations, flags missing or expired documents, and
-produces a renter-controlled application-readiness packet. **It prepares and validates the
-application — it never decides eligibility** (no approve / reject / score / rank / priority, ever).
-Challenge brief: [`challenge_03.pdf`](challenge_03.pdf).
+Renter-side copilot that turns household documents into a human-confirmed profile, explains one
+affordable-housing program's rules with citations, flags missing or expired documents, and produces
+a renter-controlled application-readiness packet. **It prepares and validates the application — it
+never decides eligibility** (no approve / reject / score / rank / priority, ever).
+Challenge brief: [`challenge_03.pdf`](challenge_03.pdf) · Live app:
+**https://realdoor-boston.vercel.app**
+
+```mermaid
+flowchart LR
+    R(["Renter's browser"])
+
+    subgraph V["Vercel · realdoor-boston.vercel.app"]
+        FE["Next.js frontend<br/>Profile · Understand · Prepare<br/>deterministic math, integer cents<br/>readiness receipt · i18n ×5"]
+        EN["Python engine /api/engine<br/>classify + extract<br/>page/bbox evidence + confidence"]
+    end
+
+    subgraph S["Supabase · project snAI"]
+        AUTH["anonymous auth · i18n tables"]
+        FN["understand-chat edge function<br/>policy gates · citations<br/>rate limits · decision-language lint"]
+        AUD[("ai_request_events<br/>metadata-only audit")]
+    end
+
+    OAI["OpenAI gpt-4o<br/>Structured Outputs · store: false"]
+
+    R --> FE
+    FE -- "PDF uploads" --> EN
+    EN -- "allowlisted fields + evidence" --> FE
+    FE --- AUTH
+    FE -- "chat: JWT + allowlisted numeric context" --> FN
+    FN -- "only if every gate passes" --> OAI
+    FN --> AUD
+```
+
+*The red line everywhere in this diagram: no component ever labels a person eligible, approved,
+denied, or ranked — the assistant refuses decision requests, and readiness always describes the
+**file**, never the person.*
 
 ## How it works
 
-A minimal entry point explains RealDoor in **three short steps**, then starts the flow.
-**One applicant = one application record**, built entirely from uploaded documents. Three global
-values are recomputed after **every** change and stay visible throughout:
+**One applicant = one application record**, built entirely from uploaded documents. Three header
+values recompute after **every** change: **Status** (phase ladder), **Gross Income** (deterministic,
+integer cents), **Errors** (rule flags on confirmed values). All are readiness / accuracy /
+completeness signals only — never a verdict. The flow is a strict three-phase pipeline (each step
+unlocks the next):
 
-| Value | What it is |
-|---|---|
-| **Status** | Current phase and completeness of the application |
-| **Gross Income** | Auto-aggregated from income fields extracted across the documents |
-| **Errors** | Missing required documents + unresolved / low-confidence fields |
+1. **Profile** — drag in synthetic PDFs; each is classified against a live checklist (*uploaded* vs
+   *still missing* — missing never hard-blocks). The engine extracts **only allowlisted fields**;
+   the renter reviews them one at a time — each with the **source page and bounding box highlighted
+   in the built-in PDF viewer**, a confidence score, and a plain-language explanation — then
+   confirms, corrects, or types the value. **Only confirmed values are used downstream.** Injected
+   document text is quarantined, never a field.
+2. **Understand** — the income table shows every source annualized by its stated frequency
+   (weekly ×52 … annual ×1) against the **frozen FY 2026 60% MTSP threshold** for the household
+   size, with formula, effective date, and sources. A **bounded AI assistant** answers rules
+   questions with `rule_id` citations and authority badges — greetings get a friendly reply,
+   out-of-scope questions get a soft abstain with tappable suggestions, decision requests get a
+   refusal.
+3. **Prepare** — file readiness (`READY_TO_REVIEW` / `NEEDS_REVIEW`, about the **file**) with coded,
+   evidence-linked reasons; a paper-style **SAMPLE readiness receipt** with in-place corrections and
+   print-to-PDF; packet download (never transmitted); and delete-session with a deletion proof.
 
-These are **readiness, accuracy and completeness signals only — never an eligibility verdict.**
-The flow is a strict three-phase pipeline, with progress tracked per phase:
+Cross-cutting: everything is reactive; the UI is **fully localized in five languages** (EN, ES, ZH,
+TL, VI — the most spoken in the US), switchable at any time; the six official challenge households
+reproduce the organizer oracle **exactly** through both the frontend and engine paths.
 
-1. **Upload** — documents (ID, pay stubs, benefit letters, …) are auto-classified against a
-   required-documents checklist that live-updates into *uploaded* vs *still missing (even if
-   required)*. Missing items never hard-block progress; they persist as errors until resolved.
-2. **Review** — the AI extracts structured fields; the renter validates them **one at a time**
-   (prev / next). Each field shows the **source document with the exact region highlighted**, a
-   **confidence score**, and a **plain-language explanation** of what it is and why it's needed —
-   then **confirm**, **correct** (a typed value overrides the extraction), or **ask the assistant**.
-   Every confirm/correct recomputes Gross Income and Errors.
-3. **Confirm** — a single summary of everything collected; the renter confirms (locked as *ready to
-   review* — about the **file**, not eligibility) or goes back to fix things.
+> The domain & safety law (red line, income math, readiness codes) lives in [`CLAUDE.md`](CLAUDE.md);
+> the visual system in [`FRONTEND-DESIGN.md`](FRONTEND-DESIGN.md); the AI layer's contract,
+> disclosure, and limits in [`AI_SPEC.md`](AI_SPEC.md); day-by-day decisions in
+> [`BUILDLOG.md`](BUILDLOG.md).
 
-Cross-cutting: an **AI assistant** (Help) opens from anywhere and knows the current application
-state, documents, fields, and errors; everything is **reactive** (any change propagates to Status,
-Gross Income, Errors, and the checklist); the UI is **fully localized in five languages**
-(EN, ES, ZH, TL, VI — the most spoken in the US), switchable at any time.
+## The AI assistant
 
-> The domain & safety law (no-eligibility red line, income math, readiness codes, the renter
-> journey) lives in [`CLAUDE.md`](CLAUDE.md); the visual & interaction system lives in
-> [`FRONTEND-DESIGN.md`](FRONTEND-DESIGN.md).
->
-> **Build status:** the entry landing + login + five-language i18n are built. The upload / review /
-> confirm surfaces and the extraction + rules engine described above are the product spec and are
-> **not built yet**.
+A narrow, grounded chat panel in the Understand step, served by the Supabase Edge Function
+[`supabase/functions/understand-chat`](supabase/functions/understand-chat):
 
-## Frontend
+- **Deterministic pre-gates** catch prompt injection, cross-applicant requests, protected-trait
+  inference, legal advice, vacancy questions, wrong-year thresholds, decision requests, greetings,
+  and "what are the rules?" — all without a model call.
+- In-scope questions go to **OpenAI `gpt-4o`** (Responses API, Structured Outputs, `store: false`)
+  with the frozen 11-rule corpus, an app guide, and an **allowlisted numeric context** — never
+  files, raw OCR, names, addresses, or filenames. A server-side integrity gate independently
+  recomputes all arithmetic before any model call.
+- Answers must cite; uncited answers are downgraded, verdict language is lint-rejected, and every
+  request is audited **metadata-only** in `ai_request_events` (RLS-denied to browsers) with per-user
+  rate limits (5/min, 30/day). If the function or provider is down, a local frozen-rule fallback
+  answers in the browser.
 
-**Next.js (App Router, TypeScript)** in [`frontend/`](frontend/) — the landing (hero, document
-prompt, phase cards), a five-language switch (EN/ES/ZH/TL/VI), and Supabase login. It began as a
-pixel-identical port of the original single-file page and grows from there.
-
-- **Live app:** https://realdoor-boston.vercel.app
-- **Hosting:** Vercel (project `realdoor-boston`, team `chefcurrys-projects`).
-- **Backend:** Supabase (project `snAI`, ref `zgfanoruqwftbqhhvtwg`, region eu-central-1)
-  provides **auth and the i18n tables today** (more database later). The URL and publishable key in
-  `lib/supabase.ts` are public by design (equivalent to the anon key) and can be overridden with
-  `NEXT_PUBLIC_SUPABASE_URL` / `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`. Real secrets (LLM keys etc.)
-  go in **API routes + Vercel env vars only**, never in client code. Demo login credentials: ask
-  Massimo.
-
-> Why not hosted on Supabase itself: Supabase deliberately rewrites `text/html`
-> responses to `text/plain` on the shared `*.supabase.co` domain (anti-phishing
-> policy, both Edge Functions and Storage), so it cannot serve web pages there.
-
-### Structure
+## Repository layout
 
 ```
-frontend/
-  app/            layout, page (view switching landing/login), globals.css
-  components/     SiteHeader, PromptShell, PhaseCards, LoginView
-  lib/            supabase.ts (client), dictionaries.ts (5-language strings),
-                  i18n.tsx (provider + Supabase overlay + hook)
-  public/         logo.svg, fonts/
-  next.config.ts  security headers (CSP etc.)
+frontend/   Next.js 16 app (App Router, strict TS) — pipeline UI, PDF viewer, AI chat,
+            receipt, i18n; api/ carries the Python engine when deployed
+engine/     Python extraction + rules engine (classify, extract, score) + fixtures/tests;
+            deployed as a Vercel Python function at /api/engine/*
+supabase/   understand-chat edge function + _shared policy/contract modules, tests
+            (node --test), migrations (i18n, ai_request_events)
+CLAUDE.md   project law · FRONTEND-DESIGN.md  design system · AI_SPEC.md  AI disclosure
 ```
 
-### Develop & deploy
+## Hosting & services
+
+- **Vercel** project `realdoor-boston` (team `chefcurrys-projects`) serves the frontend and the
+  Python engine function. **Pushes do not auto-deploy** — deploy manually (below).
+- **Supabase** project `snAI` (`zgfanoruqwftbqhhvtwg`, eu-central-1): anonymous auth, i18n tables,
+  the `understand-chat` function, and the AI audit table. The URL + publishable key in
+  `frontend/lib/supabase.ts` are public by design (anon-equivalent); real secrets
+  (`OPENAI_API_KEY`, `OPENAI_MODEL`) live **only** in Supabase Edge Function secrets.
+
+> Why the app isn't hosted on Supabase: the shared `*.supabase.co` domain rewrites `text/html` to
+> `text/plain` (anti-phishing), so it can't serve web pages.
+
+## Develop, test, deploy
 
 ```bash
 cd frontend
 npm install
-npm run dev        # http://localhost:3000
-npm run build      # must pass before pushing
+npm run dev            # http://localhost:3000  (NEXT_PUBLIC_ENGINE=mock for engine-less preview)
+npm run build          # must pass before pushing
 
-./deploy.sh        # manual production deploy (Vercel project: realdoor-boston)
+# AI policy + eval suites (from the repo root; Node ≥ 22 runs TS natively)
+node --test supabase/functions/tests/ai_policy.test.ts supabase/functions/tests/ai_eval.test.ts
+
+./frontend/deploy.sh   # manual production deploy to Vercel (no alias step — domains are attached)
 ```
 
-> Note: the `realdoor-boston.vercel.app` domain is still attached to the old
-> `snai` Vercel project, so `deploy.sh` adds an explicit `vercel alias set`
-> after deploying. Moving the domain to the `realdoor-boston` project in the
-> Vercel dashboard (Settings → Domains) makes plain `vercel deploy --prod`
-> sufficient.
+The engine's own tests and the six-household oracle fixtures live under `engine/tests/`.
+
+## Ground rules for all frontend work
+
+1. **Mobile friendly, always** — verified at 320 / 375 / 768 px, no horizontal overflow, touch
+   targets ≥ 44px.
+2. **WCAG 2.2 AA, always** — keyboard-complete, visible focus, labeled controls, no color-only
+   signaling, live-region announcements, AA contrast on the warm palette.
+3. **i18n is law** — every user-facing string ships in all five languages
+   (`frontend/lib/dictionaries.ts` / `lib/pipeline/copy.ts`, mirrored in Supabase
+   `i18n_translations`); never hardcode copy in components.
+4. **Never-strings** — no decision / approval / eligibility language anywhere: UI, logs, exports,
+   or model output. Refusals only, phrased in the negative.
 
 ## Local tooling (MCP)
 
-Two MCP servers are wired up for local agent workflows in [`.mcp.json`](.mcp.json) at the repo root
-— **gitignored on purpose** (machine-local, not committed):
-
-- **Playwright** (`@playwright/mcp`) — drive a real browser for E2E checks and responsive / visual
-  verification across breakpoints (320 → 1920 px).
-- **Remotion** (`@remotion/mcp`) — programmatic React video, e.g. a demo recording.
-
-Both run on demand via `npx …@latest`, so there's no install step. The repo-root
-[`.gitignore`](.gitignore) also covers OS/editor junk, root env files, and local Claude/MCP config;
-the Next.js app keeps its own `frontend/.gitignore` for build and dependency artifacts.
-
-### Ground rules for all frontend work
-
-1. **Mobile friendly, always** — responsive layout, verified at 320 / 375 / 768 px (and comfortable
-   up to large desktops), no horizontal overflow, the landing fits the viewport without scrolling on
-   a normal laptop, touch targets ≥ 44px.
-2. **WCAG 2.2 AA, always** (non-negotiable requirement of the challenge brief):
-   - Fully keyboard-operable (native controls, skip link, logical focus order)
-   - Visible focus indicator (3px outline on `:focus-visible`)
-   - Labeled controls; errors linked via `aria-describedby` + `aria-invalid`
-   - No color-only status: every error prefixed with text ("Error: …")
-   - Structured headings, focus moved to the view heading on navigation
-   - Clear completion announcements via the visually-hidden `role="status"` live
-     region ("Signed in successfully.", "Signed out.") — screen-reader only by design
-   - AA color contrast on the warm palette (see `globals.css` custom properties)
-3. **i18n** — every user-facing string lives in `lib/dictionaries.ts` with entries in
-   all five supported languages (EN, ES, ZH, TL, VI) and is mirrored in the Supabase
-   `i18n_translations` table (runtime override, bundled fallback). Never hardcode copy in components.
-```
+[`.mcp.json`](.mcp.json) (machine-local, gitignored) wires **Playwright** (browser E2E / responsive
+checks) and **Remotion** (programmatic demo video). Both run on demand via `npx …@latest`.
