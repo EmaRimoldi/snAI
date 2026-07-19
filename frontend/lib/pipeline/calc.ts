@@ -11,6 +11,7 @@ import type {
   DisplayStatus,
   ReadinessResult,
   ReviewReason,
+  ReviewReasonCode,
 } from "@/lib/pipeline/types";
 import type { PayFrequency } from "@/lib/pipeline/types";
 import { thresholdForSize } from "@/lib/data/mtsp2026";
@@ -198,7 +199,16 @@ export function computeGrossAnnualCents(
 
 function isExpired(dateStr: string): boolean {
   // "current" if dated on/after the 60-day window start (challenge convention).
-  const d = Date.parse(dateStr);
+  // A "YYYY-MM" statement month counts as its LAST covered day (engine parity).
+  const text = dateStr.trim();
+  let d: number;
+  if (/^\d{4}-\d{2}$/.test(text)) {
+    const year = Number(text.slice(0, 4));
+    const month = Number(text.slice(5, 7));
+    d = Date.UTC(year, month, 0); // day 0 of next month = last day of `month`
+  } else {
+    d = Date.parse(text);
+  }
   if (Number.isNaN(d)) return false;
   return d < Date.parse(CURRENCY_WINDOW_START);
 }
@@ -215,6 +225,7 @@ export function computeReadiness(
   documents: readonly DocumentRecord[],
   fields: readonly ExtractedField[],
   missingRequired: readonly string[],
+  householdSize: number | null,
 ): ReadinessResult {
   const reasons: ReviewReason[] = [];
 
@@ -222,12 +233,29 @@ export function computeReadiness(
   // "pending", not yet an inconsistency. Once the renter confirms (or corrects)
   // the involved values, the checks below fire independently of the rest.
 
-  // Employment letter currency (60-day window) — once its date is confirmed.
+  // Frozen 60-day currency convention over EVERY dated evidence document
+  // (mirrors the engine's DATE_FIELD map; one reason per expired code).
+  const DATE_FIELD: Partial<Record<DocumentType, string>> = {
+    employment_letter: "document_date",
+    benefit_letter: "document_date",
+    pay_stub: "pay_date",
+    gig_statement: "statement_month",
+  };
+  const EXPIRED_CODE: Partial<Record<DocumentType, ReviewReasonCode>> = {
+    employment_letter: "EMPLOYMENT_LETTER_EXPIRED",
+    benefit_letter: "BENEFIT_LETTER_EXPIRED",
+    pay_stub: "PAY_STUB_EXPIRED",
+    gig_statement: "GIG_STATEMENT_EXPIRED",
+  };
+  const expiredSeen = new Set<ReviewReasonCode>();
   for (const doc of documents) {
-    if (doc.documentType !== "employment_letter") continue;
-    const dateField = fields.find((f) => f.documentId === doc.id && f.key === "document_date");
+    const dateKey = DATE_FIELD[doc.documentType];
+    const code = EXPIRED_CODE[doc.documentType];
+    if (!dateKey || !code || expiredSeen.has(code)) continue;
+    const dateField = fields.find((f) => f.documentId === doc.id && f.key === dateKey);
     if (dateField && isResolved(dateField) && isExpired(dateField.value)) {
-      reasons.push({ code: "EMPLOYMENT_LETTER_EXPIRED", blocking: true, documentId: doc.id });
+      expiredSeen.add(code);
+      reasons.push({ code, blocking: true, documentId: doc.id });
     }
   }
 
@@ -237,6 +265,54 @@ export function computeReadiness(
     const receipts = fields.find((f) => f.documentId === doc.id && f.key === "gross_receipts");
     if (receipts && isResolved(receipts)) {
       reasons.push({ code: "GIG_INCOME_UNCORROBORATED", blocking: true, documentId: doc.id });
+    }
+  }
+
+  // Employer letter corroborates the RATE: a confirmed letter rate differing
+  // from every confirmed stub rate (beyond a cent) is a conflict; differing
+  // hours are just an approximate schedule, never a conflict.
+  const stubRates = documents
+    .filter((d) => d.documentType === "pay_stub")
+    .map((d) => fields.find((f) => f.documentId === d.id && f.key === "hourly_rate"))
+    .filter((f): f is ExtractedField => Boolean(f && isResolved(f)))
+    .map((f) => toCents(f.value))
+    .filter((cents) => cents > 0);
+  const letterRateField = documents
+    .filter((d) => d.documentType === "employment_letter")
+    .map((d) => fields.find((f) => f.documentId === d.id && f.key === "hourly_rate"))
+    .find((f) => f && isResolved(f));
+  if (letterRateField && stubRates.length > 0) {
+    const letterRate = toCents(letterRateField.value);
+    if (letterRate > 0 && stubRates.every((r) => Math.abs(r - letterRate) > 1)) {
+      reasons.push({
+        code: "EMPLOYMENT_RATE_CONFLICT",
+        blocking: true,
+        documentId: letterRateField.documentId,
+      });
+    }
+  }
+
+  // Self-declared amounts are never counted as documented income.
+  for (const doc of documents) {
+    if (doc.documentType !== "application_summary") continue;
+    const declared = fields.find((f) => f.documentId === doc.id && f.key === "declared_income");
+    if (declared && isResolved(declared)) {
+      reasons.push({ code: "UNVERIFIED_INCOME_CLAIM", blocking: true, documentId: doc.id });
+    }
+  }
+
+  // Threshold applicability + income evidence — only once nothing is pending,
+  // so "not confirmed yet" is never mislabelled as "missing".
+  const nothingPending = documents.length > 0 && fields.every((f) => isResolved(f));
+  if (nothingPending) {
+    if (householdSize === null) {
+      reasons.push({ code: "MISSING_HOUSEHOLD_SIZE", blocking: true });
+    } else if (thresholdForSize(householdSize) === null) {
+      reasons.push({ code: "NO_FROZEN_THRESHOLD", blocking: true });
+    }
+    const counted = deriveIncomeSources(documents, fields).some((s) => s.counted);
+    if (!counted) {
+      reasons.push({ code: "MISSING_INCOME_EVIDENCE", blocking: true });
     }
   }
 

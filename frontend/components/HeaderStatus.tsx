@@ -33,6 +33,11 @@ const TONE: Record<DisplayStatus, string> = {
 const ERROR_TARGET_FIELD: Partial<Record<ReviewReasonCode, string>> = {
   PAY_STUB_TOTAL_CONFLICT: "gross_pay",
   EMPLOYMENT_LETTER_EXPIRED: "document_date",
+  BENEFIT_LETTER_EXPIRED: "document_date",
+  PAY_STUB_EXPIRED: "pay_date",
+  GIG_STATEMENT_EXPIRED: "statement_month",
+  EMPLOYMENT_RATE_CONFLICT: "hourly_rate",
+  UNVERIFIED_INCOME_CLAIM: "declared_income",
   GIG_INCOME_UNCORROBORATED: "gross_receipts",
 };
 

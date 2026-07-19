@@ -265,12 +265,12 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
     () => computeGrossAnnualCents(documents, fields),
     [documents, fields],
   );
+  const household = useMemo(() => readHouseholdSize(fields), [fields]);
   const readiness = useMemo(
-    () => computeReadiness(documents, fields, missingRequired),
-    [documents, fields, missingRequired],
+    () => computeReadiness(documents, fields, missingRequired, household.size),
+    [documents, fields, missingRequired, household.size],
   );
   const errorCount = useMemo(() => computeErrorCount(readiness.reasons), [readiness.reasons]);
-  const household = useMemo(() => readHouseholdSize(fields), [fields]);
   const quarantineCount = useMemo(
     () => documents.filter((d) => d.quarantinedText).length,
     [documents],

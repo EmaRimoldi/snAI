@@ -264,3 +264,17 @@ an in-panel visual pass on the unlocked Understand chat is still worth a click-t
   implement (BENEFIT_LETTER/PAY_STUB/GIG_STATEMENT_EXPIRED, EMPLOYMENT_RATE_CONFLICT,
   MISSING_HOUSEHOLD_SIZE, MISSING_INCOME_EVIDENCE, NO_FROZEN_THRESHOLD, UNVERIFIED_INCOME_CLAIM) —
   the engine implements all of them and stays the authority for submission scoring.
+
+## 2026-07-19 — Frontend implements the full reason-code vocabulary; exact gold match on all splits
+
+- `computeReadiness` now mirrors the engine's full rule surface: generic 60-day currency over every
+  dated evidence doc (DATE_FIELD map incl. YYYY-MM statement months = last covered day) emitting
+  `<TYPE>_EXPIRED` per doc type; `EMPLOYMENT_RATE_CONFLICT` (letter rate vs stub rates, hours never
+  conflict); `UNVERIFIED_INCOME_CLAIM` (declared_income never counted); `MISSING_HOUSEHOLD_SIZE` /
+  `NO_FROZEN_THRESHOLD` / `MISSING_INCOME_EVIDENCE` (the latter three gated on "nothing pending"
+  so unconfirmed values are never mislabelled as missing).
+- ReviewReasonCode union +8; rc_/rcTitle_ strings ×5 languages; labels hooks and header error-menu
+  jump targets extended.
+- Verification: official 6/6 exact; dev1–dev6 53/53 households exact on income, comparison,
+  readiness status AND reason codes (zero remaining gaps). Engine remains authoritative for
+  submissions; the frontend now tells the same story.

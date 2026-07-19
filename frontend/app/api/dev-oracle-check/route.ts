@@ -81,7 +81,7 @@ export async function GET(request: Request) {
     const missingRequired = REQUIRED_CHECKLIST.filter((t) => !present.has(t));
 
     const incomeCents = computeGrossAnnualCents(documents, fields);
-    const readiness = computeReadiness(documents, fields, missingRequired);
+    const readiness = computeReadiness(documents, fields, missingRequired, householdSize);
     const comparison = compareToThreshold(incomeCents, thresholdCentsForSize(householdSize));
 
     results.push({
