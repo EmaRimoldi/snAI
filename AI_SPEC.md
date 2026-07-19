@@ -67,7 +67,7 @@ rendered messages only in component memory for the current page lifetime.
 - Provider: OpenAI
 - API: Responses API, Structured Outputs, `store: false`
 - Model: configured by the Supabase secret `OPENAI_MODEL`; baseline
-  `gpt-4o-mini`
+  `gpt-4o`
 - Terms: OpenAI API terms and usage policies
 - Training: API data is not used to train OpenAI models by default unless the
   customer explicitly opts in

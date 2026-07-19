@@ -143,7 +143,7 @@ type ProviderResult = {
 async function callOpenAI(request: ChatRequest, userId: string): Promise<ProviderResult> {
   const apiKey = env("OPENAI_API_KEY");
   if (!apiKey) throw new Error("OPENAI_API_KEY is not configured.");
-  const requestedModel = env("OPENAI_MODEL") || "gpt-4o-mini";
+  const requestedModel = env("OPENAI_MODEL") || "gpt-4o";
   const response = await fetch("https://api.openai.com/v1/responses", {
     method: "POST",
     headers: {
