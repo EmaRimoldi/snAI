@@ -214,6 +214,9 @@ a { -webkit-tap-highlight-color: transparent; }
   color: var(--muted-foreground);
   font-size: 0.875rem;
   font-weight: 650;
+  /* Must be able to shrink inside the header row — the status chips
+     ellipsize instead of pushing the page wider than the viewport. */
+  min-width: 0;
 }
 
 /* Header status chips — simple tinted boxes, no borders, no container. */
@@ -229,6 +232,7 @@ a { -webkit-tap-highlight-color: transparent; }
   align-items: center;
   gap: 0.4rem;
   min-width: 0;
+  max-width: 100%;
   padding: 0.3rem 0.7rem;
   border-radius: 0.6rem;
   font-size: 0.85rem;

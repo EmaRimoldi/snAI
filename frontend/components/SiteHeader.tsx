@@ -95,7 +95,7 @@ export default function SiteHeader({
           aria-current={activeView === "discover" ? "page" : undefined}
           onClick={onDiscover}
         >
-          Discover
+          {t("nav.discover")}
         </button>
         <div className="language-control" ref={languageControlRef}>
           <button

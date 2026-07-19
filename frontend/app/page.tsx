@@ -37,7 +37,7 @@ function RealDoorApp() {
 
   useEffect(() => {
     document.documentElement.lang = language;
-    document.title = view === "discover" ? "Discover properties — RealDoor" : t("titles.landing");
+    document.title = view === "discover" ? t("titles.discover") : t("titles.landing");
   }, [language, t, view]);
 
   useEffect(() => {

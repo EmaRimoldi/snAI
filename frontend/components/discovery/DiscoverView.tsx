@@ -4,6 +4,9 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import type { RefObject } from "react";
 import type { LatLngTuple, LayerGroup, Map, TileLayer } from "leaflet";
 import propertiesJson from "@/data/lihtc-properties.json";
+import { useCopy, fmt, type Copy } from "@/lib/pipeline/copy";
+import { useI18n } from "@/lib/i18n";
+import type { Language } from "@/lib/dictionaries";
 import styles from "./discovery.module.css";
 
 type LeafletApi = typeof import("leaflet");
@@ -36,13 +39,21 @@ type DiscoverViewProps = {
 
 const properties = propertiesJson as PropertyRecord[];
 
-const bedroomFields: Array<[keyof PropertyRecord, number, string]> = [
-  ["studio_units", 0, "Studio"],
-  ["one_bedroom_units", 1, "1 bedroom"],
-  ["two_bedroom_units", 2, "2 bedrooms"],
-  ["three_bedroom_units", 3, "3 bedrooms"],
-  ["four_bedroom_units", 4, "4 bedrooms"],
+const bedroomFields: Array<[keyof PropertyRecord, number, keyof Copy]> = [
+  ["studio_units", 0, "dvBrStudio"],
+  ["one_bedroom_units", 1, "dvBr1"],
+  ["two_bedroom_units", 2, "dvBr2"],
+  ["three_bedroom_units", 3, "dvBr3"],
+  ["four_bedroom_units", 4, "dvBr4"],
 ];
+
+const NUMBER_LOCALES: Record<Language, string> = {
+  en: "en-US",
+  es: "es-US",
+  zh: "zh-CN",
+  tl: "fil-PH",
+  vi: "vi-VN",
+};
 
 const referencePoints = {
   "boston-city-hall": { label: "Boston City Hall", latitude: 42.3601, longitude: -71.0589 },
@@ -61,8 +72,8 @@ function titleCase(value: string | number | undefined) {
     .replace(/\b[a-z]/g, (letter) => letter.toUpperCase());
 }
 
-function formatNumber(value: number | string | undefined) {
-  return Number.isFinite(Number(value)) ? Number(value).toLocaleString("en-US") : "Not reported";
+function formatNumber(value: number | string | undefined, locale: string, notReported: string) {
+  return Number.isFinite(Number(value)) ? Number(value).toLocaleString(locale) : notReported;
 }
 
 function escapeHtml(value: string | number | undefined) {
@@ -74,11 +85,12 @@ function escapeHtml(value: string | number | undefined) {
     .replaceAll("'", "&#039;");
 }
 
-function getBedroomLabel(property: PropertyRecord) {
+function getBedroomLabel(property: PropertyRecord, c: Copy) {
   const availableBedroomTypes = bedroomFields
     .filter(([field]) => Number(property[field] ?? 0) > 0)
     .sort((a, b) => a[1] - b[1]);
-  return availableBedroomTypes.at(-1)?.[2] ?? "Not reported";
+  const key = availableBedroomTypes.at(-1)?.[2];
+  return key ? String(c[key]) : c.dvNotReported;
 }
 
 function distanceMiles(
@@ -104,10 +116,10 @@ function propertyAddress(property: PropertyRecord) {
   } ${property.project_zip}`;
 }
 
-function buildTooltip(property: PropertyRecord) {
+function buildTooltip(property: PropertyRecord, photoAlt: string) {
   const image = property.image_url
     ? `<img src="${escapeHtml(property.image_url)}" alt="${escapeHtml(
-        property.image_alt || "Property exterior",
+        property.image_alt || photoAlt,
       )}" loading="lazy">`
     : "";
 
@@ -121,6 +133,9 @@ function buildTooltip(property: PropertyRecord) {
 }
 
 export default function DiscoverView({ headingRef }: DiscoverViewProps) {
+  const c = useCopy();
+  const { language } = useI18n();
+  const numberLocale = NUMBER_LOCALES[language];
   const [city, setCity] = useState("");
   const [bedroomField, setBedroomField] = useState("");
   const [near, setNear] = useState<keyof typeof referencePoints | "">("");
@@ -266,7 +281,7 @@ export default function DiscoverView({ headingRef }: DiscoverViewProps) {
         opacity: 1,
       });
 
-      marker.bindTooltip(buildTooltip(property), {
+      marker.bindTooltip(buildTooltip(property, c.dvPhotoAlt), {
         className: styles.propertyTooltip,
         direction: "top",
         offset: [0, -4],
@@ -306,7 +321,7 @@ export default function DiscoverView({ headingRef }: DiscoverViewProps) {
         map.setView([42.3601, -71.0589], 11);
       }
     });
-  }, [filteredProperties, mapReady, selectedDistance, selectedPropertyId, selectedReference]);
+  }, [c.dvPhotoAlt, filteredProperties, mapReady, selectedDistance, selectedPropertyId, selectedReference]);
 
   const resetSelectedAnd = (next: () => void) => {
     setSelectedPropertyId(null);
@@ -322,8 +337,8 @@ export default function DiscoverView({ headingRef }: DiscoverViewProps) {
   };
 
   const distanceText = selectedProperty && selectedReference
-    ? `${distanceMiles(selectedProperty, selectedReference).toFixed(1)} mi`
-    : "Choose a location";
+    ? fmt(c.dvMi, { d: distanceMiles(selectedProperty, selectedReference).toFixed(1) })
+    : c.dvChooseLocation;
 
   return (
     <section id="view-discover" className={styles.discoverView} aria-labelledby="discover-heading">
@@ -336,21 +351,23 @@ export default function DiscoverView({ headingRef }: DiscoverViewProps) {
               className={styles.discoverTitle}
               tabIndex={-1}
             >
-              Discover properties
+              {c.dvTitle}
             </h1>
-            <p className={styles.discoverRecordCount}>PlaceHolder</p>
+            <p className={styles.discoverRecordCount}>
+              {fmt(c.dvCount, { n: filteredProperties.length })}
+            </p>
           </div>
         </div>
 
-        <section className={styles.discoverFilters} aria-label="Property filters">
+        <section className={styles.discoverFilters} aria-label={c.dvFiltersAria}>
           <div className={styles.filterField}>
-            <label htmlFor="city-filter">City</label>
+            <label htmlFor="city-filter">{c.dvCity}</label>
             <select
               id="city-filter"
               value={city}
               onChange={(event) => resetSelectedAnd(() => setCity(event.target.value))}
             >
-              <option value="">All cities</option>
+              <option value="">{c.dvCityAll}</option>
               {cityOptions.map((option) => (
                 <option key={option} value={option}>
                   {titleCase(option)}
@@ -360,23 +377,23 @@ export default function DiscoverView({ headingRef }: DiscoverViewProps) {
           </div>
 
           <div className={styles.filterField}>
-            <label htmlFor="bedroom-filter">Bedrooms</label>
+            <label htmlFor="bedroom-filter">{c.dvBedrooms}</label>
             <select
               id="bedroom-filter"
               value={bedroomField}
               onChange={(event) => resetSelectedAnd(() => setBedroomField(event.target.value))}
             >
-              <option value="">Any bedrooms</option>
-              {bedroomFields.map(([field, , label]) => (
+              <option value="">{c.dvBedroomsAny}</option>
+              {bedroomFields.map(([field, , labelKey]) => (
                 <option key={String(field)} value={String(field)}>
-                  {label}
+                  {String(c[labelKey])}
                 </option>
               ))}
             </select>
           </div>
 
           <div className={styles.filterField}>
-            <label htmlFor="near-filter">Near</label>
+            <label htmlFor="near-filter">{c.dvNear}</label>
             <select
               id="near-filter"
               value={near}
@@ -388,7 +405,7 @@ export default function DiscoverView({ headingRef }: DiscoverViewProps) {
                 })
               }
             >
-              <option value="">No location</option>
+              <option value="">{c.dvNearNone}</option>
               {Object.entries(referencePoints).map(([value, point]) => (
                 <option key={value} value={value}>
                   {point.label}
@@ -399,23 +416,24 @@ export default function DiscoverView({ headingRef }: DiscoverViewProps) {
 
           {selectedReference && (
             <div className={styles.filterField}>
-              <label htmlFor="distance-filter">Within</label>
+              <label htmlFor="distance-filter">{c.dvWithin}</label>
               <select
                 id="distance-filter"
                 value={distance}
                 onChange={(event) => resetSelectedAnd(() => setDistance(event.target.value))}
               >
-                <option value="">Any distance</option>
-                <option value="2">Within 2 mi</option>
-                <option value="5">Within 5 mi</option>
-                <option value="10">Within 10 mi</option>
-                <option value="25">Within 25 mi</option>
+                <option value="">{c.dvAnyDistance}</option>
+                {["2", "5", "10", "25"].map((mi) => (
+                  <option key={mi} value={mi}>
+                    {fmt(c.dvWithinMi, { mi })}
+                  </option>
+                ))}
               </select>
             </div>
           )}
 
           <button className={styles.clearFiltersButton} type="button" onClick={clearFilters}>
-            Clear filters
+            {c.dvClear}
           </button>
         </section>
       </div>
@@ -423,30 +441,30 @@ export default function DiscoverView({ headingRef }: DiscoverViewProps) {
       <div
         className={`${styles.discoverShell} ${selectedProperty ? "" : styles.isMapOnly}`}
       >
-        <div className={styles.discoverMap} aria-label="Map of public LIHTC property records">
+        <div className={styles.discoverMap} aria-label={c.dvMapAria}>
           <div ref={mapContainerRef} className={styles.leafletMap} />
-          <div className={styles.mapModeToggle} aria-label="Map style">
+          <div className={styles.mapModeToggle} aria-label={c.dvMapStyleAria}>
             <button
               className={mapStyle === "standard" ? styles.isActive : ""}
               type="button"
               onClick={() => setMapStyle("standard")}
             >
-              Map
+              {c.dvMapStandard}
             </button>
             <button
               className={mapStyle === "satellite" ? styles.isActive : ""}
               type="button"
               onClick={() => setMapStyle("satellite")}
             >
-              Satellite
+              {c.dvMapSatellite}
             </button>
           </div>
           {filteredProperties.length === 0 && (
-            <div className={styles.mapEmptyState}>No records match these filters.</div>
+            <div className={styles.mapEmptyState}>{c.dvNoRecords}</div>
           )}
         </div>
 
-        <aside className={styles.propertyDetail} aria-live="polite" aria-label="Selected property details">
+        <aside className={styles.propertyDetail} aria-live="polite" aria-label={c.dvDetailAria}>
           {selectedProperty ? (
             <>
               {selectedProperty.image_url && (
@@ -454,7 +472,7 @@ export default function DiscoverView({ headingRef }: DiscoverViewProps) {
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={selectedProperty.image_url}
-                    alt={selectedProperty.image_alt || "Property exterior"}
+                    alt={selectedProperty.image_alt || c.dvPhotoAlt}
                     loading="lazy"
                   />
                 </div>
@@ -476,7 +494,7 @@ export default function DiscoverView({ headingRef }: DiscoverViewProps) {
                 <button
                   className={styles.propertyDetailClose}
                   type="button"
-                  aria-label="Close property details"
+                  aria-label={c.dvCloseDetail}
                   onClick={() => setSelectedPropertyId(null)}
                 >
                   ×
@@ -484,50 +502,50 @@ export default function DiscoverView({ headingRef }: DiscoverViewProps) {
               </div>
 
               <div className={styles.unknownCard}>
-                <strong>Availability unknown</strong>
+                <strong>{c.dvAvailabilityUnknown}</strong>
               </div>
 
               <dl className={styles.detailGrid}>
                 <div className={styles.detailRow}>
-                  <dt>Low-income units</dt>
-                  <dd>{formatNumber(selectedProperty.low_income_units)}</dd>
+                  <dt>{c.dvLowIncomeUnits}</dt>
+                  <dd>{formatNumber(selectedProperty.low_income_units, numberLocale, c.dvNotReported)}</dd>
                 </div>
                 <div className={styles.detailRow}>
-                  <dt>Total units</dt>
-                  <dd>{formatNumber(selectedProperty.total_units)}</dd>
+                  <dt>{c.dvTotalUnits}</dt>
+                  <dd>{formatNumber(selectedProperty.total_units, numberLocale, c.dvNotReported)}</dd>
                 </div>
                 <div className={styles.detailRow}>
-                  <dt>Bedrooms</dt>
-                  <dd>{getBedroomLabel(selectedProperty)}</dd>
+                  <dt>{c.dvBedroomsRow}</dt>
+                  <dd>{getBedroomLabel(selectedProperty, c)}</dd>
                 </div>
                 <div className={styles.detailRow}>
-                  <dt>Distance</dt>
+                  <dt>{c.dvDistance}</dt>
                   <dd>{distanceText}</dd>
                 </div>
                 <div className={styles.detailRow}>
-                  <dt>Year placed</dt>
-                  <dd>{selectedProperty.year_placed_in_service || "Not reported"}</dd>
+                  <dt>{c.dvYearPlaced}</dt>
+                  <dd>{selectedProperty.year_placed_in_service || c.dvNotReported}</dd>
                 </div>
                 <div className={styles.detailRow}>
-                  <dt>Source</dt>
-                  <dd>HUD LIHTC public data</dd>
+                  <dt>{c.dvSource}</dt>
+                  <dd>{c.dvHudSource}</dd>
                 </div>
               </dl>
 
               <div className={styles.detailActions}>
                 <a href={selectedProperty.source_url} target="_blank" rel="noopener noreferrer">
-                  View source
+                  {c.dvViewSource}
                 </a>
                 <button
                   type="button"
                   onClick={() => navigator.clipboard?.writeText(propertyAddress(selectedProperty))}
                 >
-                  Copy address
+                  {c.dvCopyAddress}
                 </button>
               </div>
             </>
           ) : (
-            <p className={styles.discoverNote}>Select a property on the map to view public details.</p>
+            <p className={styles.discoverNote}>{c.dvSelectPrompt}</p>
           )}
         </aside>
       </div>

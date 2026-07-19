@@ -7,7 +7,7 @@
 import { Fragment, useEffect, useMemo, useRef, useState } from "react";
 import { useApp } from "@/lib/pipeline/state";
 import type { DocumentRecord, DocumentType, ExtractedField } from "@/lib/pipeline/types";
-import { useCopy, fmt } from "@/lib/pipeline/copy";
+import { useCopy, fmt, type Copy } from "@/lib/pipeline/copy";
 import { CURRENCY_WINDOW_START, LOW_CONFIDENCE } from "@/lib/pipeline/calc";
 import { confidenceColor } from "@/lib/pipeline/confidence";
 import { useDocumentGuides } from "@/lib/pipeline/documentGuides";
@@ -60,53 +60,37 @@ const BENEFIT_AMOUNT_FIELDS = [
   "annual_benefit",
 ];
 
-function humanize(key: string): string {
-  return key.replace(/_/g, " ").replace(/\b\w/g, (m) => m.toUpperCase());
-}
-
-function docLabel(t: DocumentType): string {
-  const map: Record<DocumentType, string> = {
-    application_summary: "Application summary",
-    pay_stub: "Pay stub",
-    employment_letter: "Employment letter",
-    benefit_letter: "Benefit letter",
-    gig_statement: "Gig statement",
-    unknown: "Document",
-  };
-  return map[t];
-}
-
-function expectedSlots(labels: Record<DocumentType, string>): UploadSlot[] {
+function expectedSlots(labels: Record<DocumentType, string>, t: Copy): UploadSlot[] {
   return [
     {
       type: "application_summary",
       label: labels.application_summary,
       required: true,
-      description: "Identity, household size, address, application date.",
+      description: t.slotDescApplication,
     },
     {
       type: "pay_stub",
       label: labels.pay_stub,
       required: true,
-      description: "Gross pay, cadence, hours, rate, period dates.",
+      description: t.slotDescPayStub,
     },
     {
       type: "employment_letter",
       label: labels.employment_letter,
       required: true,
-      description: "Employer rate, schedule, document date.",
+      description: t.slotDescEmployment,
     },
     {
       type: "benefit_letter",
       label: labels.benefit_letter,
       required: false,
-      description: "If applicable: recurring benefit amount and frequency.",
+      description: t.slotDescBenefit,
     },
     {
       type: "gig_statement",
       label: labels.gig_statement,
       required: false,
-      description: "If applicable: monthly gross receipts and platform fees.",
+      description: t.slotDescGig,
     },
   ];
 }
@@ -136,8 +120,11 @@ function buildConsistencyWarnings(args: {
   fields: ExtractedField[];
   slots: UploadSlot[];
   slotDocumentIds: Partial<Record<DocumentType, string>>;
+  t: Copy;
+  docLabels: Record<DocumentType, string>;
+  fieldLabel: (key: string) => string;
 }): ConsistencyWarning[] {
-  const { documents, fields, slots, slotDocumentIds } = args;
+  const { documents, fields, slots, slotDocumentIds, t, docLabels, fieldLabel } = args;
   const warnings: ConsistencyWarning[] = [];
   const seen = new Set<string>();
   const documentsById = new Map(documents.map((document) => [document.id, document]));
@@ -181,8 +168,8 @@ function buildConsistencyWarnings(args: {
         add({
           id: `missing-required-${slot.type}`,
           tone: "danger",
-          title: `${slot.label} missing`,
-          detail: "Upload this required document before final review.",
+          title: fmt(t.wMissingRequiredTitle, { doc: slot.label }),
+          detail: t.wMissingRequiredDetail,
           slotType: slot.type,
         });
       }
@@ -193,8 +180,8 @@ function buildConsistencyWarnings(args: {
       add({
         id: `type-mismatch-${slot.type}-${document.id}`,
         tone: "danger",
-        title: "Document type mismatch",
-        detail: `${slot.label} was parsed as ${docLabel(document.documentType)}. Check that the uploaded file is in the right slot.`,
+        title: t.wTypeMismatchTitle,
+        detail: fmt(t.wTypeMismatchDetail, { slot: slot.label, parsed: docLabels[document.documentType] }),
         documentId: document.id,
       });
     }
@@ -203,8 +190,8 @@ function buildConsistencyWarnings(args: {
       add({
         id: `low-classify-${document.id}`,
         tone: "warning",
-        title: "Low document confidence",
-        detail: `${slot.label} classification is ${Math.round(document.classifyConfidence * 100)}%. Check the document type before continuing.`,
+        title: t.wLowDocTitle,
+        detail: fmt(t.wLowDocDetail, { slot: slot.label, pct: Math.round(document.classifyConfidence * 100) }),
         documentId: document.id,
       });
     }
@@ -217,8 +204,8 @@ function buildConsistencyWarnings(args: {
       add({
         id: `missing-fields-${slot.type}-${document.id}`,
         tone: "warning",
-        title: "Missing extracted fields",
-        detail: `${slot.label}: ${missingFields.map(humanize).join(", ")}. Review or enter manually if needed.`,
+        title: t.wMissingFieldsTitle,
+        detail: fmt(t.wMissingFieldsDetail, { slot: slot.label, list: missingFields.map(fieldLabel).join(", ") }),
         documentId: document.id,
       });
     }
@@ -236,8 +223,8 @@ function buildConsistencyWarnings(args: {
     add({
       id: `duplicate-file-${group[0].fileName}`,
       tone: "warning",
-      title: "Possible duplicate file",
-      detail: `${group.length} uploads use the same file name: ${group[0].fileName}.`,
+      title: t.wDupFileTitle,
+      detail: fmt(t.wDupFileDetail, { n: group.length, name: group[0].fileName }),
       documentId: group[0].id,
     });
   }
@@ -254,8 +241,8 @@ function buildConsistencyWarnings(args: {
     add({
       id: `duplicate-type-${type}`,
       tone: "warning",
-      title: "Possible duplicate document type",
-      detail: `${group.length} ${docLabel(type)} documents were uploaded. Check whether all are intended.`,
+      title: t.wDupTypeTitle,
+      detail: fmt(t.wDupTypeDetail, { n: group.length, doc: docLabels[type] }),
       documentId: group[0].id,
     });
   }
@@ -275,8 +262,8 @@ function buildConsistencyWarnings(args: {
     add({
       id: "name-mismatch",
       tone: "warning",
-      title: "Applicant name mismatch",
-      detail: `Different names detected: ${names.join(", ")}. Check that all documents belong to the same file.`,
+      title: t.wNameMismatchTitle,
+      detail: fmt(t.wNameMismatchDetail, { names: names.join(", ") }),
       documentId: firstField?.documentId,
       fieldId: firstField?.id,
     });
@@ -288,9 +275,9 @@ function buildConsistencyWarnings(args: {
       add({
         id: `extraction-error-${document.id}`,
         tone: "danger",
-        title: "Parser could not extract this document",
+        title: t.wExtractErrorTitle,
         detail: document.extractionError.includes("tesseract")
-          ? "OCR is unavailable locally, so this scanned/rasterized document needs Tesseract or manual review."
+          ? t.wExtractErrorOcr
           : document.extractionError,
         documentId: document.id,
       });
@@ -301,8 +288,8 @@ function buildConsistencyWarnings(args: {
       add({
         id: `low-fields-${document.id}`,
         tone: "warning",
-        title: "Low confidence fields",
-        detail: `${docLabel(document.documentType)}: ${lowFields.map((field) => humanize(field.key)).join(", ")}.`,
+        title: t.wLowFieldsTitle,
+        detail: fmt(t.wLowFieldsDetail, { doc: docLabels[document.documentType], list: lowFields.map((field) => fieldLabel(field.key)).join(", ") }),
         documentId: document.id,
         fieldId: lowFields[0].id,
       });
@@ -312,8 +299,8 @@ function buildConsistencyWarnings(args: {
       add({
         id: `quarantine-${document.id}`,
         tone: "danger",
-        title: "Untrusted instruction detected",
-        detail: "The parser quarantined adversarial or unrelated instruction text from this document.",
+        title: t.wQuarantineTitle,
+        detail: t.wQuarantineDetail,
         documentId: document.id,
       });
     }
@@ -329,8 +316,12 @@ function buildConsistencyWarnings(args: {
         add({
           id: `pay-total-${document.id}`,
           tone: "danger",
-          title: "Pay stub total mismatch",
-          detail: `Gross pay does not match hours × rate (${regularHours} × $${hourlyRate.toFixed(2)} ≈ $${computedGross.toFixed(2)}).`,
+          title: t.wPayTotalTitle,
+          detail: fmt(t.wPayTotalDetail, {
+            hours: regularHours,
+            rate: `$${hourlyRate.toFixed(2)}`,
+            total: `$${computedGross.toFixed(2)}`,
+          }),
           documentId: document.id,
           fieldId: fieldByKey(document.id, "gross_pay")?.id,
         });
@@ -340,8 +331,8 @@ function buildConsistencyWarnings(args: {
       add({
         id: `net-over-gross-${document.id}`,
         tone: "danger",
-        title: "Net pay exceeds gross pay",
-        detail: "Net pay should not be higher than gross pay. Check the extraction.",
+        title: t.wNetOverTitle,
+        detail: t.wNetOverDetail,
         documentId: document.id,
         fieldId: fieldByKey(document.id, "net_pay")?.id,
       });
@@ -353,8 +344,8 @@ function buildConsistencyWarnings(args: {
       add({
         id: `pay-period-order-${document.id}`,
         tone: "danger",
-        title: "Pay period dates look reversed",
-        detail: "Pay period start is after pay period end.",
+        title: t.wPeriodOrderTitle,
+        detail: t.wPeriodOrderDetail,
         documentId: document.id,
         fieldId: fieldByKey(document.id, "pay_period_start")?.id,
       });
@@ -367,8 +358,8 @@ function buildConsistencyWarnings(args: {
         add({
           id: `employment-stale-${document.id}`,
           tone: "danger",
-          title: "Employment letter may be stale",
-          detail: "The document date is outside the 60-day currency window.",
+          title: t.wEmploymentStaleTitle,
+          detail: t.wEmploymentStaleDetail,
           documentId: document.id,
           fieldId: dateField?.id,
         });
@@ -379,8 +370,8 @@ function buildConsistencyWarnings(args: {
       add({
         id: `gig-corroboration-${document.id}`,
         tone: "warning",
-        title: "Gig income needs corroboration",
-        detail: "Gig receipts are annualized, but should be reviewed against supporting evidence.",
+        title: t.wGigTitle,
+        detail: t.wGigDetail,
         documentId: document.id,
         fieldId: fieldByKey(document.id, "gross_receipts")?.id,
       });
@@ -409,8 +400,9 @@ export default function ProfileStep() {
   } = useApp();
 
   const slots = useMemo(
-    () => expectedSlots(docLabels),
+    () => expectedSlots(docLabels, c),
     [
+      c,
       docLabels.application_summary,
       docLabels.pay_stub,
       docLabels.employment_letter,
@@ -519,8 +511,8 @@ export default function ProfileStep() {
           : c.stConfirmed
     : "";
   const consistencyWarnings = useMemo(
-    () => buildConsistencyWarnings({ documents, fields, slots, slotDocumentIds }),
-    [documents, fields, slots, slotDocumentIds],
+    () => buildConsistencyWarnings({ documents, fields, slots, slotDocumentIds, t: c, docLabels, fieldLabel }),
+    [documents, fields, slots, slotDocumentIds, c, docLabels, fieldLabel],
   );
   const activeGuide = activeGuideType ? documentGuides[activeGuideType] : null;
   const orderedSlots = useMemo(() => {
@@ -686,7 +678,7 @@ export default function ProfileStep() {
           className={s.playButton}
           onClick={startParsing}
           disabled={!canParse}
-          aria-label="Start parsing"
+          aria-label={c.wAriaStartParsing}
         >
           <span aria-hidden="true" />
         </button>
@@ -863,7 +855,7 @@ export default function ProfileStep() {
       {reviewOpen && documents.length > 0 && (
         <>
           {doc ? (
-            <section className={s.card} aria-label="Reviewer" ref={reviewSectionRef}>
+            <section className={s.card} aria-label={c.wAriaReviewer} ref={reviewSectionRef}>
               {doc?.quarantinedText && (
                 <div className={s.quarantine} role="note">
                   <p className={s.quarantineHead}>
@@ -875,11 +867,11 @@ export default function ProfileStep() {
               )}
 
               {consistencyWarnings.length > 0 && (
-                <section className={s.warningPanel} aria-label="Upload consistency warnings">
+                <section className={s.warningPanel} aria-label={c.wAriaPanel}>
                   <div className={s.warningPanelHead}>
                     <div>
-                      <p className={s.warningEyebrow}>Warnings</p>
-                      <h3>Consistency checks</h3>
+                      <p className={s.warningEyebrow}>{c.wEyebrow}</p>
+                      <h3>{c.wTitle}</h3>
                     </div>
                     <span>{consistencyWarnings.length}</span>
                   </div>
@@ -900,7 +892,7 @@ export default function ProfileStep() {
                           className={s.warningOpenButton}
                           onClick={() => openConsistencyWarning(warning)}
                         >
-                          {warning.documentId || warning.fieldId ? "Open" : "Upload"}
+                          {warning.documentId || warning.fieldId ? c.wOpen : c.wUpload}
                         </button>
                       </li>
                     ))}
@@ -911,7 +903,7 @@ export default function ProfileStep() {
               {field ? (
                 <>
               <div className={s.fieldNavBar}>
-                <div className={s.reviewMeta} aria-label="Review progress">
+                <div className={s.reviewMeta} aria-label={c.wAriaProgress}>
                   <span className={s.documentChip}>{labelForDocument(doc)}</span>
                   <span aria-hidden="true">·</span>
                   <span>{fmt(c.documentOf, { n: currentDocumentIndex + 1, total: reviewDocuments.length })}</span>
@@ -1073,7 +1065,7 @@ export default function ProfileStep() {
                     <h3 className={s.fieldKey} ref={fieldHeadingRef} tabIndex={-1}>
                       {labelForDocument(doc)}
                     </h3>
-                    <p className={s.hint}>No extracted fields for this document yet.</p>
+                    <p className={s.hint}>{c.wNoFields}</p>
                   </div>
                   <DocumentPreview doc={doc} field={undefined} fields={[]} />
                 </div>

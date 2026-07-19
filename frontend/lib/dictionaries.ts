@@ -24,6 +24,7 @@ const en = {
   nav: {
     homeLabel: "RealDoor home",
     languageLabel: "Choose language",
+    discover: "Discover",
     login: "Log in",
     account: "Account",
     signout: "Sign out",
@@ -97,6 +98,7 @@ const en = {
   },
   titles: {
     landing: "RealDoor — Housing paperwork, made clear",
+    discover: "Discover properties — RealDoor",
     login: "Log in — RealDoor",
   },
 };
@@ -108,6 +110,7 @@ const es: Dictionary = {
   nav: {
     homeLabel: "Inicio de RealDoor",
     languageLabel: "Elegir idioma",
+    discover: "Descubre",
     login: "Iniciar sesión",
     account: "Cuenta",
     signout: "Cerrar sesión",
@@ -181,6 +184,7 @@ const es: Dictionary = {
   },
   titles: {
     landing: "RealDoor — Los trámites de vivienda, más claros",
+    discover: "Descubre propiedades — RealDoor",
     login: "Iniciar sesión — RealDoor",
   },
 };
@@ -190,6 +194,7 @@ const zh: Dictionary = {
   nav: {
     homeLabel: "RealDoor 首页",
     languageLabel: "选择语言",
+    discover: "发现房源",
     login: "登录",
     account: "账户",
     signout: "退出登录",
@@ -256,6 +261,7 @@ const zh: Dictionary = {
   },
   titles: {
     landing: "RealDoor — 住房手续，一目了然",
+    discover: "发现房源 — RealDoor",
     login: "登录 — RealDoor",
   },
 };
@@ -265,6 +271,7 @@ const tl: Dictionary = {
   nav: {
     homeLabel: "RealDoor home",
     languageLabel: "Pumili ng wika",
+    discover: "Tuklasin",
     login: "Mag-log in",
     account: "Account",
     signout: "Mag-sign out",
@@ -338,6 +345,7 @@ const tl: Dictionary = {
   },
   titles: {
     landing: "RealDoor — Mga papeles sa pabahay, ginawang malinaw",
+    discover: "Tuklasin ang mga property — RealDoor",
     login: "Mag-log in — RealDoor",
   },
 };
@@ -347,6 +355,7 @@ const vi: Dictionary = {
   nav: {
     homeLabel: "Trang chủ RealDoor",
     languageLabel: "Chọn ngôn ngữ",
+    discover: "Khám phá",
     login: "Đăng nhập",
     account: "Tài khoản",
     signout: "Đăng xuất",
@@ -417,6 +426,7 @@ const vi: Dictionary = {
   },
   titles: {
     landing: "RealDoor — Thủ tục nhà ở, rõ ràng hơn",
+    discover: "Khám phá nhà ở — RealDoor",
     login: "Đăng nhập — RealDoor",
   },
 };
