@@ -1,0 +1,13 @@
+# Upload filter for `vercel deploy`. NOTE: this file REPLACES .gitignore for
+# deploys — api/_engine/ is gitignored but MUST upload (deploy.sh creates it).
+node_modules
+.next
+out
+.vercel
+*.tsbuildinfo
+.env
+.env.*
+start.log
+deploy-out.txt
+e2e-shots
+e2e-*.mjs

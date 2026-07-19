@@ -76,7 +76,7 @@ const STREETS = ["Blue Hill Ave", "Dorchester Ave", "Massachusetts Ave", "Centre
 // ---- public API -------------------------------------------------------------
 
 export async function classifyDocument(file: File): Promise<ClassifyResult> {
-  if (ENGINE.startsWith("http")) {
+  if (ENGINE.startsWith("http") || ENGINE.startsWith("/")) {
     const { httpClassify } = await import("@/lib/engine/http");
     return httpClassify(ENGINE, file);
   }
@@ -92,7 +92,7 @@ export async function extractFields(doc: {
   fileName: string;
   documentType: DocumentType;
 }): Promise<ExtractResult> {
-  if (ENGINE.startsWith("http")) {
+  if (ENGINE.startsWith("http") || ENGINE.startsWith("/")) {
     const { httpExtract } = await import("@/lib/engine/http");
     return httpExtract(doc);
   }
