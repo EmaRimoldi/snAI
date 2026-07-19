@@ -343,7 +343,7 @@ Verify layouts at **320 / 375 / 768 / 1024 / 1440px** with no horizontal overflo
 | `frontend/app/layout.tsx` | Root layout, `<html lang>`, metadata, favicon (`icons: "/logo.svg"`) |
 | `frontend/app/page.tsx` | View switching, Supabase session, focus management, live-region status |
 | `frontend/components/SiteHeader.tsx` | Header: brand and custom language menu |
-| `frontend/components/HeroSellingPoints.tsx` | Hero headline and delayed selling-point typewriter cycle |
+| `frontend/components/HeroSellingPoints.tsx` | Hero headline and selling-point typewriter loop |
 | `frontend/components/LoginView.tsx` | Accessible email/password sign-in |
 | `frontend/components/PromptShell.tsx` | Prompt input, drag-drop upload, typewriter placeholder |
 | `frontend/components/PhaseCards.tsx` | The 3 phase cards |

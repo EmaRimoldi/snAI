@@ -29,10 +29,9 @@ const en = {
     signout: "Sign out",
   },
   hero: {
-    headline: "Preparing your documents has never been this easy.",
+    rotatingHeadline: "Housing paperwork in minutes.",
     subheadline: "Housing paperwork, made clear.",
-    sellingPoints: [
-      "Housing paperwork in minutes.",
+    rotatingSellingPoints: [
       "Catch missing details early.",
       "Save on preparation fees.",
       "Safe checks. Published rules.",
@@ -99,10 +98,9 @@ const es: Dictionary = {
     signout: "Cerrar sesión",
   },
   hero: {
-    headline: "Preparar tus documentos nunca había sido tan fácil.",
+    rotatingHeadline: "Documentos listos en minutos.",
     subheadline: "Los trámites de vivienda, más claros.",
-    sellingPoints: [
-      "Documentos listos en minutos.",
+    rotatingSellingPoints: [
       "Detecta a tiempo lo que falta.",
       "Ahorra en la preparación.",
       "Revisiones seguras. Reglas vigentes.",
@@ -167,10 +165,9 @@ const zh: Dictionary = {
     signout: "退出登录",
   },
   hero: {
-    headline: "准备文件从未如此简单。",
+    rotatingHeadline: "住房文件，几分钟完成。",
     subheadline: "住房手续，一目了然。",
-    sellingPoints: [
-      "住房文件，几分钟完成。",
+    rotatingSellingPoints: [
       "尽早发现缺失信息。",
       "节省准备费用。",
       "安全检查，依据公开规则。",
@@ -235,10 +232,9 @@ const tl: Dictionary = {
     signout: "Mag-sign out",
   },
   hero: {
-    headline: "Hindi pa naging ganito kadali ang paghahanda ng iyong mga dokumento.",
+    rotatingHeadline: "Papeles, handa sa ilang minuto.",
     subheadline: "Mga papeles sa pabahay, ginawang malinaw.",
-    sellingPoints: [
-      "Papeles, handa sa ilang minuto.",
+    rotatingSellingPoints: [
       "Maagang makita ang kulang.",
       "Makatipid sa paghahanda.",
       "Ligtas. Ayon sa patakaran.",
@@ -303,10 +299,9 @@ const vi: Dictionary = {
     signout: "Đăng xuất",
   },
   hero: {
-    headline: "Chuẩn bị giấy tờ chưa bao giờ dễ dàng đến thế.",
+    rotatingHeadline: "Hồ sơ sẵn sàng trong vài phút.",
     subheadline: "Thủ tục nhà ở, rõ ràng hơn.",
-    sellingPoints: [
-      "Hồ sơ sẵn sàng trong vài phút.",
+    rotatingSellingPoints: [
       "Phát hiện sớm phần còn thiếu.",
       "Tiết kiệm phí chuẩn bị.",
       "Kiểm tra an toàn. Theo quy định.",
