@@ -106,10 +106,27 @@ export function deriveIncomeSources(
   const countedStubId =
     stubs.length > 0 ? [...stubs].sort((a, b) => payDate(b) - payDate(a))[0].id : undefined;
 
+  // §8: a stub's recurring basis is regular_hours × hourly_rate when both are
+  // confirmed (the internally consistent figure — on a printed-total conflict
+  // this basis wins, never the printed gross, never an average or max).
+  // Stubs without hours/rate fall back to the printed gross.
+  const stubBasisCents = (f: ExtractedField): number => {
+    const rate = fields.find((x) => x.documentId === f.documentId && x.key === "hourly_rate");
+    const hours = fields.find((x) => x.documentId === f.documentId && x.key === "regular_hours");
+    if (rate && hours && isResolved(rate) && isResolved(hours)) {
+      const hoursNum = Number(hours.value);
+      const rateCents = toCents(rate.value);
+      if (Number.isFinite(hoursNum) && hoursNum > 0 && rateCents > 0) {
+        return Math.round(rateCents * hoursNum);
+      }
+    }
+    return toCents(f.value);
+  };
+
   return resolvedIncome.map((f) => {
     const documentType = docType(f.documentId);
     const frequency = f.incomeFrequency ?? "monthly";
-    const periodCents = toCents(f.value);
+    const periodCents = documentType === "pay_stub" ? stubBasisCents(f) : toCents(f.value);
     const counted = documentType !== "pay_stub" || f.id === countedStubId;
     return {
       fieldId: f.id,

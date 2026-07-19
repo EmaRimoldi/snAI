@@ -224,3 +224,16 @@ overflow comes from the pre-existing header nav, not the receipt), ES localizati
   NEXT_PUBLIC_DEMO_HOUSEHOLD; NEXT_PUBLIC_DEMO_STEP=understand debug mode auto-confirms and jumps.
 - Verified HH-003 end-to-end in-browser: Pay $1,155×26 + Benefit $850×12 = $40,230 vs $92,580
   (size 3), header shows the READY-with-missing-letter oracle quirk as informational.
+
+## 2026-07-19 — Oracle verification of the full main-branch pipeline (frontend + engine)
+
+- New dev-only diagnostic `frontend/app/api/dev-oracle-check/route.ts`: runs the REAL frontend
+  pipeline (engine adapter + calc.ts) over all six official households' PDFs server-side,
+  simulating full renter confirmation; returns computed values only (expectations stay outside
+  product code — the caller compares against the oracle).
+- **Found & fixed a §8 violation:** the frontend annualized a pay stub's PRINTED gross, so HH-002
+  computed $72,540 instead of $49,920. `deriveIncomeSources` now uses the internally consistent
+  basis (regular_hours × hourly_rate, printed-gross fallback when absent) — engine-aligned.
+- Result: all six households reproduce the oracle EXACTLY through the frontend path (income,
+  readiness status, blocking codes, comparison). Engine path re-verified separately after the
+  classifier fix (batch_run official: 159/159 fields, 6/6 households, 0 LLM calls).
