@@ -87,7 +87,12 @@ function RealDoorApp() {
       />
 
       <main id="main" className="site-main">
-        <section id="view-landing" aria-labelledby="hero-heading" hidden={view !== "landing"}>
+        <section
+          id="view-landing"
+          className="landing-view"
+          aria-labelledby="hero-heading"
+          hidden={view !== "landing"}
+        >
           <div id="top" className="hero-section">
             <h1 id="hero-heading" className="hero-heading" ref={heroHeadingRef} tabIndex={-1}>
               {t("hero.headline")}

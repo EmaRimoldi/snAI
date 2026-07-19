@@ -29,8 +29,10 @@ html {
 }
 
 body {
-  min-height: 100vh;
+  min-height: 100dvh;
   margin: 0;
+  display: flex;
+  flex-direction: column;
   overflow-x: hidden;
   background: var(--background);
   color: var(--foreground);
@@ -89,13 +91,13 @@ a { -webkit-tap-highlight-color: transparent; }
   position: relative;
   z-index: 20;
   display: flex;
-  min-height: 6rem;
+  min-height: clamp(4.5rem, 10vh, 6rem);
   width: min(100%, 80rem);
   margin: 0 auto;
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  padding: 1rem 2.5rem;
+  padding: clamp(0.5rem, 1.5vh, 1rem) 2.5rem;
 }
 
 .brand-link {
@@ -254,15 +256,29 @@ a { -webkit-tap-highlight-color: transparent; }
 .primary-button:hover { background: #7d3e2e; }
 
 .site-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
   width: min(100%, 72rem);
   margin: 0 auto;
-  padding: 0 2.5rem 2rem;
+  padding: 0 2.5rem clamp(0.75rem, 2vh, 2rem);
+}
+
+/* The landing fills the space under the header and distributes its three
+   blocks so the whole page fits the viewport on desktop; on small screens
+   the content is taller than the viewport and scrolls naturally. */
+.landing-view {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(1rem, 3.5vh, 2.5rem);
 }
 
 .hero-section {
   width: min(100%, 58rem);
   margin: 0 auto;
-  padding-top: 2.75rem;
   text-align: center;
 }
 
@@ -270,7 +286,7 @@ a { -webkit-tap-highlight-color: transparent; }
   max-width: 58rem;
   margin: 0;
   color: var(--foreground);
-  font-size: clamp(2.55rem, 6.2vw, 4.65rem);
+  font-size: clamp(2.2rem, min(6.2vw, 8vh), 4.65rem);
   font-weight: 700;
   letter-spacing: -0.045em;
   line-height: 1.06;
@@ -278,15 +294,15 @@ a { -webkit-tap-highlight-color: transparent; }
 }
 
 .hero-subheadline {
-  margin: 1rem 0 0;
+  margin: clamp(0.5rem, 1.5vh, 1rem) 0 0;
   color: var(--muted-foreground);
-  font-size: clamp(1.05rem, 2vw, 1.25rem);
+  font-size: clamp(1rem, min(2vw, 2.6vh), 1.25rem);
   letter-spacing: -0.01em;
 }
 
 .prompt-section {
   width: min(100%, 46rem);
-  margin: 1.75rem auto 0;
+  margin: 0 auto;
 }
 
 .prompt-shell {
@@ -401,17 +417,17 @@ a { -webkit-tap-highlight-color: transparent; }
 .phase-section {
   display: grid;
   width: min(100%, 64rem);
-  margin: clamp(3rem, 5vw, 4rem) auto 0;
+  margin: 0 auto;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: clamp(1.25rem, 3vw, 2.25rem);
 }
 
 .phase-card {
   display: flex;
-  min-height: 16rem;
+  min-height: clamp(9rem, 24vh, 16rem);
   flex-direction: column;
   align-items: center;
-  padding: 2.5rem 2.25rem;
+  padding: clamp(1.25rem, 3.5vh, 2.5rem) 2.25rem;
   border-radius: 1.25rem;
   background: color-mix(in srgb, var(--secondary) 55%, transparent);
   text-align: center;
@@ -446,7 +462,7 @@ a { -webkit-tap-highlight-color: transparent; }
 
 .login-view {
   width: min(100%, 28rem);
-  margin: clamp(2rem, 7vw, 5rem) auto 0;
+  margin: auto;
   padding: 2rem;
   border: 1px solid var(--input);
   border-radius: 1.25rem;
@@ -499,7 +515,9 @@ a { -webkit-tap-highlight-color: transparent; }
   }
 
   .site-main { padding: 0 1.25rem 4rem; }
-  .hero-section { padding-top: 3.5rem; }
+  /* Stacked cards are taller than a phone screen: flow from the top and
+     let the page scroll naturally instead of centering. */
+  .landing-view { justify-content: flex-start; padding-top: 2rem; }
   .phase-section { grid-template-columns: 1fr; gap: 1rem; }
   .phase-card { min-height: auto; padding: 2rem 1.75rem; }
   .account-panel { right: 1.25rem; }
@@ -508,7 +526,7 @@ a { -webkit-tap-highlight-color: transparent; }
 @media (max-width: 440px) {
   .site-header,
   .site-main { padding-left: 1rem; padding-right: 1rem; }
-  .hero-section { padding-top: 2.5rem; }
+  .landing-view { padding-top: 1.25rem; }
   .nav-actions { gap: 0.35rem; }
   .language-select { padding-left: 1.9rem; padding-right: 1.7rem; }
   .prompt-shell { padding: 0.45rem; }

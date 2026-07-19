@@ -279,6 +279,14 @@ Fluid-first: containers use `min(100%, Nrem)`, type and gaps use `clamp()`, so m
 media queries. Guards: `html { min-width: 320px }`, `body { overflow-x: hidden }`. There is **no**
 custom viewport override — Next.js injects `width=device-width, initial-scale=1`.
 
+**Viewport-fit landing (no vertical scroll on desktop):** `body` is a `100dvh` flex column, header
+on top, `.site-main` takes `flex: 1`, and `.landing-view` centers its three blocks with
+`gap: clamp(1rem, 3.5vh, 2.5rem)`. Height-aware `clamp(..., Nvh, ...)` values compress the header,
+hero type, card `min-height`, and paddings on short screens, so the whole landing fits the viewport
+on any reasonable desktop size (verified 1280×620 through 1920×1080). The login card centers with
+`margin: auto`. On `≤720px` (stacked cards taller than a phone screen) `.landing-view` switches to
+`flex-start` and the page scrolls naturally — keep that behavior.
+
 | Breakpoint | Changes |
 |---|---|
 | `≤ 720px` | header `min-height: 5rem`, tighter padding; main padding `0 1.25rem 4rem`; **phase grid → 1 column**; cards `min-height: auto`; account panel right-aligned |
