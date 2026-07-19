@@ -43,8 +43,14 @@ npm install
 npm run dev        # http://localhost:3000
 npm run build      # must pass before pushing
 
-vercel deploy --prod --yes   # manual deploy (Vercel auto-detects Next.js)
+./deploy.sh        # manual production deploy (Vercel project: realdoor-boston)
 ```
+
+> Note: the `realdoor-boston.vercel.app` domain is still attached to the old
+> `snai` Vercel project, so `deploy.sh` adds an explicit `vercel alias set`
+> after deploying. Moving the domain to the `realdoor-boston` project in the
+> Vercel dashboard (Settings → Domains) makes plain `vercel deploy --prod`
+> sufficient.
 
 ### Ground rules for all frontend work
 
