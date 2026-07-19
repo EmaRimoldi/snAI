@@ -2,8 +2,14 @@
 
 import { useEffect, useRef, useState } from "react";
 import type { Session } from "@supabase/supabase-js";
-import { useI18n } from "@/lib/i18n";
+import { SUPPORTED_LANGUAGES, useI18n } from "@/lib/i18n";
 import type { Language } from "@/lib/i18n";
+
+const LANGUAGE_CODES = new Set<string>(SUPPORTED_LANGUAGES.map((entry) => entry.code));
+
+function isLanguage(value: string): value is Language {
+  return LANGUAGE_CODES.has(value);
+}
 
 type SiteHeaderProps = {
   view: "landing" | "login";
@@ -88,12 +94,16 @@ export default function SiteHeader({
             className="language-select"
             aria-label={t("nav.languageLabel")}
             value={language}
-            onChange={(event) =>
-              setLanguage(event.target.value === "es" ? "es" : ("en" as Language))
-            }
+            onChange={(event) => {
+              const next = event.target.value;
+              if (isLanguage(next)) setLanguage(next);
+            }}
           >
-            <option value="en">EN</option>
-            <option value="es">ES</option>
+            {SUPPORTED_LANGUAGES.map((entry) => (
+              <option key={entry.code} value={entry.code}>
+                {entry.label}
+              </option>
+            ))}
           </select>
           <svg className="select-chevron" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
             <path d="m6 9 6 6 6-6" />

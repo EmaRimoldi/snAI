@@ -65,5 +65,7 @@ npm run build      # must pass before pushing
    - Clear completion announcements via the visually-hidden `role="status"` live
      region ("Signed in successfully.", "Signed out.") — screen-reader only by design
    - AA color contrast on the warm palette (see `globals.css` custom properties)
-3. **i18n** — every user-facing string lives in `lib/i18n.tsx` (EN + ES). Never
-   hardcode copy in components.
+3. **i18n** — every user-facing string lives in `lib/dictionaries.ts` with entries in
+   all five supported languages (EN, ES, ZH, TL, VI — the most spoken in the US) and is
+   mirrored in the Supabase `i18n_translations` table (runtime override, bundled
+   fallback). Never hardcode copy in components.

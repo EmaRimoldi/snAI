@@ -78,12 +78,16 @@ The user has chosen to **document both** the built stack and the challenge's ref
 
 - **Frontend:** Next.js 16 + React 19 + TypeScript 5 (App Router), under [`frontend/`](frontend/).
 - **Auth/backend service:** `@supabase/supabase-js` v2 → Supabase-as-a-service (project ref
-  `zgfanoruqwftbqhhvtwg`, `eu-central-1`). **Auth only today**; database "later". Called directly from
-  the browser. The Supabase URL + publishable key are **public by design** (anon-equivalent) — fine
-  to keep in the repo; real secrets never go here.
+  `zgfanoruqwftbqhhvtwg`, `eu-central-1`). **Auth + the i18n tables today**; more database "later".
+  Called directly from the browser. The Supabase URL + publishable key are **public by design**
+  (anon-equivalent) — fine to keep in the repo; real secrets never go here.
 - **Hosting:** Vercel (project `realdoor-boston`, team `chefcurrys-projects`).
-- **Design:** self-hosted Public Sans; warm terracotta-on-cream; strong WCAG 2.2 AA; EN/ES i18n.
-  CSP + security headers in `frontend/next.config.ts`.
+- **Design:** self-hosted Public Sans; warm terracotta-on-cream; strong WCAG 2.2 AA. CSP + security
+  headers in `frontend/next.config.ts`.
+- **i18n: five languages — the most spoken in the US** (`en`, `es`, `zh`, `tl`, `vi`). Bundled
+  dictionaries in `frontend/lib/dictionaries.ts` (typed: every language must carry every key);
+  Supabase tables `i18n_languages` / `i18n_translations` (public read via RLS) mirror them and are
+  fetched at load as runtime overrides, with the bundled copy as the offline fallback.
 - **No backend/engine exists yet** — no extraction, income math, rules, safety, or persistence code.
   The prompt/upload UI is a stub (`console.log`, nothing sent anywhere).
 
@@ -262,8 +266,13 @@ denial / priority decision (and it risks DQ). Accessibility is scored per the br
 - **Small & cohesive:** files < 800 lines, functions < 50 lines, nesting ≤ 4 (early returns). Organize
   by feature/surface.
 - **No hardcoded secrets.** (The Supabase URL + publishable key are public-by-design and excepted.)
-- **All user-facing strings via i18n**, with both EN and ES entries. Keep the calm, non-decisional
-  voice.
+- **All user-facing strings via i18n — this is law.** Every string ships in **all five supported
+  languages** (`en`, `es`, `zh`, `tl`, `vi` — the five most spoken languages in the US): add it to
+  `frontend/lib/dictionaries.ts` (the `Dictionary` type makes a missing language a compile error)
+  **and** to the Supabase `i18n_translations` table (the shared store; public read via RLS, the app
+  overlays it on the bundled dictionaries at load, bundled copy = offline fallback). Never hardcode
+  copy in components; adding a language = new `Language` code + full dictionary + table rows. Keep
+  the calm, non-decisional voice in **every** language.
 
 ---
 

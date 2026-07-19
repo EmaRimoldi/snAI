@@ -186,8 +186,8 @@ plus a visually-hidden `role="status"` live region.
 **Header** (`.site-header`, both views): flex row, space-between, `min-height: 6rem`,
 `width: min(100%, 80rem)`, `padding: 1rem 2.5rem`, `z-index: 20`.
 - Left: brand link = 2rem logo + "RealDoor" wordmark (`gap 0.65rem`, `--primary`).
-- Right (`.nav-actions`, gap `1.25rem`): globe-icon language `<select>` (EN/ES, pill,
-  `appearance: none`, custom chevron) + either a "Log in" text link (signed-out) or a circular
+- Right (`.nav-actions`, gap `1.25rem`): globe-icon language `<select>` (EN / ES / 中文 / TL / VI,
+  pill, `appearance: none`, custom chevron) + either a "Log in" text link (signed-out) or a circular
   account icon button (signed-in) toggling a `.account-panel` dropdown.
 
 **(a) Landing / signed-in view** — single centered column:
@@ -304,10 +304,18 @@ Verify layouts at **320 / 375 / 768 / 1024 / 1440px** with no horizontal overflo
 
 ## 12. Internationalization
 
-- EN + ES via `lib/i18n.tsx` — a React context exposing `t(path)` (strings) and `tList(path)`
-  (arrays, e.g. the typewriter placeholders). Switching language updates `<html lang>`.
-- **Rule:** every user-facing string goes through i18n, with **both an EN and an ES entry**. Never
-  hardcode display text in a component.
+- **Five languages — the most spoken in the US:** English, Spanish, Chinese, Tagalog, Vietnamese
+  (`en`, `es`, `zh`, `tl`, `vi`). Bundled dictionaries live in `lib/dictionaries.ts` (the
+  `Dictionary` type enforces at compile time that every language has every key); the React context
+  in `lib/i18n.tsx` exposes `t(path)` (strings) and `tList(path)` (arrays, e.g. the typewriter
+  placeholders). Switching language updates `<html lang>`.
+- **Supabase is the shared translation store:** tables `i18n_languages` + `i18n_translations`
+  (public read via RLS; writes only via dashboard/SQL). The app fetches them once at load and
+  overlays them on the bundled dictionaries; if the fetch fails, the bundled copy is the fallback —
+  the UI never depends on the network.
+- **Rule:** every user-facing string goes through i18n, with **an entry in all five languages**, in
+  `lib/dictionaries.ts` **and** in `i18n_translations` (keep them in sync). Never hardcode display
+  text in a component.
 - **Keep the voice:** calm, plain, reassuring, non-decisional. Match the existing register —
   "Housing paperwork, made clear." / "Nothing is decided without you." / phase copy like "Upload your
   documents. Confirm what's true." Avoid jargon, urgency, and anything that sounds like a verdict.
