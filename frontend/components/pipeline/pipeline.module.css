@@ -352,6 +352,212 @@
 }
 
 /* Summary */
+/* Understand: structured calculation on the left, rules chat on the right. */
+.understandGrid {
+  display: grid;
+  /* Chat gets the wider column — it's the dominant surface on this step. */
+  grid-template-columns: 1fr 1.25fr;
+  gap: 1.25rem;
+  /* stretch: the chat fills the full height of the right column */
+  align-items: stretch;
+  min-width: 0;
+}
+
+/* Flat, borderless variant of the summary rows (Understand) — hairlines, not boxes. */
+.flatList {
+  margin: 1rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+.flatRow {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.55rem 0.15rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--input) 55%, transparent);
+}
+.flatRow:last-child { border-bottom: 0; }
+
+/* Flat formula wrapper — the math table inside is the only box. */
+.formulaFlat {
+  border: 0;
+  padding: 0;
+  background: transparent;
+}
+.understandGrid > * { min-width: 0; }
+
+.mathTable {
+  display: grid;
+  border: 1px solid var(--input);
+  border-radius: 0.6rem;
+  overflow: hidden;
+}
+.mathRow {
+  display: grid;
+  grid-template-columns: minmax(3.5rem, 0.5fr) 1.9fr minmax(6rem, auto);
+  gap: 0.85rem;
+  align-items: baseline;
+  padding: 0.65rem 0.85rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--input) 55%, transparent);
+  background: color-mix(in srgb, var(--muted) 45%, var(--background));
+}
+.mathRow:last-child { border-bottom: 0; }
+.mathHead {
+  background: var(--background);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+}
+.mathHead .mathSrcCell,
+.mathHead .mathCalcCell,
+.mathHead .mathNum {
+  font-size: inherit;
+  font-weight: inherit;
+  text-transform: uppercase;
+  color: inherit;
+}
+.mathSrcCell {
+  font-weight: 700;
+  font-size: 0.9rem;
+  text-transform: capitalize;
+}
+.mathSrcSub {
+  display: block;
+  font-weight: 500;
+  font-size: 0.76rem;
+  color: var(--muted-foreground);
+  text-transform: none;
+}
+.mathCalcCell {
+  font-size: 0.92rem;
+  color: var(--muted-foreground);
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+.mathNum {
+  text-align: right;
+  font-size: 0.95rem;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.mathTotalRow {
+  border-top: 2px solid var(--input);
+  background: var(--background);
+  font-size: 1.02rem;
+}
+
+.resultText {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+}
+.resultAmounts {
+  font-size: 0.85rem;
+  font-variant-numeric: tabular-nums;
+  opacity: 0.9;
+}
+
+/* Comparison result — color + icon + text (never color-only, never a verdict). */
+.resultBanner {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin: 1rem 0 0;
+  padding: 0.7rem 0.9rem;
+  border-radius: 0.6rem;
+  font-size: 0.95rem;
+}
+.resultBanner svg {
+  width: 1.1rem;
+  height: 1.1rem;
+  flex: none;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.resultOk { color: var(--success); background: color-mix(in srgb, var(--success) 12%, transparent); }
+.resultBad { color: var(--danger); background: color-mix(in srgb, var(--danger) 10%, transparent); }
+.resultNone { color: var(--muted-foreground); background: color-mix(in srgb, var(--muted) 70%, transparent); }
+
+/* The rules chat: a proper support-chat window — visually distinct from the
+   calculation card (tinted shell, header bar with presence dot, white message
+   well, bubbles on both sides, input docked at the bottom). */
+.qaCard {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: min(84vh, 60rem);
+  background: color-mix(in srgb, var(--secondary) 42%, var(--background));
+  border-color: color-mix(in srgb, var(--primary) 30%, var(--input));
+}
+.chatHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--input) 70%, transparent);
+}
+.chatHeaderDot {
+  width: 0.6rem;
+  height: 0.6rem;
+  flex: none;
+  border-radius: 50%;
+  background: var(--success);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--success) 25%, transparent);
+}
+.chatHeaderTitle {
+  margin: 0;
+  font-size: 1.05rem;
+  letter-spacing: -0.02em;
+}
+.chatHeaderHint {
+  margin: 0.1rem 0 0;
+  font-size: 0.8rem;
+  color: var(--muted-foreground);
+}
+/* flex: 1 1 0 + min-height: 0 make this the ONLY growing/scrolling region —
+   the input and disclaimer below can never be overlapped. */
+/* No inner box — messages float on the card; the bubbles carry the structure. */
+.qaAnswerArea {
+  flex: 1 1 0;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  margin: 0.75rem 0;
+  padding: 0.25rem 0.1rem;
+}
+.chatEntry {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.chatQuestion {
+  align-self: flex-end;
+  max-width: 85%;
+  margin: 0;
+  padding: 0.5rem 0.8rem;
+  border-radius: 0.85rem 0.85rem 0.2rem 0.85rem;
+  background: var(--primary-dark);
+  color: var(--primary-foreground);
+  font-weight: 600;
+  font-size: 0.92rem;
+}
+.chatAnswer {
+  align-self: flex-start;
+  max-width: 92%;
+  padding: 0.6rem 0.8rem;
+  border-radius: 0.85rem 0.85rem 0.85rem 0.2rem;
+  background: var(--background);
+}
+
 .summaryList { display: grid; gap: 0.5rem; margin: 0; padding: 0; list-style: none; }
 .summaryRow {
   display: flex; justify-content: space-between; gap: 1rem;
@@ -372,4 +578,9 @@
   .globals { grid-template-columns: 1fr; }
   .stepper { flex-direction: column; }
   .reviewGrid { grid-template-columns: 1fr; }
+  .understandGrid { grid-template-columns: 1fr; }
+  .mathRow { grid-template-columns: 1fr auto; gap: 0.25rem 0.75rem; }
+  .mathSrcCell { grid-column: 1 / -1; }
+  .mathNum { white-space: normal; }
+  .qaCard { min-height: 0; }
 }

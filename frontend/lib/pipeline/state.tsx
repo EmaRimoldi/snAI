@@ -85,6 +85,10 @@ const AppContext = createContext<AppValue | null>(null);
 
 const AUTOLOAD_HOUSEHOLD =
   process.env.NODE_ENV === "development" ? process.env.NEXT_PUBLIC_DEMO_HOUSEHOLD : undefined;
+/** Debug: pretend earlier steps are done — auto-confirm every extracted field
+ *  after the demo autoload and jump straight to this step ("understand" | "prepare"). */
+const DEMO_STEP =
+  process.env.NODE_ENV === "development" ? process.env.NEXT_PUBLIC_DEMO_STEP : undefined;
 
 type DemoHouseholdResponse = {
   householdId: string;
@@ -172,7 +176,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
   }, []);
 
   useEffect(() => {
-    if (AUTOLOAD_HOUSEHOLD !== "HH-001" || demoStartedRef.current) return;
+    if (!AUTOLOAD_HOUSEHOLD || demoStartedRef.current) return;
     demoStartedRef.current = true;
     let cancelled = false;
 
@@ -189,6 +193,17 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
         return new File([bytes.buffer], name, { type });
       });
       await addFiles(files);
+      if (DEMO_STEP === "understand" || DEMO_STEP === "prepare") {
+        // Debug shortcut: simulate a completed Profile step (all values
+        // confirmed by the renter) and open the requested step directly.
+        setFields((prev) =>
+          prev.map((f) =>
+            f.reviewStatus === "extracted" ? { ...f, reviewStatus: "confirmed" as const } : f,
+          ),
+        );
+        setUnderstandVisited(true);
+        setStep(DEMO_STEP);
+      }
     };
 
     // Deferring one task avoids doing the expensive extraction twice during
@@ -242,7 +257,10 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
     () => REQUIRED_CHECKLIST.filter((t) => !presentTypes.includes(t)),
     [presentTypes],
   );
-  const grossIncomeCents = useMemo(() => computeGrossAnnualCents(fields), [fields]);
+  const grossIncomeCents = useMemo(
+    () => computeGrossAnnualCents(documents, fields),
+    [documents, fields],
+  );
   const readiness = useMemo(
     () => computeReadiness(documents, fields, missingRequired),
     [documents, fields, missingRequired],

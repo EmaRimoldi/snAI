@@ -22,7 +22,7 @@ export default function Page() {
 type View = "landing" | "app";
 
 const AUTOLOAD_DEMO =
-  process.env.NODE_ENV === "development" && process.env.NEXT_PUBLIC_DEMO_HOUSEHOLD === "HH-001";
+  process.env.NODE_ENV === "development" && Boolean(process.env.NEXT_PUBLIC_DEMO_HOUSEHOLD);
 
 function RealDoorApp() {
   const { language, t, tList } = useI18n();

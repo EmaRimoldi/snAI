@@ -207,31 +207,20 @@ Prepare): receipt visible by default, edit on receipt recomputes income/readines
 the receipt alone with watermark, 320px collapses rows to one column (remaining 320px horizontal
 overflow comes from the pre-existing header nav, not the receipt), ES localization + delete flow OK.
 
-## 2026-07-19 — AI assistant: fix false OUT_OF_DOMAIN abstains (gate + prompt + NFC)
+## 2026-07-19 — Understand step: structured math, support chat, full i18n; engine classifier fix
 
-**Problem (user-reported):** realistic in-scope questions — "What are the rules?", "What happens
-when I delete my session?", "Is my information private?", "What can you help me with?", and the
-es/tl/vi equivalents — came back `abstained · OUT_OF_DOMAIN`.
-
-**Root causes & fixes (`supabase/functions/_shared` + tests):**
-- `policy.ts` `DOMAIN_RE` lacked core vocabulary (`rules`, `session`, `private`, `help`,
-  `employment`, es `umbral`/`hogar`, tl `patakaran`…), and its Vietnamese terms could never match:
-  JS `\b` is ASCII-only, so terms ending in an accented char (`giấy tờ`, `hồ sơ`) sat dead inside
-  the `\b(...)\b` group. Broadened the allowlist across all five locales (plus a few Italian stems)
-  and moved non-ASCII-ending terms to a boundary-free tail.
-- `contract.ts` now NFC-normalizes the question at the parse boundary — decomposed (NFD) input,
-  e.g. from macOS browsers, previously never matched the NFC regex literals.
-- `prompt.ts` (`ai-prompt-v2`): meta questions in any supported locale are explicitly in scope; a
-  question about an unconfirmed personal value returns `needs_confirmation`/`MISSING_CONTEXT`
-  citing GUIDE-CONFIRM-001 (was abstaining or failing grounding); verdict words are banned even
-  when summarizing rules — the decision-language lint was eating otherwise-valid rule summaries.
-- Bare "what are the rules?" (en/es/zh/tl/vi) now gets a deterministic localized overview citing 8
-  corpus rules (`rulesOverview` ×5 + `RULES_OVERVIEW_RE` in `policy.ts`) — gpt-4o-mini flip-flopped
-  on that exact shape, so it no longer reaches the model at all. Specific rule questions still do.
-
-**Verified:** ai_policy + ai_eval suites 21/21 (new tests: realistic in-domain phrasings, NFD gate,
-deterministic rules overview, no-overbroadening guard; the 36 organizer QA + 24 adversarial fixtures
-unchanged). Live battery against the deployed function: all previously-failing phrasings now answer
-or ask for confirmation with citations; poem / eligibility / injection / cross-applicant controls
-still abstain or refuse deterministically. Prod drawer click-through shows the cited overview.
-Edge function redeployed (verify_jwt on); no frontend change, so no Vercel redeploy needed.
+- Understand redesign (visually verified via headless-Chromium screenshots): calculation left /
+  large support-chat right (tinted shell, presence header, bubbles, docked input, scroll-pinned
+  thread, sample questions until first message); math as a labeled 3-column table (Source ·
+  Calculation · Per year) with per-source rows + Total; green/red published-limit banner (text
+  carries meaning; non-decisional note kept); de-boxed cards (hairline rows, single container each).
+- Income derivation now groups pay stubs into ONE corroborated wage source (latest pay_date wins) —
+  fixes double-counting with the real engine (HH-001 was showing $112,632).
+- **Engine fix** (`realdoor/cli.py`): filename-hint order put bare "letter" before "benefit", so
+  `*_benefit_letter.pdf` uploaded without a manifest classified as employment_letter and its income
+  was dropped (HH-003 showed $30,030 instead of $40,230). Specific hints now match first; official
+  set re-verified (159/159 fields, 6/6 households, classifier spot-check on HH-001/3/4).
+- Dev fixture route generalized to serve ANY official household's complete set via
+  NEXT_PUBLIC_DEMO_HOUSEHOLD; NEXT_PUBLIC_DEMO_STEP=understand debug mode auto-confirms and jumps.
+- Verified HH-003 end-to-end in-browser: Pay $1,155×26 + Benefit $850×12 = $40,230 vs $92,580
+  (size 3), header shows the READY-with-missing-letter oracle quirk as informational.

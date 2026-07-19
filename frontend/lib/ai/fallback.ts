@@ -1,14 +1,19 @@
 import { answerRulesQuestion } from "@/lib/pipeline/rules";
 import type { AiChatResponse } from "@/lib/ai/types";
 
-export function localRulesFallback(question: string): AiChatResponse {
+/** Localized wrapper texts the caller supplies (from the pipeline copy), so the
+ * fallback answers in the renter's language. Rule text itself is quoted
+ * verbatim from the frozen English corpus — never paraphrased or translated. */
+export type FallbackTexts = { refusal: string; abstain: string };
+
+export function localRulesFallback(question: string, texts: FallbackTexts): AiChatResponse {
   const result = answerRulesQuestion(question);
   if (result.kind === "refusal") {
     return {
       requestId: "local-fallback",
       outcome: "refused",
       policyCode: "DECISION_BOUNDARY",
-      answer: "RealDoor can't make a program determination. It can explain documented values, the published comparison, and file readiness for human review.",
+      answer: texts.refusal,
       citations: [],
     };
   }
@@ -17,7 +22,7 @@ export function localRulesFallback(question: string): AiChatResponse {
       requestId: "local-fallback",
       outcome: "abstained",
       policyCode: "OUT_OF_DOMAIN",
-      answer: "I can only help with RealDoor, its frozen rules, your current documents, and the application-readiness workflow.",
+      answer: texts.abstain,
       citations: [],
     };
   }

@@ -14,7 +14,7 @@ import { useCopy, fmt } from "@/lib/pipeline/copy";
 import { useI18n } from "@/lib/i18n";
 import { formatMoneyCents, compareToThreshold, thresholdCentsForSize } from "@/lib/pipeline/calc";
 import { MTSP_2026 } from "@/lib/data/mtsp2026";
-import { useDocLabels, useFieldLabel, useReasonTexts, useReasonTitles } from "@/lib/pipeline/labels";
+import { humanize, useDocLabels, useFieldLabel, useReasonTexts } from "@/lib/pipeline/labels";
 import s from "./pipeline.module.css";
 import r from "./receipt.module.css";
 
@@ -71,7 +71,8 @@ type RowSpec =
   | { kind: "missing"; id: string; label: string };
 
 /** Resolve a document's expected entries against its actually-parsed fields;
- * parsed-but-unexpected extras are appended so no real data is hidden. */
+ * parsed-but-unexpected extras are appended so no real data is hidden.
+ * `fieldLabel` supplies the localized display label for a field key. */
 function buildDocRows(
   doc: DocumentRecord,
   docFields: readonly ExtractedField[],
@@ -126,9 +127,9 @@ export default function ReceiptDocument() {
     presentTypes,
   } = useApp();
   const docLabels = useDocLabels();
-  const reasonTexts = useReasonTexts();
-  const reasonTitles = useReasonTitles();
   const fieldLabel = useFieldLabel();
+  const reasonTexts = useReasonTexts();
+  const money = (cents: number): string => formatMoneyCents(cents, language);
 
   const [editingId, setEditingId] = useState<string | null>(null);
   const [draft, setDraft] = useState("");
@@ -319,13 +320,13 @@ export default function ReceiptDocument() {
                 <li className={r.row}>
                   <span className={r.rowKey}>{c.annualizedIncome}</span>
                   <span className={r.rowVal} aria-live="polite">
-                    {formatMoneyCents(grossIncomeCents)}
+                    {money(grossIncomeCents)}
                   </span>
                 </li>
                 <li className={r.row}>
                   <span className={r.rowKey}>{c.threshold60}</span>
                   <span className={r.rowVal}>
-                    {thresholdCents === null ? c.cmpNone : formatMoneyCents(thresholdCents)}
+                    {thresholdCents === null ? c.cmpNone : money(thresholdCents)}
                   </span>
                 </li>
                 <li className={r.row}>
@@ -354,9 +355,8 @@ export default function ReceiptDocument() {
                     <li key={`${reason.code}-${i}`} className={r.note}>
                       <strong>{reasonTitles[reason.code]}</strong> — {reasonTexts[reason.code]}
                       {reason.detail && reason.code === "MISSING_REQUIRED_DOCUMENT"
-                        ? ` (${docLabels[reason.detail as DocumentType] ?? reason.detail})`
-                        : ""}{" "}
-                      <span className={r.codeRef}>{reason.code}</span>
+                        ? ` (${(docLabels as Record<string, string | undefined>)[reason.detail] ?? humanize(reason.detail)})`
+                        : ""}
                     </li>
                   ))}
                 </ul>

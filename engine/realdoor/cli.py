@@ -41,11 +41,13 @@ _TYPE_KEYWORDS = [
     ("application_summary", ("application", "summary", "intake",
                              "applicant")),
 ]
+# Specific tokens first — the bare "letter" hint must come after "benefit",
+# or benefit_letter.pdf is misclassified as an employment letter.
 _FILENAME_HINTS = [
-    ("pay_stub", ("stub", "pay")),
-    ("employment_letter", ("employment", "letter")),
     ("benefit_letter", ("benefit",)),
     ("gig_statement", ("gig",)),
+    ("pay_stub", ("stub", "pay")),
+    ("employment_letter", ("employment", "letter")),
     ("application_summary", ("application", "summary", "intake")),
 ]
 

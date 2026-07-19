@@ -156,15 +156,26 @@ LLM call per batch** (only labels the cascade could not classify, only for
 documents still missing core fields; cache-aware, zero calls when there is
 nothing to ask) → local re-match + all household submissions together.
 
-Measured over all 160 fixture documents in six sets — official, dev,
-dev2, dev3, dev4, and dev5 (10 further extreme layout families:
+The runner covers 190 fixture documents in seven sets — official, dev,
+dev2, dev3, dev4, dev5, and dev6. `dev5` contributes 10 extreme layout
+families:
 newspaper columns, email prose, calendar cells, affidavits, process-flow
 nodes, sticky-note boards, tri-fold panels, terminal-console machine keys,
-magazine features, transit maps) — with 8 workers:
+magazine features, and transit maps. `dev6` adds 30 documents split evenly
+between official-form-inspired templates and five new extreme layouts:
+receipt rolls, kanban cards, boarding-pass bands, lab notebooks, and comic
+panels. The previously recorded six-set benchmark with 8 workers was:
+
 | mode | fields | households | LLM calls | wall time |
 |---|---|---|---|---|
 | deterministic | 930/962 | 47/49 | 0 | **~4 s** |
 | with classifier | **962/962** | **49/49** | 4 | ~77 s (LLM latency) |
+
+`dev7/` is separate from that passing batch: it is an intentional negative
+benchmark containing five confirmed extractor failures. Run
+`REALDOOR_LLM_BACKUP=0 .venv/bin/python eval/probe_dev7.py` to verify the
+failure paths used by the website's missing, incorrect, and degraded-document
+states.
 
 Labels sent to the classifier are additionally **dictionary-masked**: words
 not in the English dictionary (invented names/orgs) become `<Wn>`

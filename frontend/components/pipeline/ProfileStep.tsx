@@ -6,9 +6,9 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useApp, REQUIRED_CHECKLIST } from "@/lib/pipeline/state";
-import { useCopy, fmt, FIELD_EXPLAIN } from "@/lib/pipeline/copy";
+import { useCopy, fmt } from "@/lib/pipeline/copy";
 import { LOW_CONFIDENCE } from "@/lib/pipeline/calc";
-import { humanize, useDocLabels } from "@/lib/pipeline/labels";
+import { useDocLabels, useFieldLabel, useFieldExplain } from "@/lib/pipeline/labels";
 import DocumentPreview from "./DocumentPreview";
 import s from "./pipeline.module.css";
 
@@ -19,6 +19,8 @@ export default function ProfileStep() {
     pendingReviewFieldId, clearReviewRequest,
   } = useApp();
   const docLabels = useDocLabels();
+  const fieldLabel = useFieldLabel();
+  const fieldExplain = useFieldExplain();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [dragging, setDragging] = useState(false);
   const [index, setIndex] = useState(0);
@@ -199,11 +201,15 @@ export default function ProfileStep() {
           <div className={s.reviewGrid}>
             <div>
               <h3 className={s.fieldKey} ref={fieldHeadingRef} tabIndex={-1}>
-                {humanize(field.key)}
+                {fieldLabel(field.key)}
               </h3>
               <p className={s.fieldExplain}>
                 <strong>{c.whyNeeded}: </strong>
-                {FIELD_EXPLAIN[field.key] ?? `${humanize(field.key)} — extracted from ${docLabels[doc.documentType]}.`}
+                {fieldExplain(field.key) ??
+                  fmt(c.fieldExplainFallback, {
+                    field: fieldLabel(field.key),
+                    doc: docLabels[doc.documentType],
+                  })}
               </p>
 
               <div className={`${s.confidenceWrap} ${field.confidence < LOW_CONFIDENCE ? s.confidenceLow : ""}`}>
@@ -219,7 +225,7 @@ export default function ProfileStep() {
               {correcting ? (
                 <>
                   <label className="visually-hidden" htmlFor="correct-input">
-                    {humanize(field.key)}
+                    {fieldLabel(field.key)}
                   </label>
                   <input
                     id="correct-input"
