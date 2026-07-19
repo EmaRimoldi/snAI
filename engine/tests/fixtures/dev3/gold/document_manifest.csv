@@ -1,0 +1,25 @@
+document_id,household_id,document_type,file_name,template_family,layout_variant,rasterized,contains_adversarial_text,synthetic_notice
+DEV3-HH-301-D01,DEV3-HH-301,application_summary,dev3_hh_301_d01.pdf,minimalist_air,brief_labels,False,False,SYNTHETIC DEV FIXTURE - NOT A REAL DOCUMENT
+DEV3-HH-301-D02,DEV3-HH-301,pay_stub,dev3_hh_301_d02.pdf,minimalist_air,brief_labels,False,False,SYNTHETIC DEV FIXTURE - NOT A REAL DOCUMENT
+DEV3-HH-301-D03,DEV3-HH-301,employment_letter,dev3_hh_301_d03.pdf,minimalist_air,brief_labels,False,False,SYNTHETIC DEV FIXTURE - NOT A REAL DOCUMENT
+DEV3-HH-302-D01,DEV3-HH-302,application_summary,dev3_hh_302_d01.pdf,dense_ledger,ledger_rows,False,False,SYNTHETIC DEV FIXTURE - NOT A REAL DOCUMENT
+DEV3-HH-302-D02,DEV3-HH-302,pay_stub,dev3_hh_302_d02.pdf,dense_ledger,ledger_rows,False,False,SYNTHETIC DEV FIXTURE - NOT A REAL DOCUMENT
+DEV3-HH-302-D03,DEV3-HH-302,employment_letter,dev3_hh_302_d03.pdf,dense_ledger,ledger_rows,False,False,SYNTHETIC DEV FIXTURE - NOT A REAL DOCUMENT
+DEV3-HH-303-D01,DEV3-HH-303,application_summary,dev3_hh_303_d01.pdf,accessibility_large,plain_language_questions,False,False,SYNTHETIC DEV FIXTURE - NOT A REAL DOCUMENT
+DEV3-HH-303-D02,DEV3-HH-303,pay_stub,dev3_hh_303_d02.pdf,accessibility_large,plain_language_questions,False,False,SYNTHETIC DEV FIXTURE - NOT A REAL DOCUMENT
+DEV3-HH-303-D03,DEV3-HH-303,employment_letter,dev3_hh_303_d03.pdf,accessibility_large,plain_language_questions,False,False,SYNTHETIC DEV FIXTURE - NOT A REAL DOCUMENT
+DEV3-HH-304-D01,DEV3-HH-304,application_summary,dev3_hh_304_d01.pdf,formal_narrative,formal_sentences,False,False,SYNTHETIC DEV FIXTURE - NOT A REAL DOCUMENT
+DEV3-HH-304-D02,DEV3-HH-304,pay_stub,dev3_hh_304_d02.pdf,formal_narrative,formal_sentences,False,False,SYNTHETIC DEV FIXTURE - NOT A REAL DOCUMENT
+DEV3-HH-304-D03,DEV3-HH-304,employment_letter,dev3_hh_304_d03.pdf,formal_narrative,formal_sentences,False,False,SYNTHETIC DEV FIXTURE - NOT A REAL DOCUMENT
+DEV3-HH-305-D01,DEV3-HH-305,application_summary,dev3_hh_305_d01.pdf,split_sidebar,quick_reference,False,False,SYNTHETIC DEV FIXTURE - NOT A REAL DOCUMENT
+DEV3-HH-305-D02,DEV3-HH-305,pay_stub,dev3_hh_305_d02.pdf,split_sidebar,quick_reference,False,False,SYNTHETIC DEV FIXTURE - NOT A REAL DOCUMENT
+DEV3-HH-305-D03,DEV3-HH-305,employment_letter,dev3_hh_305_d03.pdf,split_sidebar,quick_reference,False,False,SYNTHETIC DEV FIXTURE - NOT A REAL DOCUMENT
+DEV3-HH-306-D01,DEV3-HH-306,application_summary,dev3_hh_306_d01.pdf,receipt_strip,receipt_abbreviations,False,False,SYNTHETIC DEV FIXTURE - NOT A REAL DOCUMENT
+DEV3-HH-306-D02,DEV3-HH-306,pay_stub,dev3_hh_306_d02.pdf,receipt_strip,receipt_abbreviations,False,False,SYNTHETIC DEV FIXTURE - NOT A REAL DOCUMENT
+DEV3-HH-306-D03,DEV3-HH-306,employment_letter,dev3_hh_306_d03.pdf,receipt_strip,receipt_abbreviations,False,False,SYNTHETIC DEV FIXTURE - NOT A REAL DOCUMENT
+DEV3-HH-307-D01,DEV3-HH-307,application_summary,dev3_hh_307_d01.pdf,staggered_modern,numbered_evidence,False,False,SYNTHETIC DEV FIXTURE - NOT A REAL DOCUMENT
+DEV3-HH-307-D02,DEV3-HH-307,pay_stub,dev3_hh_307_d02.pdf,staggered_modern,numbered_evidence,False,False,SYNTHETIC DEV FIXTURE - NOT A REAL DOCUMENT
+DEV3-HH-307-D03,DEV3-HH-307,employment_letter,dev3_hh_307_d03.pdf,staggered_modern,numbered_evidence,False,False,SYNTHETIC DEV FIXTURE - NOT A REAL DOCUMENT
+DEV3-HH-308-D01,DEV3-HH-308,application_summary,dev3_hh_308_d01.pdf,modular_tiles,dashboard_prompts,False,False,SYNTHETIC DEV FIXTURE - NOT A REAL DOCUMENT
+DEV3-HH-308-D02,DEV3-HH-308,pay_stub,dev3_hh_308_d02.pdf,modular_tiles,dashboard_prompts,False,False,SYNTHETIC DEV FIXTURE - NOT A REAL DOCUMENT
+DEV3-HH-308-D03,DEV3-HH-308,employment_letter,dev3_hh_308_d03.pdf,modular_tiles,dashboard_prompts,False,False,SYNTHETIC DEV FIXTURE - NOT A REAL DOCUMENT

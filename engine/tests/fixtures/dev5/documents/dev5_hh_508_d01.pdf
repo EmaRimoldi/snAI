@@ -1,0 +1,60 @@
+%PDF-1.4
+%‚„œ”
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 5 0 R /F2 6 0 R >> >> /Contents 4 0 R >>
+endobj
+4 0 obj
+<< /Length 1797 >>
+stream
+q 0.025 0.045 0.035 rg 0.00 0.00 612.00 792.00 re f Q
+BT /F2 17.00 Tf 0.420 0.950 0.570 rg 1 0 0 1 30.00 748.00 Tm (REALDOOR://SYNTHETIC_EVIDENCE) Tj ET
+BT /F1 8.50 Tf 0.320 0.620 0.430 rg 1 0 0 1 30.00 722.00 Tm (> LOAD DEV5-HH-508-D01) Tj ET
+BT /F1 7.50 Tf 0.320 0.620 0.430 rg 1 0 0 1 30.00 700.00 Tm (> TYPE application_summary  ORG Umber Console Simulation) Tj ET
+q 0.320 0.620 0.430 RG 0.70 w 28.00 684.00 m 584.00 684.00 l S Q
+BT /F2 8.00 Tf 0.320 0.620 0.430 rg 1 0 0 1 30.00 646.00 Tm ([01]) Tj ET
+BT /F2 9.70 Tf 0.320 0.620 0.430 rg 1 0 0 1 72.00 646.00 Tm (REC.ADDRESS :: ) Tj ET
+BT /F1 9.70 Tf 0.420 0.950 0.570 rg 1 0 0 1 154.45 646.00 Tm (508 Console Crescent, Cambridge, MA 00000) Tj ET
+BT /F2 8.00 Tf 0.320 0.620 0.430 rg 1 0 0 1 30.00 593.00 Tm ([02]) Tj ET
+BT /F2 9.70 Tf 0.320 0.620 0.430 rg 1 0 0 1 72.00 593.00 Tm (REC.HOUSEHOLD_SIZE :: ) Tj ET
+BT /F1 9.70 Tf 0.420 0.950 0.570 rg 1 0 0 1 195.96 593.00 Tm (8) Tj ET
+BT /F2 8.00 Tf 0.320 0.620 0.430 rg 1 0 0 1 30.00 540.00 Tm ([03]) Tj ET
+BT /F2 9.70 Tf 0.320 0.620 0.430 rg 1 0 0 1 72.00 540.00 Tm (REC.PERSON_NAME :: ) Tj ET
+BT /F1 9.70 Tf 0.420 0.950 0.570 rg 1 0 0 1 181.94 540.00 Tm (Pia Umber) Tj ET
+BT /F2 8.00 Tf 0.320 0.620 0.430 rg 1 0 0 1 30.00 487.00 Tm ([04]) Tj ET
+BT /F2 9.70 Tf 0.320 0.620 0.430 rg 1 0 0 1 72.00 487.00 Tm (REC.APPLICATION_DATE :: ) Tj ET
+BT /F1 9.70 Tf 0.420 0.950 0.570 rg 1 0 0 1 204.57 487.00 Tm (2026-07-13) Tj ET
+BT /F1 7.80 Tf 0.320 0.620 0.430 rg 1 0 0 1 30.00 130.00 Tm (> STATUS evidence-only; human review required) Tj ET
+BT /F1 7.10 Tf 0.320 0.620 0.430 rg 1 0 0 1 30.00 101.00 Tm (A dark console report uses machine-like keys and inline values.) Tj ET
+BT /F1 6.80 Tf 0.800 0.870 0.800 rg 1 0 0 1 28.00 17.00 Tm (SYNTHETIC DEV FIXTURE - NOT A REAL DOCUMENT - DEV5-HH-508-D01) Tj ET
+endstream
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+6 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>
+endobj
+7 0 obj
+<< /Title (DEV5-HH-508-D01) /Author (RealDoor synthetic fixture generator) /Creator (dev2/generate_fixtures.py) /Producer (standard-library vector PDF writer) >>
+endobj
+xref
+0 8
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000121 00000 n 
+0000000257 00000 n 
+0000002106 00000 n 
+0000002176 00000 n 
+0000002251 00000 n 
+trailer
+<< /Size 8 /Root 1 0 R /Info 7 0 R >>
+startxref
+2428
+%%EOF

@@ -16,6 +16,11 @@
 # Dependencies (safety net; frontend/ ignores its own node_modules)
 node_modules/
 
+# Python (engine)
+__pycache__/
+.venv/
+*.pyc
+
 # Build log scratch, if kept local
 BUILDLOG.local.md
 

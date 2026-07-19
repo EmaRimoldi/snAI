@@ -1,0 +1,61 @@
+%PDF-1.4
+%‚„œ”
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 5 0 R /F2 6 0 R >> >> /Contents 4 0 R >>
+endobj
+4 0 obj
+<< /Length 1846 >>
+stream
+BT /F2 24.00 Tf 0.080 0.080 0.080 rg 1 0 0 1 84.65 754.00 Tm (THE SYNTHETIC TRAINING REGISTER) Tj ET
+q 0.080 0.080 0.080 RG 1.60 w 32.00 738.00 m 580.00 738.00 l S Q
+BT /F2 10.00 Tf 0.070 0.090 0.120 rg 1 0 0 1 36.00 715.00 Tm (APPLICATION SUMMARY) Tj ET
+BT /F1 7.20 Tf 0.070 0.090 0.120 rg 1 0 0 1 514.39 715.00 Tm (DEV5-HH-501-D01) Tj ET
+BT /F1 8.50 Tf 0.310 0.360 0.410 rg 1 0 0 1 36.00 694.00 Tm (North Training Register) Tj ET
+q 0.700 0.700 0.680 RG 0.60 w 306.00 126.00 m 306.00 675.00 l S Q
+q 0.960 0.940 0.880 rg 35.00 609.00 252.00 64.00 re f Q
+BT /F1 8.90 Tf 0.180 0.210 0.240 rg 1 0 0 1 40.00 625.00 Tm (The evidence desk reports that the applicant name is ) Tj ET
+BT /F2 8.90 Tf 0.070 0.090 0.120 rg 1 0 0 1 251.23 625.00 Tm (Iris North) Tj ET
+q 0.780 0.780 0.750 RG 0.35 w 40.00 605.00 m 286.00 605.00 l S Q
+BT /F2 7.40 Tf 0.310 0.360 0.410 rg 1 0 0 1 322.00 643.00 Tm (DESK / 02 / PEOPLE INCLUDED) Tj ET
+BT /F1 10.20 Tf 0.070 0.090 0.120 rg 1 0 0 1 322.00 625.00 Tm (1) Tj ET
+q 0.780 0.780 0.750 RG 0.35 w 322.00 605.00 m 568.00 605.00 l S Q
+BT /F1 7.30 Tf 0.180 0.210 0.240 rg 1 0 0 1 40.00 525.00 Tm (Correspondence for this profile goes to ) Tj ET
+BT /F2 7.30 Tf 0.070 0.090 0.120 rg 1 0 0 1 167.81 525.00 Tm (501 Bulletin Way, Boston, MA 00000) Tj ET
+q 0.780 0.780 0.750 RG 0.35 w 40.00 505.00 m 286.00 505.00 l S Q
+BT /F2 7.40 Tf 0.310 0.360 0.410 rg 1 0 0 1 322.00 543.00 Tm (DESK / 04 / FILED DATE) Tj ET
+BT /F1 10.20 Tf 0.070 0.090 0.120 rg 1 0 0 1 322.00 525.00 Tm (2026-07-11) Tj ET
+q 0.780 0.780 0.750 RG 0.35 w 322.00 505.00 m 568.00 505.00 l S Q
+BT /F1 7.40 Tf 0.310 0.360 0.410 rg 1 0 0 1 36.00 82.00 Tm (A two-column bulletin separates narrative facts from a compact evidence desk.) Tj ET
+BT /F1 6.80 Tf 0.380 0.420 0.460 rg 1 0 0 1 28.00 17.00 Tm (SYNTHETIC DEV FIXTURE - NOT A REAL DOCUMENT - DEV5-HH-501-D01) Tj ET
+endstream
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+6 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>
+endobj
+7 0 obj
+<< /Title (DEV5-HH-501-D01) /Author (RealDoor synthetic fixture generator) /Creator (dev2/generate_fixtures.py) /Producer (standard-library vector PDF writer) >>
+endobj
+xref
+0 8
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000121 00000 n 
+0000000257 00000 n 
+0000002155 00000 n 
+0000002225 00000 n 
+0000002300 00000 n 
+trailer
+<< /Size 8 /Root 1 0 R /Info 7 0 R >>
+startxref
+2477
+%%EOF

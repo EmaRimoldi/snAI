@@ -1,0 +1,63 @@
+%PDF-1.4
+%‚„œ”
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 5 0 R /F2 6 0 R >> >> /Contents 4 0 R >>
+endobj
+4 0 obj
+<< /Length 2077 >>
+stream
+BT /F2 21.00 Tf 0.080 0.200 0.340 rg 1 0 0 1 32.00 750.00 Tm (EVIDENCE ROUTE MAP) Tj ET
+BT /F1 8.40 Tf 0.070 0.090 0.120 rg 1 0 0 1 32.00 723.00 Tm (Employment Verification / Willow Transit Training) Tj ET
+BT /F2 7.20 Tf 0.070 0.090 0.120 rg 1 0 0 1 516.39 750.00 Tm (DEV5-HH-510-D03) Tj ET
+q 0.880 0.240 0.180 RG 5.00 w 115.00 154.00 m 495.00 652.00 l S Q
+q 0.100 0.480 0.660 RG 5.00 w 90.00 590.00 m 535.00 235.00 l S Q
+q 1.000 1.000 1.000 rg 0.800 0.830 0.860 RG 0.35 w 45.00 620.00 220.00 43.00 re B Q
+q 1.000 1.000 1.000 rg 0.080 0.200 0.340 RG 1.80 w 33.00 623.00 10.00 10.00 re B Q
+BT /F2 7.40 Tf 0.310 0.360 0.410 rg 1 0 0 1 50.00 650.00 Tm (STATION / 01 / ISSUED DATE) Tj ET
+BT /F2 11.60 Tf 0.070 0.090 0.120 rg 1 0 0 1 50.00 632.00 Tm (2026-07-08) Tj ET
+q 1.000 1.000 1.000 rg 0.800 0.830 0.860 RG 0.35 w 355.00 620.00 220.00 43.00 re B Q
+q 1.000 1.000 1.000 rg 0.080 0.200 0.340 RG 1.80 w 343.00 623.00 10.00 10.00 re B Q
+BT /F1 11.60 Tf 0.180 0.210 0.240 rg 1 0 0 1 360.00 632.00 Tm (Route bulletin: the weekly hours is ) Tj ET
+BT /F2 11.60 Tf 0.070 0.090 0.120 rg 1 0 0 1 539.23 632.00 Tm (37.5) Tj ET
+q 1.000 1.000 1.000 rg 0.800 0.830 0.860 RG 0.35 w 70.00 548.00 220.00 43.00 re B Q
+q 1.000 1.000 1.000 rg 0.080 0.200 0.340 RG 1.80 w 58.00 551.00 10.00 10.00 re B Q
+BT /F2 7.40 Tf 0.310 0.360 0.410 rg 1 0 0 1 75.00 578.00 Tm (STATION / 03 / UNIT RATE) Tj ET
+BT /F1 11.60 Tf 0.070 0.090 0.120 rg 1 0 0 1 75.00 560.00 Tm ($42.00) Tj ET
+q 1.000 1.000 1.000 rg 0.800 0.830 0.860 RG 0.35 w 355.00 523.00 220.00 43.00 re B Q
+q 1.000 1.000 1.000 rg 0.080 0.200 0.340 RG 1.80 w 343.00 526.00 10.00 10.00 re B Q
+BT /F2 7.40 Tf 0.310 0.360 0.410 rg 1 0 0 1 360.00 553.00 Tm (STATION / 04 / RECORD HOLDER) Tj ET
+BT /F1 11.60 Tf 0.070 0.090 0.120 rg 1 0 0 1 360.00 535.00 Tm (Sage Willow) Tj ET
+BT /F1 7.20 Tf 0.310 0.360 0.410 rg 1 0 0 1 38.00 112.00 Tm (Route stations place related facts along crossing paths rather than a form grid.) Tj ET
+BT /F1 6.80 Tf 0.380 0.420 0.460 rg 1 0 0 1 28.00 17.00 Tm (SYNTHETIC DEV FIXTURE - NOT A REAL DOCUMENT - DEV5-HH-510-D03) Tj ET
+endstream
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+6 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>
+endobj
+7 0 obj
+<< /Title (DEV5-HH-510-D03) /Author (RealDoor synthetic fixture generator) /Creator (dev2/generate_fixtures.py) /Producer (standard-library vector PDF writer) >>
+endobj
+xref
+0 8
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000121 00000 n 
+0000000257 00000 n 
+0000002386 00000 n 
+0000002456 00000 n 
+0000002531 00000 n 
+trailer
+<< /Size 8 /Root 1 0 R /Info 7 0 R >>
+startxref
+2708
+%%EOF

@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": [
+    "household_id",
+    "annualized_income",
+    "comparison",
+    "readiness_status",
+    "citations"
+  ],
+  "properties": {
+    "household_id": {
+      "type": "string"
+    },
+    "annualized_income": {
+      "type": "number",
+      "minimum": 0
+    },
+    "comparison": {
+      "enum": [
+        "below_or_equal",
+        "above",
+        "no_frozen_threshold"
+      ]
+    },
+    "readiness_status": {
+      "enum": [
+        "READY_TO_REVIEW",
+        "NEEDS_REVIEW"
+      ]
+    },
+    "citations": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    }
+  }
+}

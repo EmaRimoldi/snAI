@@ -1,0 +1,60 @@
+%PDF-1.4
+%‚„œ”
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 5 0 R /F2 6 0 R >> >> /Contents 4 0 R >>
+endobj
+4 0 obj
+<< /Length 1898 >>
+stream
+BT /F2 16.00 Tf 0.120 0.160 0.200 rg 1 0 0 1 162.88 758.00 Tm (IVORY FORMAL CORRESPONDENCE) Tj ET
+BT /F1 11.50 Tf 0.200 0.240 0.280 rg 1 0 0 1 244.01 733.00 Tm (Employment Verification) Tj ET
+q 0.180 0.220 0.250 RG 1.20 w 58.00 718.00 m 554.00 718.00 l S Q
+BT /F2 7.50 Tf 0.720 0.080 0.080 rg 1 0 0 1 58.00 691.00 Tm (TRAINING CORRESPONDENCE - FICTIONAL FACTS FOR REVIEW) Tj ET
+BT /F1 9.20 Tf 0.200 0.240 0.280 rg 1 0 0 1 58.00 651.00 Tm (To the human reviewer: this fictional issuer presents documented facts for consideration.) Tj ET
+BT /F1 9.20 Tf 0.250 0.290 0.330 rg 1 0 0 1 66.00 596.00 Tm (The recorded letter date is) Tj ET
+BT /F2 10.50 Tf 0.080 0.100 0.130 rg 1 0 0 1 318.00 596.00 Tm (2026-07-08) Tj ET
+q 0.700 0.720 0.740 RG 0.40 w 314.00 591.00 m 554.00 591.00 l S Q
+BT /F1 9.20 Tf 0.250 0.290 0.330 rg 1 0 0 1 66.00 547.00 Tm (The recorded employee name is) Tj ET
+BT /F2 10.50 Tf 0.080 0.100 0.130 rg 1 0 0 1 318.00 547.00 Tm (Drew Ivory) Tj ET
+q 0.700 0.720 0.740 RG 0.40 w 314.00 542.00 m 554.00 542.00 l S Q
+BT /F1 9.20 Tf 0.250 0.290 0.330 rg 1 0 0 1 66.00 498.00 Tm (The recorded hourly rate is) Tj ET
+BT /F2 10.50 Tf 0.080 0.100 0.130 rg 1 0 0 1 318.00 498.00 Tm ($28.00) Tj ET
+q 0.700 0.720 0.740 RG 0.40 w 314.00 493.00 m 554.00 493.00 l S Q
+BT /F1 9.20 Tf 0.250 0.290 0.330 rg 1 0 0 1 66.00 449.00 Tm (The recorded weekly hours is) Tj ET
+BT /F2 10.50 Tf 0.080 0.100 0.130 rg 1 0 0 1 318.00 449.00 Tm (40) Tj ET
+q 0.700 0.720 0.740 RG 0.40 w 314.00 444.00 m 554.00 444.00 l S Q
+BT /F2 24.00 Tf 0.940 0.870 0.870 rg 0.74314 0.66913 -0.66913 0.74314 98.00 235.00 Tm (SYNTHETIC - NOT A REAL DOCUMENT) Tj ET
+BT /F1 8.50 Tf 0.080 0.100 0.130 rg 1 0 0 1 58.00 74.00 Tm (Respectfully submitted to a human reviewer; no program decision is expressed.) Tj ET
+BT /F1 7.00 Tf 0.380 0.420 0.460 rg 1 0 0 1 34.00 18.00 Tm (SYNTHETIC DEV FIXTURE - NOT A REAL DOCUMENT - DEV3-HH-304-D03) Tj ET
+endstream
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+6 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>
+endobj
+7 0 obj
+<< /Title (DEV3-HH-304-D03) /Author (RealDoor synthetic fixture generator) /Creator (dev2/generate_fixtures.py) /Producer (standard-library vector PDF writer) >>
+endobj
+xref
+0 8
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000121 00000 n 
+0000000257 00000 n 
+0000002207 00000 n 
+0000002277 00000 n 
+0000002352 00000 n 
+trailer
+<< /Size 8 /Root 1 0 R /Info 7 0 R >>
+startxref
+2529
+%%EOF
