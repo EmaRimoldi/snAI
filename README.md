@@ -49,12 +49,13 @@ flowchart LR
     E --> F
     B3 == extracted fields<br>+ evidence ==> C["<b>Renter confirms every value</b><br>evidence: page · bbox · confidence<br>"]
     C == confirmed<br>values only ==> D
-    Q ==> G{{"<b>SAFETY GATE</b><br>injection quarantine<br>never-strings lint<br>never decides eligibility"}}
+    Q ==> G{{"<b>SAFETY GATE</b><br>injection quarantine · never-strings lint<br>guarded LLM I/O — masked, allowlisted, linted<br>never decides eligibility"}}
     G ==> E
     G -.- V(["✓ <b>Verified</b> — 6/6 gold households · 53/53 dev splits<br><i>pytest + vitest + eval harness</i>"])
-    B3 -.- O["<b>OpenAI</b><br>sees masked labels only<br>never values or names"]
+    B3 -. anonymized labels only .-> G
     C -. AI help .- S["<b>Supabase</b><br>i18n ×5 languages<br>AI-chat Edge Function proxy"]
-    S -.- O
+    S -. pre-gates + decision lint .-> G
+    G -.-> O["<b>OpenAI</b><br>sees masked labels /<br>confirmed numbers only —<br>never names, raw text, or files"]
     A["<b>Upload</b><br>PDFs stay in the browser<br>"] --> ENGINE
 
      B1:::engine
