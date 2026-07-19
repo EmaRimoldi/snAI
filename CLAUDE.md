@@ -58,6 +58,48 @@ renter-controlled readiness packet — **without deciding eligibility**.
 
 ---
 
+## 2A. Product flow — the renter journey (UPLOAD → REVIEW → CONFIRM)
+
+The UI is a **strict three-phase pipeline** over a single application record — **one applicant = one
+application record**, built entirely from uploaded documents. Progress is tracked **per phase**. This
+is the UX framing of the mission pillars above; it prepares and validates the application and
+**never** decides eligibility.
+
+**Three global values are recomputed after every change and are always visible:**
+- **Status** — the current phase and completeness of the application.
+- **Gross Income** — aggregated automatically from income fields extracted across documents (the §5
+  income math; deterministic, integer-cents, never a float).
+- **Errors** — count of missing required documents **plus** unresolved / low-confidence fields.
+
+These are **readiness / accuracy / completeness signals only — never an eligibility verdict** (red
+line). Everything is **reactive**: any data change immediately propagates to Status, Gross Income,
+Errors, and the required-documents checklist.
+
+1. **UPLOAD** — the renter uploads documents (ID, pay stubs, benefit letters, …). Each file is
+   auto-classified against a required-documents checklist that live-updates into **uploaded** vs
+   **still missing (even if required)**. Missing items **never hard-block** progress; they persist as
+   errors until resolved.
+2. **REVIEW** — the AI extracts structured fields; the renter validates them **one at a time**
+   (prev / next navigation). Each field shows: the **source-document preview with the exact region
+   highlighted**, a **confidence score**, and a **plain-language explanation** of what it is and why
+   it's needed. Three actions per field: **confirm** it's true, **correct** it (a typed value
+   overrides the extraction), or **ask the assistant**. Every confirm/correct updates the record and
+   recomputes Gross Income + Errors.
+3. **CONFIRM** — a single summary listing all collected information. The renter either **confirms**
+   (application locked as *ready to review* — about the **file**, per §6, not about eligibility) or
+   goes back to fix things.
+
+**Cross-cutting:**
+- A minimal **entry point** explains how RealDoor works in **3 short steps**, then starts the flow.
+- An **AI assistant** (Help) can be opened **from anywhere**; it knows the current application state,
+  documents, fields, and errors. It answers rules questions from the frozen corpus only (§7) and
+  **refuses** decision requests (§10) — never improvises a verdict.
+- **Fully localized in 5 languages** (EN, ES, ZH, TL, VI — the five most spoken in the US),
+  switchable at any time; all content adapts to the selected language. Bundled dictionaries are the
+  offline-safe fallback, with optional Supabase overrides (see §4a / §14).
+
+---
+
 ## 3. Scope freeze (challenge conventions — label them as conventions)
 
 - **Program/area:** LIHTC, **Boston-Cambridge-Quincy, MA-NH HUD Metro FMR Area** only.
