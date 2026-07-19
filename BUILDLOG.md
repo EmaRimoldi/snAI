@@ -310,3 +310,24 @@ an in-panel visual pass on the unlocked Understand chat is still worth a click-t
    rate conflict, missing size/threshold/income gating, display ladder, inclusive boundary.
 Plus: `ARCHITECTURE.md` (deliverable #5 — architecture & risk note). Oracle re-verified after all
 changes: official 6/6 exact.
+
+## 2026-07-19 — Discovery merged into main (PR #6) + full i18n/responsive remediation
+
+- Merged `origin/discovery` (`--no-ff`, dcac8b0): sequential Upload/Reviewer flow with batch
+  parsing (`processBatch`, per-file fault isolation in `engine/server.py`), source-grounded PDF
+  review, localized 5-language document guides, and the Leaflet Discover explorer (32 real HUD
+  LIHTC Boston records, attributed Wikimedia photos, OSM/ArcGIS tiles behind CSP).
+- Conflict resolution vs the parallel viewer port (b81ee3e): kept discovery's Reviewer rewrite,
+  ported main's negative-correction guard + `renter_entered` chip into it, deduped the viewer
+  copy keys that both sides had added to all five language blocks, rebuilt
+  `pipeline.module.css` from discovery's version + main-only `.correctError`/`.confidenceLow`.
+- Remediation before push (d0dce15): DiscoverView + the 15 consistency warnings + slot
+  descriptions + header nav/titles now fully localized (en/es/zh/tl/vi, ~90 new copy keys);
+  shipped "PlaceHolder" replaced with a real record count; locale-aware number formatting;
+  721–800px reviewGrid overflow and 375px header/canvas overflow fixed (`minmax(0,…)`,
+  `min-width:0` chains); `@types/leaflet` → devDependencies.
+- Verification: `next build` (strict tsc) clean; vitest 23/23; engine pytest 23/24 (1 failure =
+  missing poppler binary in WSL, not code); Playwright smoke — landing/#app/#discover, PdfViewer
+  canvases + bbox overlays, confidence meter, negative-guard rejection, reactive warnings,
+  Understand math + citations, Prepare receipt with new reason codes, ES/ZH sweeps, 375/800px
+  scroll-clean. PR #6 auto-marked MERGED on push.
