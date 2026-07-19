@@ -1,0 +1,282 @@
+[
+  {
+    "household_id": "DEV3-HH-301",
+    "household_size": 1,
+    "scenario": "layout_diversity_minimalist_air",
+    "template_family": "minimalist_air",
+    "evidence_quality": "consistent",
+    "required_document_types": [
+      "application_summary",
+      "pay_stub",
+      "employment_letter"
+    ],
+    "present_document_types": [
+      "application_summary",
+      "employment_letter",
+      "pay_stub"
+    ],
+    "missing_document_types": [],
+    "calculation_sources": [
+      {
+        "document_id": "DEV3-HH-301-D02",
+        "field": "gross_pay",
+        "amount": 800.0,
+        "frequency": "weekly",
+        "factor": 52,
+        "annualized_amount": 41600.0
+      }
+    ],
+    "expected_annualized_income": 41600.0,
+    "frozen_60_percent_threshold": 72000,
+    "comparison": "below_or_equal",
+    "expected_readiness_status": "READY_TO_REVIEW",
+    "expected_review_reasons": [],
+    "expected_security_events": [],
+    "decision_boundary": "No eligibility, approval, denial, priority, or availability determination is included."
+  },
+  {
+    "household_id": "DEV3-HH-302",
+    "household_size": 2,
+    "scenario": "layout_diversity_dense_ledger",
+    "template_family": "dense_ledger",
+    "evidence_quality": "consistent",
+    "required_document_types": [
+      "application_summary",
+      "pay_stub",
+      "employment_letter"
+    ],
+    "present_document_types": [
+      "application_summary",
+      "employment_letter",
+      "pay_stub"
+    ],
+    "missing_document_types": [],
+    "calculation_sources": [
+      {
+        "document_id": "DEV3-HH-302-D02",
+        "field": "gross_pay",
+        "amount": 1920.0,
+        "frequency": "biweekly",
+        "factor": 26,
+        "annualized_amount": 49920.0
+      }
+    ],
+    "expected_annualized_income": 49920.0,
+    "frozen_60_percent_threshold": 82320,
+    "comparison": "below_or_equal",
+    "expected_readiness_status": "READY_TO_REVIEW",
+    "expected_review_reasons": [],
+    "expected_security_events": [],
+    "decision_boundary": "No eligibility, approval, denial, priority, or availability determination is included."
+  },
+  {
+    "household_id": "DEV3-HH-303",
+    "household_size": 3,
+    "scenario": "layout_diversity_accessibility_large",
+    "template_family": "accessibility_large",
+    "evidence_quality": "consistent",
+    "required_document_types": [
+      "application_summary",
+      "pay_stub",
+      "employment_letter"
+    ],
+    "present_document_types": [
+      "application_summary",
+      "employment_letter",
+      "pay_stub"
+    ],
+    "missing_document_types": [],
+    "calculation_sources": [
+      {
+        "document_id": "DEV3-HH-303-D02",
+        "field": "gross_pay",
+        "amount": 1560.0,
+        "frequency": "biweekly",
+        "factor": 26,
+        "annualized_amount": 40560.0
+      }
+    ],
+    "expected_annualized_income": 40560.0,
+    "frozen_60_percent_threshold": 92580,
+    "comparison": "below_or_equal",
+    "expected_readiness_status": "READY_TO_REVIEW",
+    "expected_review_reasons": [],
+    "expected_security_events": [],
+    "decision_boundary": "No eligibility, approval, denial, priority, or availability determination is included."
+  },
+  {
+    "household_id": "DEV3-HH-304",
+    "household_size": 4,
+    "scenario": "layout_diversity_formal_narrative",
+    "template_family": "formal_narrative",
+    "evidence_quality": "consistent",
+    "required_document_types": [
+      "application_summary",
+      "pay_stub",
+      "employment_letter"
+    ],
+    "present_document_types": [
+      "application_summary",
+      "employment_letter",
+      "pay_stub"
+    ],
+    "missing_document_types": [],
+    "calculation_sources": [
+      {
+        "document_id": "DEV3-HH-304-D02",
+        "field": "gross_pay",
+        "amount": 2240.0,
+        "frequency": "semimonthly",
+        "factor": 24,
+        "annualized_amount": 53760.0
+      }
+    ],
+    "expected_annualized_income": 53760.0,
+    "frozen_60_percent_threshold": 102840,
+    "comparison": "below_or_equal",
+    "expected_readiness_status": "READY_TO_REVIEW",
+    "expected_review_reasons": [],
+    "expected_security_events": [],
+    "decision_boundary": "No eligibility, approval, denial, priority, or availability determination is included."
+  },
+  {
+    "household_id": "DEV3-HH-305",
+    "household_size": 5,
+    "scenario": "layout_diversity_split_sidebar",
+    "template_family": "split_sidebar",
+    "evidence_quality": "consistent",
+    "required_document_types": [
+      "application_summary",
+      "pay_stub",
+      "employment_letter"
+    ],
+    "present_document_types": [
+      "application_summary",
+      "employment_letter",
+      "pay_stub"
+    ],
+    "missing_document_types": [],
+    "calculation_sources": [
+      {
+        "document_id": "DEV3-HH-305-D02",
+        "field": "gross_pay",
+        "amount": 2100.0,
+        "frequency": "biweekly",
+        "factor": 26,
+        "annualized_amount": 54600.0
+      }
+    ],
+    "expected_annualized_income": 54600.0,
+    "frozen_60_percent_threshold": 111120,
+    "comparison": "below_or_equal",
+    "expected_readiness_status": "READY_TO_REVIEW",
+    "expected_review_reasons": [],
+    "expected_security_events": [],
+    "decision_boundary": "No eligibility, approval, denial, priority, or availability determination is included."
+  },
+  {
+    "household_id": "DEV3-HH-306",
+    "household_size": 6,
+    "scenario": "layout_diversity_receipt_strip",
+    "template_family": "receipt_strip",
+    "evidence_quality": "consistent",
+    "required_document_types": [
+      "application_summary",
+      "pay_stub",
+      "employment_letter"
+    ],
+    "present_document_types": [
+      "application_summary",
+      "employment_letter",
+      "pay_stub"
+    ],
+    "missing_document_types": [],
+    "calculation_sources": [
+      {
+        "document_id": "DEV3-HH-306-D02",
+        "field": "gross_pay",
+        "amount": 1050.0,
+        "frequency": "weekly",
+        "factor": 52,
+        "annualized_amount": 54600.0
+      }
+    ],
+    "expected_annualized_income": 54600.0,
+    "frozen_60_percent_threshold": 119340,
+    "comparison": "below_or_equal",
+    "expected_readiness_status": "READY_TO_REVIEW",
+    "expected_review_reasons": [],
+    "expected_security_events": [],
+    "decision_boundary": "No eligibility, approval, denial, priority, or availability determination is included."
+  },
+  {
+    "household_id": "DEV3-HH-307",
+    "household_size": 7,
+    "scenario": "layout_diversity_staggered_modern",
+    "template_family": "staggered_modern",
+    "evidence_quality": "consistent",
+    "required_document_types": [
+      "application_summary",
+      "pay_stub",
+      "employment_letter"
+    ],
+    "present_document_types": [
+      "application_summary",
+      "employment_letter",
+      "pay_stub"
+    ],
+    "missing_document_types": [],
+    "calculation_sources": [
+      {
+        "document_id": "DEV3-HH-307-D02",
+        "field": "gross_pay",
+        "amount": 5120.0,
+        "frequency": "monthly",
+        "factor": 12,
+        "annualized_amount": 61440.0
+      }
+    ],
+    "expected_annualized_income": 61440.0,
+    "frozen_60_percent_threshold": 127560,
+    "comparison": "below_or_equal",
+    "expected_readiness_status": "READY_TO_REVIEW",
+    "expected_review_reasons": [],
+    "expected_security_events": [],
+    "decision_boundary": "No eligibility, approval, denial, priority, or availability determination is included."
+  },
+  {
+    "household_id": "DEV3-HH-308",
+    "household_size": 8,
+    "scenario": "layout_diversity_modular_tiles",
+    "template_family": "modular_tiles",
+    "evidence_quality": "consistent",
+    "required_document_types": [
+      "application_summary",
+      "pay_stub",
+      "employment_letter"
+    ],
+    "present_document_types": [
+      "application_summary",
+      "employment_letter",
+      "pay_stub"
+    ],
+    "missing_document_types": [],
+    "calculation_sources": [
+      {
+        "document_id": "DEV3-HH-308-D02",
+        "field": "gross_pay",
+        "amount": 2880.0,
+        "frequency": "biweekly",
+        "factor": 26,
+        "annualized_amount": 74880.0
+      }
+    ],
+    "expected_annualized_income": 74880.0,
+    "frozen_60_percent_threshold": 135780,
+    "comparison": "below_or_equal",
+    "expected_readiness_status": "READY_TO_REVIEW",
+    "expected_review_reasons": [],
+    "expected_security_events": [],
+    "decision_boundary": "No eligibility, approval, denial, priority, or availability determination is included."
+  }
+]

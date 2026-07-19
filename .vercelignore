@@ -1,0 +1,18 @@
+# Upload filter for `vercel deploy` from the REPO ROOT (the Vercel project's
+# Root Directory is `frontend`). NOTE: this file replaces .gitignore for
+# deploys — frontend/api/_engine/ is gitignored but MUST upload.
+/engine
+node_modules
+.next
+out
+.venv
+__pycache__
+*.log
+*.tsbuildinfo
+.env
+.env.*
+challenge_03.pdf
+frontend/e2e-shots
+frontend/e2e-*.mjs
+frontend/start.log
+frontend/deploy-out.txt

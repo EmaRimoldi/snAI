@@ -1,0 +1,58 @@
+%PDF-1.4
+%‚„œ”
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 5 0 R /F2 6 0 R >> >> /Contents 4 0 R >>
+endobj
+4 0 obj
+<< /Length 1624 >>
+stream
+q 0.470 0.100 0.260 rg 0.00 684.00 612.00 108.00 re f Q
+BT /F2 27.00 Tf 1.000 1.000 1.000 rg 1 0 0 1 32.00 740.00 Tm (THE EVIDENCE EDIT) Tj ET
+BT /F1 9.00 Tf 1.000 0.880 0.930 rg 1 0 0 1 34.00 706.00 Tm (Application Summary / FICTIONAL FEATURE) Tj ET
+BT /F2 7.20 Tf 1.000 1.000 1.000 rg 1 0 0 1 516.39 744.00 Tm (DEV5-HH-509-D01) Tj ET
+q 0.980 0.910 0.940 rg 34.00 520.00 330.00 126.00 re f Q
+BT /F1 14.20 Tf 0.180 0.210 0.240 rg 1 0 0 1 52.00 560.00 Tm (Meet the featured record holder, ) Tj ET
+BT /F2 14.20 Tf 0.070 0.090 0.120 rg 1 0 0 1 258.79 560.00 Tm (Ravi Vesper) Tj ET
+q 0.950 0.960 0.980 rg 382.00 573.00 245.00 59.00 re f Q
+BT /F2 7.40 Tf 0.310 0.360 0.410 rg 1 0 0 1 390.00 604.00 Tm (FEATURE / 02 / PEOPLE INCLUDED) Tj ET
+BT /F1 14.20 Tf 0.070 0.090 0.120 rg 1 0 0 1 390.00 586.00 Tm (4) Tj ET
+BT /F1 7.20 Tf 0.180 0.210 0.240 rg 1 0 0 1 40.00 440.00 Tm (Mail for the feature travels to ) Tj ET
+BT /F2 7.20 Tf 0.070 0.090 0.120 rg 1 0 0 1 133.24 440.00 Tm (509 Feature Lane, Somerville, MA 00000) Tj ET
+q 0.950 0.960 0.980 rg 312.00 427.00 245.00 59.00 re f Q
+BT /F2 7.40 Tf 0.310 0.360 0.410 rg 1 0 0 1 320.00 458.00 Tm (FEATURE / 04 / FILED DATE) Tj ET
+BT /F2 14.20 Tf 0.070 0.090 0.120 rg 1 0 0 1 320.00 440.00 Tm (2026-07-14) Tj ET
+BT /F2 7.40 Tf 0.470 0.100 0.260 rg 1 0 0 1 390.00 535.00 Tm (ONE DOCUMENT. MANY READING PATHS.) Tj ET
+BT /F1 7.20 Tf 0.310 0.360 0.410 rg 1 0 0 1 38.00 94.00 Tm (A feature-page hierarchy combines a hero fact, pull quote, and side columns.) Tj ET
+BT /F1 6.80 Tf 0.380 0.420 0.460 rg 1 0 0 1 28.00 17.00 Tm (SYNTHETIC DEV FIXTURE - NOT A REAL DOCUMENT - DEV5-HH-509-D01) Tj ET
+endstream
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+6 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>
+endobj
+7 0 obj
+<< /Title (DEV5-HH-509-D01) /Author (RealDoor synthetic fixture generator) /Creator (dev2/generate_fixtures.py) /Producer (standard-library vector PDF writer) >>
+endobj
+xref
+0 8
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000121 00000 n 
+0000000257 00000 n 
+0000001933 00000 n 
+0000002003 00000 n 
+0000002078 00000 n 
+trailer
+<< /Size 8 /Root 1 0 R /Info 7 0 R >>
+startxref
+2255
+%%EOF

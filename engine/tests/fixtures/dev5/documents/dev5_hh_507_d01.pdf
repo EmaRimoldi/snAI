@@ -1,0 +1,61 @@
+%PDF-1.4
+%‚„œ”
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 5 0 R /F2 6 0 R >> >> /Contents 4 0 R >>
+endobj
+4 0 obj
+<< /Length 1790 >>
+stream
+q 0.930 0.970 0.950 rg 0.00 0.00 204.00 792.00 re f Q
+BT /F2 11.00 Tf 0.180 0.320 0.340 rg 1 0 0 1 20.00 740.00 Tm (IDENTITY) Tj ET
+q 0.980 0.940 0.880 rg 204.00 0.00 204.00 792.00 re f Q
+q 0.480 0.520 0.550 RG 0.70 w 204.00 28.00 m 204.00 764.00 l S Q
+BT /F2 11.00 Tf 0.180 0.320 0.340 rg 1 0 0 1 224.00 740.00 Tm (EVIDENCE) Tj ET
+q 0.920 0.950 0.990 rg 408.00 0.00 204.00 792.00 re f Q
+q 0.480 0.520 0.550 RG 0.70 w 408.00 28.00 m 408.00 764.00 l S Q
+BT /F2 11.00 Tf 0.180 0.320 0.340 rg 1 0 0 1 428.00 740.00 Tm (REVIEW COPY) Tj ET
+BT /F2 10.00 Tf 0.350 0.440 0.430 rg 0.00000 1.00000 -1.00000 0.00000 18.00 104.00 Tm (SYNTHETIC TRI-FOLD) Tj ET
+BT /F2 15.00 Tf 0.070 0.090 0.120 rg 1 0 0 1 224.00 706.00 Tm (Application Summary) Tj ET
+BT /F2 6.80 Tf 0.070 0.090 0.120 rg 1 0 0 1 531.81 706.00 Tm (DEV5-HH-507-D01) Tj ET
+BT /F2 7.40 Tf 0.310 0.360 0.410 rg 1 0 0 1 22.00 668.00 Tm (PANEL / 01 / FILED DATE) Tj ET
+BT /F1 8.80 Tf 0.070 0.090 0.120 rg 1 0 0 1 22.00 650.00 Tm (2026-07-11) Tj ET
+BT /F1 6.50 Tf 0.180 0.210 0.240 rg 1 0 0 1 226.00 650.00 Tm (Mail goes to ) Tj ET
+BT /F2 6.50 Tf 0.070 0.090 0.120 rg 1 0 0 1 262.85 650.00 Tm (507 Three Panel Road, Boston, MA 00000) Tj ET
+BT /F1 8.80 Tf 0.180 0.210 0.240 rg 1 0 0 1 430.00 650.00 Tm (People included: ) Tj ET
+BT /F2 8.80 Tf 0.070 0.090 0.120 rg 1 0 0 1 497.50 650.00 Tm (7) Tj ET
+BT /F2 7.40 Tf 0.310 0.360 0.410 rg 1 0 0 1 22.00 526.00 Tm (PANEL / 04 / RECORD HOLDER) Tj ET
+BT /F1 8.80 Tf 0.070 0.090 0.120 rg 1 0 0 1 22.00 508.00 Tm (Oren Timber) Tj ET
+BT /F1 6.80 Tf 0.310 0.360 0.410 rg 1 0 0 1 222.00 77.00 Tm (Three vertical panels distribute identity, dates, and calculation evidence.) Tj ET
+BT /F1 6.80 Tf 0.380 0.420 0.460 rg 1 0 0 1 28.00 17.00 Tm (SYNTHETIC DEV FIXTURE - NOT A REAL DOCUMENT - DEV5-HH-507-D01) Tj ET
+endstream
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+6 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>
+endobj
+7 0 obj
+<< /Title (DEV5-HH-507-D01) /Author (RealDoor synthetic fixture generator) /Creator (dev2/generate_fixtures.py) /Producer (standard-library vector PDF writer) >>
+endobj
+xref
+0 8
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000121 00000 n 
+0000000257 00000 n 
+0000002099 00000 n 
+0000002169 00000 n 
+0000002244 00000 n 
+trailer
+<< /Size 8 /Root 1 0 R /Info 7 0 R >>
+startxref
+2421
+%%EOF

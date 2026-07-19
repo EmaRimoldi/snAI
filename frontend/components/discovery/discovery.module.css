@@ -1,0 +1,428 @@
+.discoverView {
+  padding: 0.75rem 0 2rem;
+}
+
+.discoverHeader {
+  display: grid;
+  gap: 1rem;
+  margin-bottom: 0.9rem;
+}
+
+.discoverTitleRow {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 1.25rem;
+}
+
+.discoverTitle {
+  margin: 0;
+  color: var(--foreground);
+  font-size: clamp(1.7rem, 2.8vw, 2.35rem);
+  font-weight: 750;
+  letter-spacing: -0.035em;
+  line-height: 1.08;
+}
+
+.discoverRecordCount {
+  max-width: 42rem;
+  margin: 0.2rem 0 0;
+  color: var(--muted-foreground);
+  font-size: 0.98rem;
+  font-weight: 700;
+}
+
+.discoverBadges {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: end;
+  gap: 0.5rem;
+}
+
+.discoverBadge {
+  display: inline-flex;
+  min-height: 36px;
+  align-items: center;
+  gap: 0.45rem;
+  border: 1px solid color-mix(in srgb, #9a5b00 35%, var(--input));
+  border-radius: 999px;
+  background: #fff8eb;
+  color: #5d3900;
+  padding: 0.35rem 0.7rem;
+  font-size: 0.82rem;
+  font-weight: 750;
+  white-space: nowrap;
+}
+
+.discoverFilters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 0.7rem;
+  padding: 0.75rem;
+  border: 1px solid var(--input);
+  border-radius: 0.85rem;
+  background: color-mix(in srgb, var(--background) 82%, #ffffff);
+}
+
+.filterField {
+  display: grid;
+  flex: 1 1 12rem;
+  gap: 0.3rem;
+}
+
+.filterField label {
+  color: var(--muted-foreground);
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.filterField select {
+  width: 100%;
+  min-height: 44px;
+  cursor: pointer;
+  border: 1px solid var(--input);
+  border-radius: 0.55rem;
+  background: var(--background);
+  color: var(--foreground);
+  padding: 0 0.75rem;
+  font-weight: 700;
+}
+
+.clearFiltersButton {
+  flex: 0 0 auto;
+  min-height: 44px;
+  align-self: end;
+  cursor: pointer;
+  border: 1px solid var(--input);
+  border-radius: 0.55rem;
+  background: var(--background);
+  color: var(--primary-dark);
+  padding: 0 0.75rem;
+  font-weight: 800;
+}
+
+.clearFiltersButton:hover {
+  background: color-mix(in srgb, var(--secondary) 60%, transparent);
+}
+
+.discoverShell {
+  display: grid;
+  min-height: 30rem;
+  overflow: hidden;
+  grid-template-columns: minmax(0, 1fr) minmax(22rem, 25rem);
+  border: 1px solid var(--input);
+  border-radius: 0.8rem;
+  background: var(--background);
+}
+
+.discoverShell.isMapOnly {
+  grid-template-columns: 1fr;
+}
+
+.discoverShell.isMapOnly .propertyDetail {
+  display: none;
+}
+
+.discoverMap {
+  position: relative;
+  min-height: 30rem;
+  overflow: hidden;
+  background: #eee8dc;
+}
+
+.leafletMap {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.leafletMap :global(.leaflet-container) {
+  background: #eee8dc;
+  font: inherit;
+}
+
+.leafletMap :global(.leaflet-control-attribution) {
+  font-size: 0.68rem;
+}
+
+.leafletMap :global(.leaflet-control-zoom) {
+  border-color: var(--input) !important;
+  box-shadow: 0 0.35rem 1rem rgba(42, 33, 28, 0.12);
+}
+
+.leafletMap :global(.leaflet-control-zoom a) {
+  color: var(--foreground) !important;
+}
+
+.propertyTooltip {
+  overflow: hidden;
+  border: 1px solid var(--input);
+  border-radius: 0.6rem;
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: 0 0.35rem 1rem rgba(42, 33, 28, 0.16);
+  color: var(--foreground);
+  padding: 0;
+}
+
+.propertyTooltip img {
+  display: block;
+  width: 13.5rem;
+  height: 8rem;
+  object-fit: cover;
+}
+
+.propertyTooltipBody {
+  width: 13.5rem;
+  padding: 0.5rem 0.65rem;
+}
+
+.propertyTooltipBody strong {
+  display: block;
+  max-width: 14rem;
+  overflow: hidden;
+  color: var(--foreground);
+  font-size: 0.78rem;
+  font-weight: 850;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.propertyTooltipBody span {
+  display: block;
+  margin-top: 0.18rem;
+  overflow-wrap: anywhere;
+  color: var(--foreground);
+  font-size: 0.72rem;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.searchRadiusCircle {
+  filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.9));
+}
+
+.mapModeToggle {
+  position: absolute;
+  right: 1rem;
+  top: 1rem;
+  z-index: 500;
+  display: inline-flex;
+  overflow: hidden;
+  border: 1px solid var(--input);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 0.35rem 1rem rgba(42, 33, 28, 0.12);
+}
+
+.mapModeToggle button {
+  min-height: 36px;
+  cursor: pointer;
+  border: 0;
+  background: transparent;
+  color: var(--muted-foreground);
+  padding: 0 0.8rem;
+  font-size: 0.82rem;
+  font-weight: 850;
+}
+
+.mapModeToggle button.isActive {
+  background: var(--primary-dark);
+  color: var(--primary-foreground);
+}
+
+.mapEmptyState {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 600;
+  width: min(90%, 24rem);
+  transform: translate(-50%, -50%);
+  border: 1px solid var(--input);
+  border-radius: 1rem;
+  background: rgba(250, 246, 239, 0.94);
+  padding: 1rem;
+  text-align: center;
+  font-weight: 750;
+}
+
+.propertyDetail {
+  display: grid;
+  align-content: start;
+  gap: 1rem;
+  border-left: 1px solid var(--input);
+  background: #ffffff;
+  padding: 1.25rem;
+}
+
+.propertyDetailPhoto {
+  overflow: hidden;
+  border: 1px solid var(--input);
+  border-radius: 0.9rem;
+  background: var(--muted);
+}
+
+.propertyDetailPhoto img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+}
+
+.propertyDetailHeader {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.propertyDetailClose {
+  display: inline-flex;
+  width: 2.25rem;
+  min-width: 2.25rem;
+  height: 2.25rem;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border: 1px solid var(--input);
+  border-radius: 50%;
+  background: var(--background);
+  color: var(--muted-foreground);
+  font-size: 1.15rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.propertyDetailClose:hover {
+  background: var(--secondary);
+  color: var(--foreground);
+}
+
+.propertyDetail h2 {
+  margin: 0;
+  font-size: 1.35rem;
+  letter-spacing: -0.035em;
+  line-height: 1.15;
+}
+
+.propertyAddress {
+  margin: 0.35rem 0 0;
+  color: var(--muted-foreground);
+  font-size: 0.92rem;
+  font-weight: 550;
+  line-height: 1.38;
+}
+
+.propertyAddress span {
+  display: block;
+}
+
+.streetAddress {
+  color: color-mix(in srgb, var(--foreground) 72%, var(--muted-foreground));
+  font-size: 0.98rem;
+  font-weight: 650;
+}
+
+.unknownCard {
+  display: flex;
+  min-height: 50px;
+  align-items: center;
+  gap: 0.55rem;
+  border: 1px solid color-mix(in srgb, #9a5b00 38%, var(--input));
+  border-radius: 0.55rem;
+  background: #fff8eb;
+  padding: 0.75rem 0.9rem;
+  color: #5d3900;
+  font-size: 0.9rem;
+}
+
+.unknownCard strong {
+  color: #4b2e00;
+}
+
+.detailGrid {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.detailRow {
+  display: grid;
+  grid-template-columns: minmax(8rem, 0.75fr) 1fr;
+  gap: 0.75rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--input) 72%, transparent);
+  padding-bottom: 0.65rem;
+}
+
+.detailRow dt {
+  color: var(--muted-foreground);
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.detailRow dd {
+  margin: 0;
+  font-weight: 750;
+}
+
+.detailActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+}
+
+.detailActions a,
+.detailActions button {
+  min-height: 44px;
+  cursor: pointer;
+  border: 1px solid var(--primary);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--primary-dark);
+  padding: 0.65rem 0.9rem;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.detailActions a:hover,
+.detailActions button:hover {
+  background: var(--secondary);
+}
+
+.discoverNote {
+  margin: 0.25rem 0 0;
+  color: var(--muted-foreground);
+  font-size: 0.9rem;
+}
+
+@media (max-width: 1080px) {
+  .discoverShell {
+    grid-template-columns: 1fr;
+  }
+
+  .propertyDetail {
+    border-top: 1px solid var(--input);
+    border-left: 0;
+  }
+}
+
+@media (max-width: 720px) {
+  .discoverTitleRow {
+    display: grid;
+  }
+
+  .discoverBadges {
+    justify-content: start;
+  }
+
+  .filterField {
+    flex-basis: 100%;
+  }
+
+  .clearFiltersButton {
+    width: 100%;
+  }
+
+  .discoverMap {
+    min-height: 32rem;
+  }
+}

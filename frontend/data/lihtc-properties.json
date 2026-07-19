@@ -23,7 +23,7 @@
     "retrieved_utc": "2026-07-18T18:21:49Z",
     "availability_status": "unknown",
     "availability_note": "HUD LIHTC property data does not include current vacancies, waitlists, or application status.",
-    "image_url": "./assets/properties/property-01.jpg",
+    "image_url": "/assets/properties/property-01.jpg",
     "image_alt": "Illustrative Boston-area residential building exterior"
   },
   {
@@ -50,7 +50,7 @@
     "retrieved_utc": "2026-07-18T18:21:49Z",
     "availability_status": "unknown",
     "availability_note": "HUD LIHTC property data does not include current vacancies, waitlists, or application status.",
-    "image_url": "./assets/properties/property-02.jpg",
+    "image_url": "/assets/properties/property-02.jpg",
     "image_alt": "Illustrative Boston-area residential building exterior"
   },
   {
@@ -77,7 +77,7 @@
     "retrieved_utc": "2026-07-18T18:21:49Z",
     "availability_status": "unknown",
     "availability_note": "HUD LIHTC property data does not include current vacancies, waitlists, or application status.",
-    "image_url": "./assets/properties/property-03.jpg",
+    "image_url": "/assets/properties/property-03.jpg",
     "image_alt": "Illustrative Boston-area residential building exterior"
   },
   {
@@ -104,7 +104,7 @@
     "retrieved_utc": "2026-07-18T18:21:49Z",
     "availability_status": "unknown",
     "availability_note": "HUD LIHTC property data does not include current vacancies, waitlists, or application status.",
-    "image_url": "./assets/properties/property-04.jpg",
+    "image_url": "/assets/properties/property-04.jpg",
     "image_alt": "Illustrative Boston-area residential building exterior"
   },
   {
@@ -131,7 +131,7 @@
     "retrieved_utc": "2026-07-18T18:21:49Z",
     "availability_status": "unknown",
     "availability_note": "HUD LIHTC property data does not include current vacancies, waitlists, or application status.",
-    "image_url": "./assets/properties/property-05.jpg",
+    "image_url": "/assets/properties/property-05.jpg",
     "image_alt": "Illustrative Boston-area residential building exterior"
   },
   {
@@ -158,7 +158,7 @@
     "retrieved_utc": "2026-07-18T18:21:49Z",
     "availability_status": "unknown",
     "availability_note": "HUD LIHTC property data does not include current vacancies, waitlists, or application status.",
-    "image_url": "./assets/properties/property-06.jpg",
+    "image_url": "/assets/properties/property-06.jpg",
     "image_alt": "Illustrative Boston-area residential building exterior"
   },
   {
@@ -185,7 +185,7 @@
     "retrieved_utc": "2026-07-18T18:21:49Z",
     "availability_status": "unknown",
     "availability_note": "HUD LIHTC property data does not include current vacancies, waitlists, or application status.",
-    "image_url": "./assets/properties/property-07.jpg",
+    "image_url": "/assets/properties/property-07.jpg",
     "image_alt": "Illustrative Boston-area residential building exterior"
   },
   {
@@ -212,7 +212,7 @@
     "retrieved_utc": "2026-07-18T18:21:49Z",
     "availability_status": "unknown",
     "availability_note": "HUD LIHTC property data does not include current vacancies, waitlists, or application status.",
-    "image_url": "./assets/properties/property-01.jpg",
+    "image_url": "/assets/properties/property-01.jpg",
     "image_alt": "Illustrative Boston-area residential building exterior"
   },
   {
@@ -239,7 +239,7 @@
     "retrieved_utc": "2026-07-18T18:21:49Z",
     "availability_status": "unknown",
     "availability_note": "HUD LIHTC property data does not include current vacancies, waitlists, or application status.",
-    "image_url": "./assets/properties/property-02.jpg",
+    "image_url": "/assets/properties/property-02.jpg",
     "image_alt": "Illustrative Boston-area residential building exterior"
   },
   {
@@ -266,7 +266,7 @@
     "retrieved_utc": "2026-07-18T18:21:49Z",
     "availability_status": "unknown",
     "availability_note": "HUD LIHTC property data does not include current vacancies, waitlists, or application status.",
-    "image_url": "./assets/properties/property-03.jpg",
+    "image_url": "/assets/properties/property-03.jpg",
     "image_alt": "Illustrative Boston-area residential building exterior"
   },
   {
@@ -293,7 +293,7 @@
     "retrieved_utc": "2026-07-18T18:21:49Z",
     "availability_status": "unknown",
     "availability_note": "HUD LIHTC property data does not include current vacancies, waitlists, or application status.",
-    "image_url": "./assets/properties/property-04.jpg",
+    "image_url": "/assets/properties/property-04.jpg",
     "image_alt": "Illustrative Boston-area residential building exterior"
   },
   {
@@ -320,7 +320,7 @@
     "retrieved_utc": "2026-07-18T18:21:49Z",
     "availability_status": "unknown",
     "availability_note": "HUD LIHTC property data does not include current vacancies, waitlists, or application status.",
-    "image_url": "./assets/properties/property-05.jpg",
+    "image_url": "/assets/properties/property-05.jpg",
     "image_alt": "Illustrative Boston-area residential building exterior"
   },
   {
@@ -347,7 +347,7 @@
     "retrieved_utc": "2026-07-18T18:21:49Z",
     "availability_status": "unknown",
     "availability_note": "HUD LIHTC property data does not include current vacancies, waitlists, or application status.",
-    "image_url": "./assets/properties/property-06.jpg",
+    "image_url": "/assets/properties/property-06.jpg",
     "image_alt": "Illustrative Boston-area residential building exterior"
   },
   {
@@ -374,7 +374,7 @@
     "retrieved_utc": "2026-07-18T18:21:49Z",
     "availability_status": "unknown",
     "availability_note": "HUD LIHTC property data does not include current vacancies, waitlists, or application status.",
-    "image_url": "./assets/properties/property-07.jpg",
+    "image_url": "/assets/properties/property-07.jpg",
     "image_alt": "Illustrative Boston-area residential building exterior"
   },
   {
@@ -401,7 +401,7 @@
     "retrieved_utc": "2026-07-18T18:21:49Z",
     "availability_status": "unknown",
     "availability_note": "HUD LIHTC property data does not include current vacancies, waitlists, or application status.",
-    "image_url": "./assets/properties/property-01.jpg",
+    "image_url": "/assets/properties/property-01.jpg",
     "image_alt": "Illustrative Boston-area residential building exterior"
   },
   {
@@ -428,7 +428,7 @@
     "retrieved_utc": "2026-07-18T18:21:49Z",
     "availability_status": "unknown",
     "availability_note": "HUD LIHTC property data does not include current vacancies, waitlists, or application status.",
-    "image_url": "./assets/properties/property-02.jpg",
+    "image_url": "/assets/properties/property-02.jpg",
     "image_alt": "Illustrative Boston-area residential building exterior"
   },
   {
@@ -455,7 +455,7 @@
     "retrieved_utc": "2026-07-18T18:21:49Z",
     "availability_status": "unknown",
     "availability_note": "HUD LIHTC property data does not include current vacancies, waitlists, or application status.",
-    "image_url": "./assets/properties/property-03.jpg",
+    "image_url": "/assets/properties/property-03.jpg",
     "image_alt": "Illustrative Boston-area residential building exterior"
   },
   {
@@ -482,7 +482,7 @@
     "retrieved_utc": "2026-07-18T18:21:49Z",
     "availability_status": "unknown",
     "availability_note": "HUD LIHTC property data does not include current vacancies, waitlists, or application status.",
-    "image_url": "./assets/properties/property-04.jpg",
+    "image_url": "/assets/properties/property-04.jpg",
     "image_alt": "Illustrative Boston-area residential building exterior"
   },
   {
@@ -509,7 +509,7 @@
     "retrieved_utc": "2026-07-18T18:21:49Z",
     "availability_status": "unknown",
     "availability_note": "HUD LIHTC property data does not include current vacancies, waitlists, or application status.",
-    "image_url": "./assets/properties/property-05.jpg",
+    "image_url": "/assets/properties/property-05.jpg",
     "image_alt": "Illustrative Boston-area residential building exterior"
   },
   {
@@ -536,7 +536,7 @@
     "retrieved_utc": "2026-07-18T18:21:49Z",
     "availability_status": "unknown",
     "availability_note": "HUD LIHTC property data does not include current vacancies, waitlists, or application status.",
-    "image_url": "./assets/properties/property-06.jpg",
+    "image_url": "/assets/properties/property-06.jpg",
     "image_alt": "Illustrative Boston-area residential building exterior"
   },
   {
@@ -563,7 +563,7 @@
     "retrieved_utc": "2026-07-18T18:21:49Z",
     "availability_status": "unknown",
     "availability_note": "HUD LIHTC property data does not include current vacancies, waitlists, or application status.",
-    "image_url": "./assets/properties/property-07.jpg",
+    "image_url": "/assets/properties/property-07.jpg",
     "image_alt": "Illustrative Boston-area residential building exterior"
   },
   {
@@ -590,7 +590,7 @@
     "retrieved_utc": "2026-07-18T18:21:49Z",
     "availability_status": "unknown",
     "availability_note": "HUD LIHTC property data does not include current vacancies, waitlists, or application status.",
-    "image_url": "./assets/properties/property-01.jpg",
+    "image_url": "/assets/properties/property-01.jpg",
     "image_alt": "Illustrative Boston-area residential building exterior"
   },
   {
@@ -617,7 +617,7 @@
     "retrieved_utc": "2026-07-18T18:21:49Z",
     "availability_status": "unknown",
     "availability_note": "HUD LIHTC property data does not include current vacancies, waitlists, or application status.",
-    "image_url": "./assets/properties/property-02.jpg",
+    "image_url": "/assets/properties/property-02.jpg",
     "image_alt": "Illustrative Boston-area residential building exterior"
   },
   {
@@ -644,7 +644,7 @@
     "retrieved_utc": "2026-07-18T18:21:49Z",
     "availability_status": "unknown",
     "availability_note": "HUD LIHTC property data does not include current vacancies, waitlists, or application status.",
-    "image_url": "./assets/properties/property-03.jpg",
+    "image_url": "/assets/properties/property-03.jpg",
     "image_alt": "Illustrative Boston-area residential building exterior"
   },
   {
@@ -671,7 +671,7 @@
     "retrieved_utc": "2026-07-18T18:21:49Z",
     "availability_status": "unknown",
     "availability_note": "HUD LIHTC property data does not include current vacancies, waitlists, or application status.",
-    "image_url": "./assets/properties/property-04.jpg",
+    "image_url": "/assets/properties/property-04.jpg",
     "image_alt": "Illustrative Boston-area residential building exterior"
   },
   {
@@ -698,7 +698,7 @@
     "retrieved_utc": "2026-07-18T18:21:49Z",
     "availability_status": "unknown",
     "availability_note": "HUD LIHTC property data does not include current vacancies, waitlists, or application status.",
-    "image_url": "./assets/properties/property-05.jpg",
+    "image_url": "/assets/properties/property-05.jpg",
     "image_alt": "Illustrative Boston-area residential building exterior"
   },
   {
@@ -725,7 +725,7 @@
     "retrieved_utc": "2026-07-18T18:21:49Z",
     "availability_status": "unknown",
     "availability_note": "HUD LIHTC property data does not include current vacancies, waitlists, or application status.",
-    "image_url": "./assets/properties/property-06.jpg",
+    "image_url": "/assets/properties/property-06.jpg",
     "image_alt": "Illustrative Boston-area residential building exterior"
   },
   {
@@ -752,7 +752,7 @@
     "retrieved_utc": "2026-07-18T18:21:49Z",
     "availability_status": "unknown",
     "availability_note": "HUD LIHTC property data does not include current vacancies, waitlists, or application status.",
-    "image_url": "./assets/properties/property-07.jpg",
+    "image_url": "/assets/properties/property-07.jpg",
     "image_alt": "Illustrative Boston-area residential building exterior"
   },
   {
@@ -779,7 +779,7 @@
     "retrieved_utc": "2026-07-18T18:21:49Z",
     "availability_status": "unknown",
     "availability_note": "HUD LIHTC property data does not include current vacancies, waitlists, or application status.",
-    "image_url": "./assets/properties/property-01.jpg",
+    "image_url": "/assets/properties/property-01.jpg",
     "image_alt": "Illustrative Boston-area residential building exterior"
   },
   {
@@ -806,7 +806,7 @@
     "retrieved_utc": "2026-07-18T18:21:49Z",
     "availability_status": "unknown",
     "availability_note": "HUD LIHTC property data does not include current vacancies, waitlists, or application status.",
-    "image_url": "./assets/properties/property-02.jpg",
+    "image_url": "/assets/properties/property-02.jpg",
     "image_alt": "Illustrative Boston-area residential building exterior"
   },
   {
@@ -833,7 +833,7 @@
     "retrieved_utc": "2026-07-18T18:21:49Z",
     "availability_status": "unknown",
     "availability_note": "HUD LIHTC property data does not include current vacancies, waitlists, or application status.",
-    "image_url": "./assets/properties/property-03.jpg",
+    "image_url": "/assets/properties/property-03.jpg",
     "image_alt": "Illustrative Boston-area residential building exterior"
   },
   {
@@ -860,7 +860,7 @@
     "retrieved_utc": "2026-07-18T18:21:49Z",
     "availability_status": "unknown",
     "availability_note": "HUD LIHTC property data does not include current vacancies, waitlists, or application status.",
-    "image_url": "./assets/properties/property-04.jpg",
+    "image_url": "/assets/properties/property-04.jpg",
     "image_alt": "Illustrative Boston-area residential building exterior"
   }
 ]

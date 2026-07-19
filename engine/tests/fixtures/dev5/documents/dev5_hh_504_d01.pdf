@@ -1,0 +1,61 @@
+%PDF-1.4
+%‚„œ”
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 5 0 R /F2 6 0 R >> >> /Contents 4 0 R >>
+endobj
+4 0 obj
+<< /Length 1984 >>
+stream
+q 1.000 1.000 1.000 rg 0.160 0.190 0.220 RG 1.20 w 30.00 42.00 552.00 720.00 re B Q
+q 1.000 1.000 1.000 rg 0.580 0.480 0.250 RG 0.55 w 37.00 49.00 538.00 706.00 re B Q
+BT /F2 15.00 Tf 0.070 0.090 0.120 rg 1 0 0 1 116.00 724.00 Tm (FICTIONAL ATTESTATION OF DOCUMENTED FACTS) Tj ET
+BT /F1 10.50 Tf 0.310 0.360 0.410 rg 1 0 0 1 256.40 701.00 Tm (Application Summary) Tj ET
+BT /F1 7.00 Tf 0.310 0.360 0.410 rg 1 0 0 1 276.05 682.00 Tm (DEV5-HH-504-D01) Tj ET
+BT /F2 10.50 Tf 0.480 0.380 0.180 rg 1 0 0 1 60.00 632.00 Tm (1.) Tj ET
+BT /F1 12.00 Tf 0.180 0.210 0.240 rg 1 0 0 1 88.00 632.00 Tm (I affirm that the application date is ) Tj ET
+BT /F2 12.00 Tf 0.070 0.090 0.120 rg 1 0 0 1 270.76 632.00 Tm (2026-07-10) Tj ET
+BT /F2 10.50 Tf 0.480 0.380 0.180 rg 1 0 0 1 60.00 580.00 Tm (2.) Tj ET
+BT /F1 12.00 Tf 0.180 0.210 0.240 rg 1 0 0 1 88.00 580.00 Tm (I affirm that the applicant name is ) Tj ET
+BT /F2 12.00 Tf 0.070 0.090 0.120 rg 1 0 0 1 268.08 580.00 Tm (Lena Quince) Tj ET
+BT /F2 10.50 Tf 0.480 0.380 0.180 rg 1 0 0 1 60.00 528.00 Tm (3.) Tj ET
+BT /F1 12.00 Tf 0.180 0.210 0.240 rg 1 0 0 1 88.00 528.00 Tm (I affirm that the number of people is ) Tj ET
+BT /F2 12.00 Tf 0.070 0.090 0.120 rg 1 0 0 1 280.10 528.00 Tm (4) Tj ET
+BT /F2 10.50 Tf 0.480 0.380 0.180 rg 1 0 0 1 60.00 476.00 Tm (4.) Tj ET
+BT /F1 12.00 Tf 0.180 0.210 0.240 rg 1 0 0 1 88.00 476.00 Tm (I affirm that the mailing address is ) Tj ET
+BT /F2 12.00 Tf 0.070 0.090 0.120 rg 1 0 0 1 270.74 476.00 Tm (504 Attestation Avenue, Somerville, MA 00000) Tj ET
+q 0.250 0.280 0.300 RG 0.60 w 80.00 127.00 m 300.00 127.00 l S Q
+BT /F1 6.80 Tf 0.310 0.360 0.410 rg 1 0 0 1 80.00 110.00 Tm (Synthetic reviewer signature line - intentionally blank) Tj ET
+BT /F1 7.20 Tf 0.310 0.360 0.410 rg 1 0 0 1 80.00 80.00 Tm (Numbered attestations present source facts without making a program decision.) Tj ET
+BT /F1 6.80 Tf 0.380 0.420 0.460 rg 1 0 0 1 28.00 17.00 Tm (SYNTHETIC DEV FIXTURE - NOT A REAL DOCUMENT - DEV5-HH-504-D01) Tj ET
+endstream
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+6 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>
+endobj
+7 0 obj
+<< /Title (DEV5-HH-504-D01) /Author (RealDoor synthetic fixture generator) /Creator (dev2/generate_fixtures.py) /Producer (standard-library vector PDF writer) >>
+endobj
+xref
+0 8
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000121 00000 n 
+0000000257 00000 n 
+0000002293 00000 n 
+0000002363 00000 n 
+0000002438 00000 n 
+trailer
+<< /Size 8 /Root 1 0 R /Info 7 0 R >>
+startxref
+2615
+%%EOF

@@ -1,0 +1,319 @@
+/* Pipeline UI styles. Consumes the global design tokens (:root in globals.css);
+   flat, warm, large-radius, no shadows — consistent with FRONTEND-DESIGN.md. */
+
+.shell {
+  width: min(100%, 62rem);
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.title {
+  margin: 0;
+  font-size: clamp(1.6rem, 3.5vw, 2.1rem);
+  letter-spacing: -0.03em;
+}
+.subtitle {
+  margin: 0.35rem 0 0;
+  color: var(--muted-foreground);
+}
+
+/* Global values strip */
+.globals {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+.globalCard {
+  border: 1px solid var(--input);
+  border-radius: 1rem;
+  padding: 0.85rem 1rem;
+  background: color-mix(in srgb, var(--secondary) 30%, var(--background));
+}
+.globalLabel {
+  margin: 0;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+}
+.globalValue {
+  margin: 0.25rem 0 0;
+  font-size: 1.35rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+.globalValueWarn { color: var(--danger); }
+
+/* Stepper */
+.stepper {
+  display: flex;
+  gap: 0.5rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.stepItem {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-height: 44px;
+  padding: 0.6rem 0.85rem;
+  border: 1px solid var(--input);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--muted-foreground);
+  cursor: pointer;
+  font: inherit;
+  font-weight: 700;
+  text-align: left;
+}
+.stepItem:disabled { cursor: not-allowed; opacity: 0.7; }
+.stepActive {
+  border-color: var(--primary);
+  color: var(--foreground);
+  background: color-mix(in srgb, var(--secondary) 45%, var(--background));
+}
+.stepDone { color: var(--foreground); }
+.stepNum {
+  display: inline-flex;
+  width: 1.6rem;
+  height: 1.6rem;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--secondary);
+  color: var(--primary-dark);
+  font-size: 0.85rem;
+  font-weight: 800;
+}
+.stepActive .stepNum { background: var(--primary); color: var(--primary-foreground); }
+
+/* Generic card / section */
+.card {
+  border: 1px solid var(--input);
+  border-radius: 1.25rem;
+  padding: clamp(1.1rem, 3vw, 1.75rem);
+  background: color-mix(in srgb, var(--secondary) 22%, var(--background));
+}
+.cardTitle { margin: 0 0 0.75rem; font-size: 1.15rem; letter-spacing: -0.02em; }
+.hint { color: var(--muted-foreground); font-size: 0.92rem; }
+
+/* Upload dropzone */
+.dropzone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 2rem 1.25rem;
+  border: 2px dashed var(--input);
+  border-radius: 1.25rem;
+  background: var(--background);
+  text-align: center;
+  transition: border-color 160ms ease, background-color 160ms ease;
+}
+.dropzoneDragging {
+  border-color: var(--primary);
+  background: color-mix(in srgb, var(--secondary) 42%, var(--background));
+}
+
+/* Checklist */
+.checklist { display: grid; gap: 0.5rem; margin: 1rem 0 0; padding: 0; list-style: none; }
+.checkItem {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.6rem 0.85rem;
+  border: 1px solid var(--input);
+  border-radius: 0.8rem;
+}
+.checkMark { font-weight: 800; }
+.checkPresent .checkMark { color: var(--primary-dark); }
+.checkMissing { color: var(--muted-foreground); border-style: dashed; }
+
+/* Field review */
+.reviewGrid {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: 1.25rem;
+  align-items: start;
+}
+.fieldNavBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+.fieldCount { color: var(--muted-foreground); font-weight: 700; font-size: 0.9rem; }
+.fieldKey { margin: 0; font-size: 1.25rem; letter-spacing: -0.02em; text-transform: capitalize; }
+.fieldExplain { color: var(--muted-foreground); font-size: 0.92rem; line-height: 1.55; }
+.fieldValue {
+  width: 100%;
+  min-height: 48px;
+  padding: 0.7rem 0.85rem;
+  border: 1px solid var(--input);
+  border-radius: 0.8rem;
+  background: var(--background);
+  color: var(--foreground);
+  font: inherit;
+  font-weight: 700;
+}
+.actions { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-top: 1rem; }
+
+/* Confidence meter */
+.confidenceWrap { margin: 0.85rem 0; }
+.confidenceHead {
+  display: flex; justify-content: space-between; align-items: baseline;
+  font-size: 0.85rem; color: var(--muted-foreground); font-weight: 700;
+}
+.confidenceBar {
+  height: 0.5rem; border-radius: 999px; margin-top: 0.35rem;
+  background: color-mix(in srgb, var(--secondary) 60%, var(--background));
+  overflow: hidden;
+}
+.confidenceFill { height: 100%; border-radius: 999px; background: var(--primary); }
+.confidenceLow .confidenceFill { background: var(--danger); }
+
+.statusChip {
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  padding: 0.2rem 0.6rem; border-radius: 999px; font-size: 0.8rem; font-weight: 800;
+  border: 1px solid var(--input);
+}
+.chipConfirmed { color: var(--primary-dark); background: color-mix(in srgb, var(--secondary) 50%, transparent); }
+.chipExtracted { color: var(--muted-foreground); }
+
+/* Document preview + bbox schematic */
+.previewPane { display: flex; flex-direction: column; gap: 0.75rem; }
+.page {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 8.5 / 11;
+  border: 1px solid var(--input);
+  border-radius: 0.6rem;
+  background: repeating-linear-gradient(
+    var(--background),
+    var(--background) 1.4rem,
+    color-mix(in srgb, var(--input) 40%, var(--background)) 1.4rem,
+    color-mix(in srgb, var(--input) 40%, var(--background)) 1.45rem
+  );
+  overflow: hidden;
+}
+.pageLabel {
+  position: absolute; top: 0.4rem; right: 0.5rem;
+  font-size: 0.7rem; font-weight: 800; color: var(--muted-foreground);
+  background: color-mix(in srgb, var(--background) 80%, transparent);
+  padding: 0.1rem 0.4rem; border-radius: 999px;
+}
+.bbox {
+  position: absolute;
+  border: 2px solid var(--primary);
+  border-radius: 0.25rem;
+  background: color-mix(in srgb, var(--primary) 16%, transparent);
+  display: flex;
+  align-items: center;
+  padding: 0 0.3rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--primary-dark);
+  overflow: hidden;
+  white-space: nowrap;
+}
+.docLink { font-size: 0.85rem; font-weight: 700; color: var(--primary-dark); }
+
+/* Reasons / readiness */
+.reasonList { display: grid; gap: 0.5rem; margin: 0.75rem 0 0; padding: 0; list-style: none; }
+.reason {
+  display: flex; flex-wrap: wrap; gap: 0.25rem 0.6rem; align-items: baseline;
+  min-width: 0;
+  padding: 0.6rem 0.85rem; border: 1px solid var(--input); border-radius: 0.8rem;
+}
+.reasonBlocking { border-color: color-mix(in srgb, var(--danger) 55%, var(--input)); }
+.reasonCode { font-weight: 800; font-size: 0.85rem; overflow-wrap: anywhere; }
+.reasonBlocking .reasonCode { color: var(--danger); }
+
+.verdict {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  padding: 0.5rem 1rem; border-radius: 999px; font-weight: 800; font-size: 1.05rem;
+  border: 2px solid var(--input);
+}
+.verdictReady { border-color: var(--primary); color: var(--primary-dark); background: color-mix(in srgb, var(--secondary) 45%, transparent); }
+.verdictNeeds { border-color: var(--danger); color: var(--danger); }
+
+/* Rules Q&A */
+.qaForm { display: flex; gap: 0.5rem; }
+.qaInput {
+  flex: 1; min-height: 48px; padding: 0.7rem 0.85rem;
+  border: 1px solid var(--input); border-radius: 0.8rem; background: var(--background);
+  color: var(--foreground); font: inherit;
+}
+.qaAnswer { margin-top: 1rem; border-top: 1px solid var(--input); padding-top: 1rem; }
+.citation {
+  margin-top: 0.75rem; padding: 0.75rem 0.9rem;
+  border: 1px solid var(--input); border-radius: 0.8rem;
+  background: color-mix(in srgb, var(--secondary) 22%, var(--background));
+}
+.citationHead { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; margin-bottom: 0.35rem; }
+.ruleId { font-weight: 800; font-size: 0.85rem; }
+.badge {
+  font-size: 0.7rem; font-weight: 800; padding: 0.12rem 0.5rem; border-radius: 999px;
+  border: 1px solid var(--input); color: var(--muted-foreground);
+}
+.badgeHud { color: var(--primary-dark); background: color-mix(in srgb, var(--secondary) 45%, transparent); }
+.badgeFederal { color: var(--foreground); }
+.badgeConvention { color: var(--muted-foreground); }
+.sampleRow { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.75rem; }
+.sampleChip {
+  border: 1px solid var(--input); background: transparent; border-radius: 999px;
+  padding: 0.45rem 0.75rem; min-height: 44px; cursor: pointer; font: inherit;
+  font-size: 0.85rem; color: var(--muted-foreground);
+}
+.sampleChip:hover { background: var(--secondary); color: var(--foreground); }
+
+/* Formula / threshold panel */
+.formula {
+  font-variant-numeric: tabular-nums;
+  padding: 0.85rem 1rem; border: 1px solid var(--input); border-radius: 0.8rem;
+  background: var(--background); line-height: 1.9;
+}
+.formula strong { font-weight: 800; }
+.sourceLine { margin-top: 0.75rem; font-size: 0.85rem; color: var(--muted-foreground); }
+
+/* Quarantine banner */
+.quarantine {
+  border: 1px solid color-mix(in srgb, var(--danger) 45%, var(--input));
+  background: color-mix(in srgb, var(--danger) 8%, var(--background));
+  border-radius: 0.8rem; padding: 0.75rem 0.9rem; margin-top: 0.75rem;
+}
+.quarantineHead { font-weight: 800; color: var(--danger); font-size: 0.9rem; }
+.quarantineText {
+  margin: 0.35rem 0 0; font-size: 0.85rem; color: var(--muted-foreground);
+  font-style: italic; overflow-wrap: anywhere;
+}
+
+/* Summary */
+.summaryList { display: grid; gap: 0.5rem; margin: 0; padding: 0; list-style: none; }
+.summaryRow {
+  display: flex; justify-content: space-between; gap: 1rem;
+  padding: 0.6rem 0.85rem; border: 1px solid var(--input); border-radius: 0.8rem;
+}
+.summaryKey { color: var(--muted-foreground); font-weight: 700; text-transform: capitalize; }
+.summaryVal { font-weight: 700; text-align: right; overflow-wrap: anywhere; }
+
+.proof {
+  margin-top: 1rem; padding: 0.85rem 1rem; border-radius: 0.8rem;
+  border: 1px solid var(--primary); background: color-mix(in srgb, var(--secondary) 40%, transparent);
+  font-weight: 700;
+}
+
+.spinner { color: var(--muted-foreground); font-weight: 700; }
+
+@media (max-width: 720px) {
+  .globals { grid-template-columns: 1fr; }
+  .stepper { flex-direction: column; }
+  .reviewGrid { grid-template-columns: 1fr; }
+}

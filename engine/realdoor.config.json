@@ -1,0 +1,24 @@
+{
+  "llm": {
+    "mode": "both",
+    "provider": "openai",
+    "model": "gpt-4o-mini",
+    "command": null,
+    "api_key_env": "OPENAI_API_KEY",
+    "timeout_seconds": 120
+  },
+  "ocr": {
+    "dpi": 200,
+    "binarize_threshold": 190,
+    "min_confidence": 40,
+    "tessdata_dir": ".tessdata"
+  },
+  "batch": {
+    "max_workers": 8
+  },
+  "notes": {
+    "llm.mode": "deterministic | labels | comprehend | both",
+    "llm.model": "fast OpenAI model for label classification + document comprehension",
+    "precedence": "env vars (REALDOOR_LLM_BACKUP/LABELS/COMPREHEND, REALDOOR_CONFIG) override this file; OPENAI_API_KEY loads from the repo .env"
+  }
+}
