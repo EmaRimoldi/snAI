@@ -7,9 +7,9 @@
 # can import it — engine/ stays the single source of truth; the copy is
 # gitignored and uploaded via the repo-root .vercelignore.
 #
-# The trailing `vercel alias set` is needed while realdoor-boston.vercel.app
-# is still attached to the old "snai" Vercel project (dashboard: move the
-# domain to realdoor-boston to drop the alias step).
+# realdoor-boston.vercel.app is a domain of the realdoor-boston project itself
+# (moved from the old "snai" project on 2026-07-19), so production deploys go
+# live on it automatically — no alias step needed.
 set -euo pipefail
 
 cd "$(dirname "$0")"
@@ -21,6 +21,5 @@ cp ../engine/realdoor.config.json api/_engine/realdoor.config.json
 find api/_engine -name "__pycache__" -type d -exec rm -rf {} + 2>/dev/null || true
 
 cd ..
-URL=$(vercel deploy --prod --yes)
-vercel alias set "$URL" realdoor-boston.vercel.app
+vercel deploy --prod --yes
 echo "Live: https://realdoor-boston.vercel.app"
