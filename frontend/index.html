@@ -73,6 +73,13 @@
     outline-offset: 3px;
   }
 
+  .hero-heading:focus,
+  .hero-heading:focus-visible,
+  .login-view h1:focus,
+  .login-view h1:focus-visible {
+    outline: none;
+  }
+
   .skip-link {
     position: fixed;
     left: 1rem;
@@ -258,13 +265,13 @@
   .site-main {
     width: min(100%, 72rem);
     margin: 0 auto;
-    padding: 0 2.5rem 5rem;
+    padding: 0 2.5rem 2rem;
   }
 
   .hero-section {
     width: min(100%, 58rem);
     margin: 0 auto;
-    padding-top: 4rem;
+    padding-top: 2.75rem;
     text-align: center;
   }
 
@@ -280,7 +287,7 @@
   }
 
   .hero-subheadline {
-    margin: 1.25rem 0 0;
+    margin: 1rem 0 0;
     color: var(--muted-foreground);
     font-size: clamp(1.05rem, 2vw, 1.25rem);
     letter-spacing: -0.01em;
@@ -288,7 +295,7 @@
 
   .prompt-section {
     width: min(100%, 46rem);
-    margin: 2.35rem auto 0;
+    margin: 1.75rem auto 0;
   }
 
   .prompt-shell {
@@ -403,7 +410,7 @@
   .phase-section {
     display: grid;
     width: min(100%, 64rem);
-    margin: clamp(4rem, 8vw, 6rem) auto 0;
+    margin: clamp(3rem, 5vw, 4rem) auto 0;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: clamp(1.25rem, 3vw, 2.25rem);
   }
