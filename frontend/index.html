@@ -464,11 +464,24 @@
   }
 
   .property-tooltip {
+    overflow: hidden;
     border: 1px solid var(--input);
     border-radius: 0.6rem;
     background: rgba(255, 255, 255, 0.96);
     box-shadow: 0 0.35rem 1rem rgba(42, 33, 28, 0.16);
     color: var(--foreground);
+    padding: 0;
+  }
+
+  .property-tooltip img {
+    display: block;
+    width: 13.5rem;
+    height: 8rem;
+    object-fit: cover;
+  }
+
+  .property-tooltip-body {
+    width: 13.5rem;
     padding: 0.5rem 0.65rem;
   }
 
@@ -490,6 +503,15 @@
     font-size: 0.72rem;
     font-weight: 700;
     line-height: 1.35;
+  }
+
+  .property-tooltip-address {
+    color: var(--foreground);
+    overflow-wrap: anywhere;
+  }
+
+  .search-radius-circle {
+    filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.9));
   }
 
   .map-mode-toggle {
@@ -1406,6 +1428,8 @@
   let leafletMap = null;
   let standardTileLayer = null;
   let satelliteTileLayer = null;
+  let searchRadiusLayer = null;
+  let searchRadiusCircle = null;
   let propertyMarkerLayer = null;
 
   const reducedMotionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -1587,6 +1611,11 @@
     return referencePoints[nearFilter.value] ?? null;
   }
 
+  function selectedDistanceMiles() {
+    const distance = Number(distanceFilter.value);
+    return Number.isFinite(distance) && distance > 0 ? distance : null;
+  }
+
   function distanceMiles(a, b) {
     if (!Number.isFinite(a.latitude) || !Number.isFinite(a.longitude)) return Infinity;
     const earthRadiusMiles = 3958.8;
@@ -1604,6 +1633,10 @@
     const reference = selectedReferencePoint();
     if (!reference) return Infinity;
     return distanceMiles(property, reference);
+  }
+
+  function milesToMeters(miles) {
+    return miles * 1609.344;
   }
 
   function coordinatesFor(property) {
@@ -1632,15 +1665,23 @@
     });
 
     standardTileLayer.addTo(leafletMap);
+    searchRadiusLayer = L.layerGroup().addTo(leafletMap);
     propertyMarkerLayer = L.layerGroup().addTo(leafletMap);
     applyMapStyle(mapStyle);
   }
 
   function buildPropertyTooltip(property) {
+    const imageMarkup = property.image_url
+      ? `<img src="${escapeHtml(property.image_url)}" alt="${escapeHtml(property.image_alt || "Illustrative property image")}" loading="lazy">`
+      : "";
+    const address = `${titleCase(property.project_address)}, ${titleCase(property.project_city)}, ${property.project_state} ${property.project_zip}`;
+
     return `
-      <strong>${escapeHtml(titleCase(property.project_name))}</strong>
-      <span>${escapeHtml(titleCase(property.project_city))} · ${escapeHtml(formatNumber(property.low_income_units))} low-income units</span>
-      <span>${escapeHtml(getBedroomLabels(property))} · Availability unknown</span>
+      ${imageMarkup}
+      <div class="property-tooltip-body">
+        <strong>${escapeHtml(titleCase(property.project_name))}</strong>
+        <span class="property-tooltip-address">${escapeHtml(address)}</span>
+      </div>
     `;
   }
 
@@ -1684,7 +1725,7 @@
   function filterDiscoverProperties() {
     const city = cityFilter.value;
     const bedroomField = bedroomFilter.value;
-    const maxDistance = distanceFilter.value ? Number(distanceFilter.value) : Infinity;
+    const maxDistance = selectedDistanceMiles() ?? Infinity;
     const reference = selectedReferencePoint();
 
     distanceFilterField.hidden = !reference;
@@ -1710,11 +1751,44 @@
     if (!selectedStillVisible) selectedPropertyId = null;
 
     discoverShell.classList.toggle("is-map-only", !selectedPropertyId);
+    renderSearchRadius();
     renderMapPins({ fitMap });
     renderPropertyDetail();
     renderPropertyStrip();
     mapEmptyState.hidden = filteredDiscoverProperties.length !== 0;
     discoverCount.textContent = `Showing ${filteredDiscoverProperties.length} of ${discoverProperties.length} public LIHTC records`;
+  }
+
+  function renderSearchRadius() {
+    initializeLeafletMap();
+    if (!leafletMap || !searchRadiusLayer) return null;
+
+    searchRadiusLayer.clearLayers();
+    searchRadiusCircle = null;
+    const reference = selectedReferencePoint();
+    const miles = selectedDistanceMiles();
+    if (!reference || !miles) return null;
+
+    const circle = L.circle([reference.latitude, reference.longitude], {
+      radius: milesToMeters(miles),
+      className: "search-radius-circle",
+      color: "#d31b12",
+      weight: 3,
+      opacity: 0.95,
+      dashArray: "10 8",
+      fillColor: "#d31b12",
+      fillOpacity: 0.13
+    });
+
+    circle.bindTooltip(`${reference.label} · within ${miles} mi`, {
+      direction: "top",
+      opacity: 1,
+      sticky: true
+    });
+
+    circle.addTo(searchRadiusLayer);
+    searchRadiusCircle = circle;
+    return circle;
   }
 
   function renderMapPins({ fitMap = false } = {}) {
@@ -1754,7 +1828,9 @@
       bounds.push(coordinates);
     });
 
-    if (bounds.length && fitMap) {
+    if (searchRadiusCircle && fitMap) {
+      leafletMap.fitBounds(searchRadiusCircle.getBounds(), { padding: [48, 48] });
+    } else if (bounds.length && fitMap) {
       if (bounds.length === 1) {
         leafletMap.setView(bounds[0], 14);
       } else {

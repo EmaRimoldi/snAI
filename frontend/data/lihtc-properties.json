@@ -22,7 +22,9 @@
     "source_url": "https://services.arcgis.com/VTyQ9soqVukalItT/ArcGIS/rest/services/LIHTC/FeatureServer/0",
     "retrieved_utc": "2026-07-18T18:21:49Z",
     "availability_status": "unknown",
-    "availability_note": "HUD LIHTC property data does not include current vacancies, waitlists, or application status."
+    "availability_note": "HUD LIHTC property data does not include current vacancies, waitlists, or application status.",
+    "image_url": "./assets/properties/property-01.jpg",
+    "image_alt": "Illustrative Boston-area residential building exterior"
   },
   {
     "hud_id": "MAB20120035",
@@ -47,7 +49,9 @@
     "source_url": "https://services.arcgis.com/VTyQ9soqVukalItT/ArcGIS/rest/services/LIHTC/FeatureServer/0",
     "retrieved_utc": "2026-07-18T18:21:49Z",
     "availability_status": "unknown",
-    "availability_note": "HUD LIHTC property data does not include current vacancies, waitlists, or application status."
+    "availability_note": "HUD LIHTC property data does not include current vacancies, waitlists, or application status.",
+    "image_url": "./assets/properties/property-02.jpg",
+    "image_alt": "Illustrative Boston-area residential building exterior"
   },
   {
     "hud_id": "MAB00000253",
@@ -72,7 +76,9 @@
     "source_url": "https://services.arcgis.com/VTyQ9soqVukalItT/ArcGIS/rest/services/LIHTC/FeatureServer/0",
     "retrieved_utc": "2026-07-18T18:21:49Z",
     "availability_status": "unknown",
-    "availability_note": "HUD LIHTC property data does not include current vacancies, waitlists, or application status."
+    "availability_note": "HUD LIHTC property data does not include current vacancies, waitlists, or application status.",
+    "image_url": "./assets/properties/property-03.jpg",
+    "image_alt": "Illustrative Boston-area residential building exterior"
   },
   {
     "hud_id": "MAB20080050",
@@ -97,7 +103,9 @@
     "source_url": "https://services.arcgis.com/VTyQ9soqVukalItT/ArcGIS/rest/services/LIHTC/FeatureServer/0",
     "retrieved_utc": "2026-07-18T18:21:49Z",
     "availability_status": "unknown",
-    "availability_note": "HUD LIHTC property data does not include current vacancies, waitlists, or application status."
+    "availability_note": "HUD LIHTC property data does not include current vacancies, waitlists, or application status.",
+    "image_url": "./assets/properties/property-04.jpg",
+    "image_alt": "Illustrative Boston-area residential building exterior"
   },
   {
     "hud_id": "MAB20151006",
@@ -122,7 +130,9 @@
     "source_url": "https://services.arcgis.com/VTyQ9soqVukalItT/ArcGIS/rest/services/LIHTC/FeatureServer/0",
     "retrieved_utc": "2026-07-18T18:21:49Z",
     "availability_status": "unknown",
-    "availability_note": "HUD LIHTC property data does not include current vacancies, waitlists, or application status."
+    "availability_note": "HUD LIHTC property data does not include current vacancies, waitlists, or application status.",
+    "image_url": "./assets/properties/property-05.jpg",
+    "image_alt": "Illustrative Boston-area residential building exterior"
   },
   {
     "hud_id": "MAA19950005",
@@ -147,7 +157,9 @@
     "source_url": "https://services.arcgis.com/VTyQ9soqVukalItT/ArcGIS/rest/services/LIHTC/FeatureServer/0",
     "retrieved_utc": "2026-07-18T18:21:49Z",
     "availability_status": "unknown",
-    "availability_note": "HUD LIHTC property data does not include current vacancies, waitlists, or application status."
+    "availability_note": "HUD LIHTC property data does not include current vacancies, waitlists, or application status.",
+    "image_url": "./assets/properties/property-06.jpg",
+    "image_alt": "Illustrative Boston-area residential building exterior"
   },
   {
     "hud_id": "MAB20110110",
@@ -172,7 +184,9 @@
     "source_url": "https://services.arcgis.com/VTyQ9soqVukalItT/ArcGIS/rest/services/LIHTC/FeatureServer/0",
     "retrieved_utc": "2026-07-18T18:21:49Z",
     "availability_status": "unknown",
-    "availability_note": "HUD LIHTC property data does not include current vacancies, waitlists, or application status."
+    "availability_note": "HUD LIHTC property data does not include current vacancies, waitlists, or application status.",
+    "image_url": "./assets/properties/property-07.jpg",
+    "image_alt": "Illustrative Boston-area residential building exterior"
   },
   {
     "hud_id": "MAB19940100",
@@ -197,7 +211,9 @@
     "source_url": "https://services.arcgis.com/VTyQ9soqVukalItT/ArcGIS/rest/services/LIHTC/FeatureServer/0",
     "retrieved_utc": "2026-07-18T18:21:49Z",
     "availability_status": "unknown",
-    "availability_note": "HUD LIHTC property data does not include current vacancies, waitlists, or application status."
+    "availability_note": "HUD LIHTC property data does not include current vacancies, waitlists, or application status.",
+    "image_url": "./assets/properties/property-01.jpg",
+    "image_alt": "Illustrative Boston-area residential building exterior"
   },
   {
     "hud_id": "MAB20040065",
@@ -222,7 +238,9 @@
     "source_url": "https://services.arcgis.com/VTyQ9soqVukalItT/ArcGIS/rest/services/LIHTC/FeatureServer/0",
     "retrieved_utc": "2026-07-18T18:21:49Z",
     "availability_status": "unknown",
-    "availability_note": "HUD LIHTC property data does not include current vacancies, waitlists, or application status."
+    "availability_note": "HUD LIHTC property data does not include current vacancies, waitlists, or application status.",
+    "image_url": "./assets/properties/property-02.jpg",
+    "image_alt": "Illustrative Boston-area residential building exterior"
   },
   {
     "hud_id": "MAB20040070",
@@ -247,7 +265,9 @@
     "source_url": "https://services.arcgis.com/VTyQ9soqVukalItT/ArcGIS/rest/services/LIHTC/FeatureServer/0",
     "retrieved_utc": "2026-07-18T18:21:49Z",
     "availability_status": "unknown",
-    "availability_note": "HUD LIHTC property data does not include current vacancies, waitlists, or application status."
+    "availability_note": "HUD LIHTC property data does not include current vacancies, waitlists, or application status.",
+    "image_url": "./assets/properties/property-03.jpg",
+    "image_alt": "Illustrative Boston-area residential building exterior"
   },
   {
     "hud_id": "MAB20191007",
@@ -272,7 +292,9 @@
     "source_url": "https://services.arcgis.com/VTyQ9soqVukalItT/ArcGIS/rest/services/LIHTC/FeatureServer/0",
     "retrieved_utc": "2026-07-18T18:21:49Z",
     "availability_status": "unknown",
-    "availability_note": "HUD LIHTC property data does not include current vacancies, waitlists, or application status."
+    "availability_note": "HUD LIHTC property data does not include current vacancies, waitlists, or application status.",
+    "image_url": "./assets/properties/property-04.jpg",
+    "image_alt": "Illustrative Boston-area residential building exterior"
   },
   {
     "hud_id": "MAB20040075",
@@ -297,7 +319,9 @@
     "source_url": "https://services.arcgis.com/VTyQ9soqVukalItT/ArcGIS/rest/services/LIHTC/FeatureServer/0",
     "retrieved_utc": "2026-07-18T18:21:49Z",
     "availability_status": "unknown",
-    "availability_note": "HUD LIHTC property data does not include current vacancies, waitlists, or application status."
+    "availability_note": "HUD LIHTC property data does not include current vacancies, waitlists, or application status.",
+    "image_url": "./assets/properties/property-05.jpg",
+    "image_alt": "Illustrative Boston-area residential building exterior"
   },
   {
     "hud_id": "MAB20172003",
@@ -322,7 +346,9 @@
     "source_url": "https://services.arcgis.com/VTyQ9soqVukalItT/ArcGIS/rest/services/LIHTC/FeatureServer/0",
     "retrieved_utc": "2026-07-18T18:21:49Z",
     "availability_status": "unknown",
-    "availability_note": "HUD LIHTC property data does not include current vacancies, waitlists, or application status."
+    "availability_note": "HUD LIHTC property data does not include current vacancies, waitlists, or application status.",
+    "image_url": "./assets/properties/property-06.jpg",
+    "image_alt": "Illustrative Boston-area residential building exterior"
   },
   {
     "hud_id": "MAB20171012",
@@ -347,7 +373,9 @@
     "source_url": "https://services.arcgis.com/VTyQ9soqVukalItT/ArcGIS/rest/services/LIHTC/FeatureServer/0",
     "retrieved_utc": "2026-07-18T18:21:49Z",
     "availability_status": "unknown",
-    "availability_note": "HUD LIHTC property data does not include current vacancies, waitlists, or application status."
+    "availability_note": "HUD LIHTC property data does not include current vacancies, waitlists, or application status.",
+    "image_url": "./assets/properties/property-07.jpg",
+    "image_alt": "Illustrative Boston-area residential building exterior"
   },
   {
     "hud_id": "MAB20161001",
@@ -372,7 +400,9 @@
     "source_url": "https://services.arcgis.com/VTyQ9soqVukalItT/ArcGIS/rest/services/LIHTC/FeatureServer/0",
     "retrieved_utc": "2026-07-18T18:21:49Z",
     "availability_status": "unknown",
-    "availability_note": "HUD LIHTC property data does not include current vacancies, waitlists, or application status."
+    "availability_note": "HUD LIHTC property data does not include current vacancies, waitlists, or application status.",
+    "image_url": "./assets/properties/property-01.jpg",
+    "image_alt": "Illustrative Boston-area residential building exterior"
   },
   {
     "hud_id": "MAC00000005",
@@ -397,7 +427,9 @@
     "source_url": "https://services.arcgis.com/VTyQ9soqVukalItT/ArcGIS/rest/services/LIHTC/FeatureServer/0",
     "retrieved_utc": "2026-07-18T18:21:49Z",
     "availability_status": "unknown",
-    "availability_note": "HUD LIHTC property data does not include current vacancies, waitlists, or application status."
+    "availability_note": "HUD LIHTC property data does not include current vacancies, waitlists, or application status.",
+    "image_url": "./assets/properties/property-02.jpg",
+    "image_alt": "Illustrative Boston-area residential building exterior"
   },
   {
     "hud_id": "MAB20150003",
@@ -422,7 +454,9 @@
     "source_url": "https://services.arcgis.com/VTyQ9soqVukalItT/ArcGIS/rest/services/LIHTC/FeatureServer/0",
     "retrieved_utc": "2026-07-18T18:21:49Z",
     "availability_status": "unknown",
-    "availability_note": "HUD LIHTC property data does not include current vacancies, waitlists, or application status."
+    "availability_note": "HUD LIHTC property data does not include current vacancies, waitlists, or application status.",
+    "image_url": "./assets/properties/property-03.jpg",
+    "image_alt": "Illustrative Boston-area residential building exterior"
   },
   {
     "hud_id": "MAB20030025",
@@ -447,7 +481,9 @@
     "source_url": "https://services.arcgis.com/VTyQ9soqVukalItT/ArcGIS/rest/services/LIHTC/FeatureServer/0",
     "retrieved_utc": "2026-07-18T18:21:49Z",
     "availability_status": "unknown",
-    "availability_note": "HUD LIHTC property data does not include current vacancies, waitlists, or application status."
+    "availability_note": "HUD LIHTC property data does not include current vacancies, waitlists, or application status.",
+    "image_url": "./assets/properties/property-04.jpg",
+    "image_alt": "Illustrative Boston-area residential building exterior"
   },
   {
     "hud_id": "MAB20050055",
@@ -472,7 +508,9 @@
     "source_url": "https://services.arcgis.com/VTyQ9soqVukalItT/ArcGIS/rest/services/LIHTC/FeatureServer/0",
     "retrieved_utc": "2026-07-18T18:21:49Z",
     "availability_status": "unknown",
-    "availability_note": "HUD LIHTC property data does not include current vacancies, waitlists, or application status."
+    "availability_note": "HUD LIHTC property data does not include current vacancies, waitlists, or application status.",
+    "image_url": "./assets/properties/property-05.jpg",
+    "image_alt": "Illustrative Boston-area residential building exterior"
   },
   {
     "hud_id": "MAB20160003",
@@ -497,7 +535,9 @@
     "source_url": "https://services.arcgis.com/VTyQ9soqVukalItT/ArcGIS/rest/services/LIHTC/FeatureServer/0",
     "retrieved_utc": "2026-07-18T18:21:49Z",
     "availability_status": "unknown",
-    "availability_note": "HUD LIHTC property data does not include current vacancies, waitlists, or application status."
+    "availability_note": "HUD LIHTC property data does not include current vacancies, waitlists, or application status.",
+    "image_url": "./assets/properties/property-06.jpg",
+    "image_alt": "Illustrative Boston-area residential building exterior"
   },
   {
     "hud_id": "MAB00000307",
@@ -522,7 +562,9 @@
     "source_url": "https://services.arcgis.com/VTyQ9soqVukalItT/ArcGIS/rest/services/LIHTC/FeatureServer/0",
     "retrieved_utc": "2026-07-18T18:21:49Z",
     "availability_status": "unknown",
-    "availability_note": "HUD LIHTC property data does not include current vacancies, waitlists, or application status."
+    "availability_note": "HUD LIHTC property data does not include current vacancies, waitlists, or application status.",
+    "image_url": "./assets/properties/property-07.jpg",
+    "image_alt": "Illustrative Boston-area residential building exterior"
   },
   {
     "hud_id": "MAB20130011",
@@ -547,7 +589,9 @@
     "source_url": "https://services.arcgis.com/VTyQ9soqVukalItT/ArcGIS/rest/services/LIHTC/FeatureServer/0",
     "retrieved_utc": "2026-07-18T18:21:49Z",
     "availability_status": "unknown",
-    "availability_note": "HUD LIHTC property data does not include current vacancies, waitlists, or application status."
+    "availability_note": "HUD LIHTC property data does not include current vacancies, waitlists, or application status.",
+    "image_url": "./assets/properties/property-01.jpg",
+    "image_alt": "Illustrative Boston-area residential building exterior"
   },
   {
     "hud_id": "MAB20080100",
@@ -572,7 +616,9 @@
     "source_url": "https://services.arcgis.com/VTyQ9soqVukalItT/ArcGIS/rest/services/LIHTC/FeatureServer/0",
     "retrieved_utc": "2026-07-18T18:21:49Z",
     "availability_status": "unknown",
-    "availability_note": "HUD LIHTC property data does not include current vacancies, waitlists, or application status."
+    "availability_note": "HUD LIHTC property data does not include current vacancies, waitlists, or application status.",
+    "image_url": "./assets/properties/property-02.jpg",
+    "image_alt": "Illustrative Boston-area residential building exterior"
   },
   {
     "hud_id": "MAB20080080",
@@ -597,7 +643,9 @@
     "source_url": "https://services.arcgis.com/VTyQ9soqVukalItT/ArcGIS/rest/services/LIHTC/FeatureServer/0",
     "retrieved_utc": "2026-07-18T18:21:49Z",
     "availability_status": "unknown",
-    "availability_note": "HUD LIHTC property data does not include current vacancies, waitlists, or application status."
+    "availability_note": "HUD LIHTC property data does not include current vacancies, waitlists, or application status.",
+    "image_url": "./assets/properties/property-03.jpg",
+    "image_alt": "Illustrative Boston-area residential building exterior"
   },
   {
     "hud_id": "MAB19920045",
@@ -622,7 +670,9 @@
     "source_url": "https://services.arcgis.com/VTyQ9soqVukalItT/ArcGIS/rest/services/LIHTC/FeatureServer/0",
     "retrieved_utc": "2026-07-18T18:21:49Z",
     "availability_status": "unknown",
-    "availability_note": "HUD LIHTC property data does not include current vacancies, waitlists, or application status."
+    "availability_note": "HUD LIHTC property data does not include current vacancies, waitlists, or application status.",
+    "image_url": "./assets/properties/property-04.jpg",
+    "image_alt": "Illustrative Boston-area residential building exterior"
   },
   {
     "hud_id": "MAB20050035",
@@ -647,7 +697,9 @@
     "source_url": "https://services.arcgis.com/VTyQ9soqVukalItT/ArcGIS/rest/services/LIHTC/FeatureServer/0",
     "retrieved_utc": "2026-07-18T18:21:49Z",
     "availability_status": "unknown",
-    "availability_note": "HUD LIHTC property data does not include current vacancies, waitlists, or application status."
+    "availability_note": "HUD LIHTC property data does not include current vacancies, waitlists, or application status.",
+    "image_url": "./assets/properties/property-05.jpg",
+    "image_alt": "Illustrative Boston-area residential building exterior"
   },
   {
     "hud_id": "MAB20120060",
@@ -672,7 +724,9 @@
     "source_url": "https://services.arcgis.com/VTyQ9soqVukalItT/ArcGIS/rest/services/LIHTC/FeatureServer/0",
     "retrieved_utc": "2026-07-18T18:21:49Z",
     "availability_status": "unknown",
-    "availability_note": "HUD LIHTC property data does not include current vacancies, waitlists, or application status."
+    "availability_note": "HUD LIHTC property data does not include current vacancies, waitlists, or application status.",
+    "image_url": "./assets/properties/property-06.jpg",
+    "image_alt": "Illustrative Boston-area residential building exterior"
   },
   {
     "hud_id": "MAB19910040",
@@ -697,7 +751,9 @@
     "source_url": "https://services.arcgis.com/VTyQ9soqVukalItT/ArcGIS/rest/services/LIHTC/FeatureServer/0",
     "retrieved_utc": "2026-07-18T18:21:49Z",
     "availability_status": "unknown",
-    "availability_note": "HUD LIHTC property data does not include current vacancies, waitlists, or application status."
+    "availability_note": "HUD LIHTC property data does not include current vacancies, waitlists, or application status.",
+    "image_url": "./assets/properties/property-07.jpg",
+    "image_alt": "Illustrative Boston-area residential building exterior"
   },
   {
     "hud_id": "MAB20120115",
@@ -722,7 +778,9 @@
     "source_url": "https://services.arcgis.com/VTyQ9soqVukalItT/ArcGIS/rest/services/LIHTC/FeatureServer/0",
     "retrieved_utc": "2026-07-18T18:21:49Z",
     "availability_status": "unknown",
-    "availability_note": "HUD LIHTC property data does not include current vacancies, waitlists, or application status."
+    "availability_note": "HUD LIHTC property data does not include current vacancies, waitlists, or application status.",
+    "image_url": "./assets/properties/property-01.jpg",
+    "image_alt": "Illustrative Boston-area residential building exterior"
   },
   {
     "hud_id": "MAB00000055",
@@ -747,7 +805,9 @@
     "source_url": "https://services.arcgis.com/VTyQ9soqVukalItT/ArcGIS/rest/services/LIHTC/FeatureServer/0",
     "retrieved_utc": "2026-07-18T18:21:49Z",
     "availability_status": "unknown",
-    "availability_note": "HUD LIHTC property data does not include current vacancies, waitlists, or application status."
+    "availability_note": "HUD LIHTC property data does not include current vacancies, waitlists, or application status.",
+    "image_url": "./assets/properties/property-02.jpg",
+    "image_alt": "Illustrative Boston-area residential building exterior"
   },
   {
     "hud_id": "MAB20090060",
@@ -772,7 +832,9 @@
     "source_url": "https://services.arcgis.com/VTyQ9soqVukalItT/ArcGIS/rest/services/LIHTC/FeatureServer/0",
     "retrieved_utc": "2026-07-18T18:21:49Z",
     "availability_status": "unknown",
-    "availability_note": "HUD LIHTC property data does not include current vacancies, waitlists, or application status."
+    "availability_note": "HUD LIHTC property data does not include current vacancies, waitlists, or application status.",
+    "image_url": "./assets/properties/property-03.jpg",
+    "image_alt": "Illustrative Boston-area residential building exterior"
   },
   {
     "hud_id": "MAB20140014",
@@ -797,6 +859,8 @@
     "source_url": "https://services.arcgis.com/VTyQ9soqVukalItT/ArcGIS/rest/services/LIHTC/FeatureServer/0",
     "retrieved_utc": "2026-07-18T18:21:49Z",
     "availability_status": "unknown",
-    "availability_note": "HUD LIHTC property data does not include current vacancies, waitlists, or application status."
+    "availability_note": "HUD LIHTC property data does not include current vacancies, waitlists, or application status.",
+    "image_url": "./assets/properties/property-04.jpg",
+    "image_alt": "Illustrative Boston-area residential building exterior"
   }
 ]

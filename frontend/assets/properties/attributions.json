@@ -1,0 +1,58 @@
+[
+  {
+    "file": "./assets/properties/property-01.jpg",
+    "title": "Nazing Court Apartments, Roxbury MA.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Nazing_Court_Apartments,_Roxbury_MA.jpg",
+    "author": "John Phelan",
+    "license": "CC BY 3.0",
+    "credit": "Own work"
+  },
+  {
+    "file": "./assets/properties/property-02.jpg",
+    "title": "BostonMA GoldsmithBlock.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:BostonMA_GoldsmithBlock.jpg",
+    "author": "User:Magicpiano",
+    "license": "CC BY-SA 4.0",
+    "credit": "Own work"
+  },
+  {
+    "file": "./assets/properties/property-03.jpg",
+    "title": "20180527 - 02 - Boston, MA (Back Bay).jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:20180527_-_02_-_Boston,_MA_(Back_Bay).jpg",
+    "author": "Andre Carrotflower",
+    "license": "CC BY-SA 4.0",
+    "credit": "Own work"
+  },
+  {
+    "file": "./assets/properties/property-04.jpg",
+    "title": "Boston Back Bay brownstones.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Boston_Back_Bay_brownstones.jpg",
+    "author": "Eganjm18",
+    "license": "CC BY-SA 4.0",
+    "credit": "Own work"
+  },
+  {
+    "file": "./assets/properties/property-05.jpg",
+    "title": "Boston Street Brownstones 2023.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Boston_Street_Brownstones_2023.jpg",
+    "author": "Ethan Dyson",
+    "license": "CC BY-SA 4.0",
+    "credit": "Own work"
+  },
+  {
+    "file": "./assets/properties/property-06.jpg",
+    "title": "Boston backbay brownstones.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Boston_backbay_brownstones.jpg",
+    "author": "Rick Berk",
+    "license": "CC BY 2.0",
+    "credit": "https://www.flickr.com/photos/rickberk/2848634125/"
+  },
+  {
+    "file": "./assets/properties/property-07.jpg",
+    "title": "42 Lomasney Way (54960645086).jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:42_Lomasney_Way_(54960645086).jpg",
+    "author": "ajay_suresh",
+    "license": "CC BY 4.0",
+    "credit": "42 Lomasney Way"
+  }
+]
