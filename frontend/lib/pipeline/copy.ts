@@ -1,0 +1,245 @@
+"use client";
+
+// Pipeline copy, localized. English is the complete source of truth; the other
+// four supported languages provide the always-visible chrome and fall back to
+// English for longer strings (spread-merge below). Kept separate from
+// dictionaries.ts to avoid churn on that actively-developed file; can be folded
+// in later. Voice: calm, plain, non-decisional — in every language.
+
+import { useI18n } from "@/lib/i18n";
+import type { Language } from "@/lib/dictionaries";
+
+const en = {
+  appTitle: "Your application",
+  appSubtitle: "RealDoor prepares and checks your paperwork. It never decides eligibility.",
+  step1: "Profile",
+  step2: "Understand",
+  step3: "Prepare",
+  back: "Back",
+  next: "Next",
+  continue: "Continue",
+
+  statusLabel: "Status",
+  incomeLabel: "Gross income",
+  errorsLabel: "Errors",
+  statusEmpty: "Not started",
+  statusProfile: "Profile · in progress",
+  statusUnderstand: "Understand · in progress",
+  statusPrepare: "Prepare · in progress",
+  statusReady: "Ready to review",
+  statusNeeds: "Needs review",
+
+  uploadTitle: "Upload your documents",
+  uploadHint: "Drag PDFs here, or choose files — pay stubs, benefit or employment letters, your application summary.",
+  chooseFiles: "Choose files",
+  reading: "Reading your documents…",
+  noDocs: "No documents yet. Upload one to begin.",
+  checklistTitle: "Documents checklist",
+  present: "Uploaded",
+  missing: "Still missing",
+
+  docApplication_summary: "Application summary",
+  docPay_stub: "Pay stub",
+  docEmployment_letter: "Employment letter",
+  docBenefit_letter: "Benefit letter",
+  docGig_statement: "Gig statement",
+  docUnknown: "Document",
+
+  reviewTitle: "Confirm your details",
+  reviewHint: "Check each value against its source, then confirm it or type a correction. Only confirmed values are used later.",
+  fieldOf: "Field {n} of {total}",
+  confirm: "Confirm",
+  correct: "Correct",
+  saveCorrection: "Save",
+  cancel: "Cancel",
+  confidence: "Confidence",
+  stExtracted: "Needs your check",
+  stConfirmed: "Confirmed",
+  stCorrected: "Corrected",
+  source: "Source",
+  page: "Page {n}",
+  openDocument: "Open original document",
+  whyNeeded: "Why this is needed",
+  allConfirmed: "All values confirmed.",
+  goUnderstand: "Continue to Understand",
+
+  quarantineTitle: "Quarantined text — ignored",
+  quarantineHint:
+    "This document contained instructions aimed at the assistant. RealDoor ignores embedded instructions; the text is shown only for transparency and is never used as data.",
+
+  understandTitle: "Understand your income and the rules",
+  incomeCalcTitle: "Annualized income",
+  householdSize: "Household size",
+  annualizedIncome: "Annualized gross income",
+  threshold60: "FY2026 60% income limit",
+  comparison: "Comparison",
+  cmpBelow: "At or below the published limit",
+  cmpAbove: "Above the published limit",
+  cmpNone: "No frozen threshold for this household size",
+  effective: "Effective",
+  notDecision: "This compares your income to a published limit — it is not an eligibility decision.",
+  confirmSizeNote: "Confirm the household size in Profile for an exact threshold.",
+  formulaHead: "How this was calculated",
+  sourcesHead: "Income sources",
+
+  rulesTitle: "Ask about the rules",
+  rulesHint: "Answers come only from the frozen rule corpus, each with its citation.",
+  askPlaceholder: "e.g. What is the 60% limit for a household of four?",
+  ask: "Ask",
+  tryAsking: "Try asking",
+  answerIntro: "From the rule corpus:",
+  abstain:
+    "I can only answer from the frozen rule corpus and didn't find a matching rule. Try asking about income limits, the effective date, annualizing income, or readiness.",
+  refusal:
+    "RealDoor can't tell you whether you qualify, or whether you'll be approved or denied — those remain human decisions. It only prepares and checks your paperwork and compares income to a published limit.",
+
+  prepareTitle: "Prepare and finish",
+  readinessTitle: "File readiness",
+  verdictNote: "This describes the file's completeness and consistency — never eligibility.",
+  reasonsTitle: "What to resolve",
+  noReasons: "Everything checks out — the file is complete and consistent.",
+  rc_PAY_STUB_TOTAL_CONFLICT: "A pay stub's stated gross doesn't match its hourly rate × hours.",
+  rc_GIG_INCOME_UNCORROBORATED: "Gig income is included but needs corroboration.",
+  rc_EMPLOYMENT_LETTER_EXPIRED: "An employment letter is older than the 60-day currency window.",
+  rc_UNCONFIRMED_FIELDS: "Some fields still need your confirmation.",
+  rc_LOW_CONFIDENCE_FIELDS: "Some fields were extracted with low confidence.",
+  rc_MISSING_REQUIRED_DOCUMENT: "A recommended document hasn't been uploaded yet.",
+  controlsTitle: "Your controls",
+  editBtn: "Edit details",
+  previewBtn: "Preview packet",
+  downloadBtn: "Download packet",
+  deleteBtn: "Delete session",
+  deleteConfirm: "Delete everything in this session? Documents and extracted values will be removed.",
+  deletedProof: "Session deleted. {docs} documents and {fields} values removed at {at}.",
+  lockBtn: "Confirm — lock as ready to review",
+  unlockBtn: "Unlock to edit",
+  lockedNote: "Locked as ready to review. You can unlock to edit.",
+  summaryTitle: "Summary",
+  fieldsConfirmed: "{n} of {total} fields confirmed",
+};
+
+export type Copy = typeof en;
+
+const es: Partial<Copy> = {
+  appTitle: "Tu solicitud",
+  appSubtitle: "RealDoor prepara y revisa tus documentos. Nunca decide la elegibilidad.",
+  step1: "Perfil", step2: "Entender", step3: "Preparar",
+  back: "Atrás", next: "Siguiente", continue: "Continuar",
+  statusLabel: "Estado", incomeLabel: "Ingreso bruto", errorsLabel: "Errores",
+  statusEmpty: "Sin empezar", statusReady: "Listo para revisar", statusNeeds: "Necesita revisión",
+  uploadTitle: "Sube tus documentos", chooseFiles: "Elegir archivos", reading: "Leyendo tus documentos…",
+  checklistTitle: "Lista de documentos", present: "Subido", missing: "Aún falta",
+  reviewTitle: "Confirma tus datos", confirm: "Confirmar", correct: "Corregir", saveCorrection: "Guardar",
+  cancel: "Cancelar", confidence: "Confianza", source: "Fuente", whyNeeded: "Por qué se necesita",
+  understandTitle: "Entiende tus ingresos y las reglas", annualizedIncome: "Ingreso bruto anualizado",
+  threshold60: "Límite de ingresos del 60% (FY2026)", comparison: "Comparación",
+  cmpBelow: "Igual o por debajo del límite", cmpAbove: "Por encima del límite",
+  notDecision: "Esto compara tus ingresos con un límite publicado — no es una decisión de elegibilidad.",
+  rulesTitle: "Pregunta sobre las reglas", ask: "Preguntar",
+  refusal: "RealDoor no puede decirte si cumples los requisitos, ni si serás aprobado o rechazado — esas son decisiones humanas. Solo prepara y revisa tus documentos y compara los ingresos con un límite publicado.",
+  prepareTitle: "Prepara y finaliza", readinessTitle: "Preparación del expediente",
+  verdictNote: "Describe qué tan completo y coherente está el expediente — nunca la elegibilidad.",
+  controlsTitle: "Tus controles", editBtn: "Editar datos", downloadBtn: "Descargar paquete",
+  deleteBtn: "Borrar sesión", lockBtn: "Confirmar — marcar como listo para revisar",
+  summaryTitle: "Resumen",
+};
+
+const zh: Partial<Copy> = {
+  appTitle: "您的申请",
+  appSubtitle: "RealDoor 帮您准备并核对材料，绝不判定资格。",
+  step1: "个人资料", step2: "了解", step3: "准备",
+  back: "返回", next: "下一步", continue: "继续",
+  statusLabel: "状态", incomeLabel: "总收入", errorsLabel: "错误",
+  statusEmpty: "未开始", statusReady: "可供审核", statusNeeds: "需要复核",
+  uploadTitle: "上传您的文件", chooseFiles: "选择文件", reading: "正在读取您的文件…",
+  checklistTitle: "文件清单", present: "已上传", missing: "仍缺少",
+  reviewTitle: "确认您的信息", confirm: "确认", correct: "更正", saveCorrection: "保存",
+  cancel: "取消", confidence: "置信度", source: "来源", whyNeeded: "为何需要",
+  understandTitle: "了解您的收入与规则", annualizedIncome: "年化总收入",
+  threshold60: "2026 财年 60% 收入上限", comparison: "比较",
+  cmpBelow: "等于或低于上限", cmpAbove: "高于上限",
+  notDecision: "这是将您的收入与公布上限比较——并非资格判定。",
+  rulesTitle: "咨询相关规则", ask: "提问",
+  refusal: "RealDoor 无法告诉您是否符合资格，也无法判定批准或拒绝——这些属于人工决定。它只帮您准备和核对材料，并将收入与公布的上限进行比较。",
+  prepareTitle: "准备并完成", readinessTitle: "材料就绪情况",
+  verdictNote: "这说明材料的完整性与一致性——绝不涉及资格。",
+  controlsTitle: "您的操作", editBtn: "编辑信息", downloadBtn: "下载材料包",
+  deleteBtn: "删除会话", lockBtn: "确认——标记为可供审核", summaryTitle: "摘要",
+};
+
+const tl: Partial<Copy> = {
+  appTitle: "Ang iyong aplikasyon",
+  appSubtitle: "Inihahanda at sinusuri ng RealDoor ang iyong mga papeles. Hindi ito nagpapasya ng eligibility.",
+  step1: "Profile", step2: "Unawain", step3: "Maghanda",
+  back: "Bumalik", next: "Susunod", continue: "Magpatuloy",
+  statusLabel: "Katayuan", incomeLabel: "Kabuuang kita", errorsLabel: "Mga error",
+  statusEmpty: "Hindi pa nagsisimula", statusReady: "Handa nang suriin", statusNeeds: "Kailangang suriin",
+  uploadTitle: "I-upload ang iyong mga dokumento", chooseFiles: "Pumili ng mga file", reading: "Binabasa ang iyong mga dokumento…",
+  checklistTitle: "Listahan ng dokumento", present: "Na-upload", missing: "Kulang pa",
+  reviewTitle: "Kumpirmahin ang iyong mga detalye", confirm: "Kumpirmahin", correct: "Iwasto", saveCorrection: "I-save",
+  cancel: "Kanselahin", confidence: "Kumpiyansa", source: "Pinagmulan", whyNeeded: "Bakit kailangan ito",
+  understandTitle: "Unawain ang iyong kita at ang mga patakaran", annualizedIncome: "Taunang kabuuang kita",
+  threshold60: "FY2026 60% na limitasyon sa kita", comparison: "Paghahambing",
+  cmpBelow: "Katumbas o mas mababa sa limitasyon", cmpAbove: "Higit sa limitasyon",
+  notDecision: "Inihahambing nito ang iyong kita sa isang nakalathalang limitasyon — hindi ito desisyon sa eligibility.",
+  rulesTitle: "Magtanong tungkol sa mga patakaran", ask: "Magtanong",
+  refusal: "Hindi masasabi ng RealDoor kung kwalipikado ka, o kung maa-aprubahan o tatanggihan ka — mga desisyon iyon ng tao. Inihahanda at sinusuri lang nito ang iyong mga papeles at inihahambing ang kita sa isang nakalathalang limitasyon.",
+  prepareTitle: "Maghanda at tapusin", readinessTitle: "Kahandaan ng file",
+  verdictNote: "Inilalarawan nito ang pagkakumpleto at pagkakatugma ng file — hindi ang eligibility.",
+  controlsTitle: "Iyong mga kontrol", editBtn: "I-edit ang mga detalye", downloadBtn: "I-download ang packet",
+  deleteBtn: "Burahin ang session", lockBtn: "Kumpirmahin — i-lock bilang handa nang suriin", summaryTitle: "Buod",
+};
+
+const vi: Partial<Copy> = {
+  appTitle: "Hồ sơ của bạn",
+  appSubtitle: "RealDoor chuẩn bị và kiểm tra giấy tờ của bạn. Không bao giờ quyết định điều kiện.",
+  step1: "Hồ sơ", step2: "Tìm hiểu", step3: "Chuẩn bị",
+  back: "Quay lại", next: "Tiếp theo", continue: "Tiếp tục",
+  statusLabel: "Trạng thái", incomeLabel: "Tổng thu nhập", errorsLabel: "Lỗi",
+  statusEmpty: "Chưa bắt đầu", statusReady: "Sẵn sàng xem xét", statusNeeds: "Cần xem xét",
+  uploadTitle: "Tải lên giấy tờ của bạn", chooseFiles: "Chọn tệp", reading: "Đang đọc giấy tờ của bạn…",
+  checklistTitle: "Danh sách giấy tờ", present: "Đã tải lên", missing: "Vẫn còn thiếu",
+  reviewTitle: "Xác nhận thông tin của bạn", confirm: "Xác nhận", correct: "Sửa", saveCorrection: "Lưu",
+  cancel: "Hủy", confidence: "Độ tin cậy", source: "Nguồn", whyNeeded: "Vì sao cần thông tin này",
+  understandTitle: "Tìm hiểu thu nhập và quy định", annualizedIncome: "Tổng thu nhập theo năm",
+  threshold60: "Giới hạn thu nhập 60% (FY2026)", comparison: "So sánh",
+  cmpBelow: "Bằng hoặc thấp hơn giới hạn", cmpAbove: "Cao hơn giới hạn",
+  notDecision: "Điều này so sánh thu nhập của bạn với giới hạn đã công bố — không phải quyết định điều kiện.",
+  rulesTitle: "Hỏi về các quy định", ask: "Hỏi",
+  refusal: "RealDoor không thể cho biết bạn có đủ điều kiện hay không, hay bạn sẽ được chấp thuận hoặc bị từ chối — đó là các quyết định của con người. Nó chỉ chuẩn bị, kiểm tra giấy tờ và so sánh thu nhập với một giới hạn đã công bố.",
+  prepareTitle: "Chuẩn bị và hoàn tất", readinessTitle: "Mức độ sẵn sàng của hồ sơ",
+  verdictNote: "Điều này mô tả mức độ đầy đủ và nhất quán của hồ sơ — không bao giờ là điều kiện.",
+  controlsTitle: "Các tùy chọn của bạn", editBtn: "Chỉnh sửa thông tin", downloadBtn: "Tải gói hồ sơ",
+  deleteBtn: "Xóa phiên", lockBtn: "Xác nhận — khóa là sẵn sàng xem xét", summaryTitle: "Tóm tắt",
+};
+
+const OVERRIDES: Record<Language, Partial<Copy>> = { en, es, zh, tl, vi };
+
+// Field explanations (EN only; fall back gracefully). Keyed by field name.
+export const FIELD_EXPLAIN: Record<string, string> = {
+  person_name: "Your name, as it appears on the application, so the file is attributed correctly.",
+  household_size: "Household size sets which income limit applies — it drives the threshold in Understand.",
+  address: "The address on your application summary; used only to attach documents to the right file.",
+  application_date: "When the application was prepared.",
+  gross_pay: "Gross pay per period — annualized by its frequency to estimate yearly income.",
+  pay_frequency: "How often you're paid; it sets the annualizing multiplier.",
+  hourly_rate: "Hourly rate — cross-checked against gross pay for internal consistency.",
+  regular_hours: "Hours per period — cross-checked against gross pay.",
+  pay_date: "The pay date; the most recent stub from a source is used.",
+  document_date: "The letter's date; it must fall within the 60-day currency window.",
+  weekly_hours: "Weekly hours stated by the employer.",
+  monthly_benefit: "Monthly benefit amount — annualized as recurring income.",
+  benefit_frequency: "How often the benefit is paid.",
+  gross_receipts: "Gross gig receipts — included as income (×12) and flagged for corroboration.",
+  platform_fees: "Platform fees, shown for context; gross receipts drive the income figure.",
+  statement_month: "The month this gig statement covers.",
+};
+
+export function useCopy(): Copy {
+  const { language } = useI18n();
+  return { ...en, ...(OVERRIDES[language] ?? {}) };
+}
+
+export function fmt(template: string, vars: Record<string, string | number>): string {
+  return template.replace(/\{(\w+)\}/g, (_, k) => String(vars[k] ?? `{${k}}`));
+}

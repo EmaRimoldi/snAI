@@ -8,6 +8,7 @@ import SiteHeader from "@/components/SiteHeader";
 import PromptShell from "@/components/PromptShell";
 import PhaseCards from "@/components/PhaseCards";
 import LoginView from "@/components/LoginView";
+import PipelineApp from "@/components/pipeline/PipelineApp";
 
 export default function Page() {
   return (
@@ -93,15 +94,21 @@ function RealDoorApp() {
           aria-labelledby="hero-heading"
           hidden={view !== "landing"}
         >
-          <div id="top" className="hero-section">
-            <h1 id="hero-heading" className="hero-heading" ref={heroHeadingRef} tabIndex={-1}>
-              {t("hero.headline")}
-            </h1>
-            <p className="hero-subheadline">{t("hero.subheadline")}</p>
-          </div>
+          {session ? (
+            <PipelineApp headingRef={heroHeadingRef} headingId="hero-heading" />
+          ) : (
+            <>
+              <div id="top" className="hero-section">
+                <h1 id="hero-heading" className="hero-heading" ref={heroHeadingRef} tabIndex={-1}>
+                  {t("hero.headline")}
+                </h1>
+                <p className="hero-subheadline">{t("hero.subheadline")}</p>
+              </div>
 
-          <PromptShell />
-          <PhaseCards />
+              <PromptShell />
+              <PhaseCards />
+            </>
+          )}
         </section>
 
         <LoginView
