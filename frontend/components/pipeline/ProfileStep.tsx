@@ -6,13 +6,14 @@
 
 import { Fragment, useEffect, useMemo, useRef, useState } from "react";
 import { useApp } from "@/lib/pipeline/state";
-import type { DocumentRecord, DocumentType, ExtractedField } from "@/lib/pipeline/types";
+import type { DocumentRecord, DocumentType, ExtractedField, NormBox, PayFrequency } from "@/lib/pipeline/types";
 import { useCopy, fmt, type Copy } from "@/lib/pipeline/copy";
 import { CURRENCY_WINDOW_START, LOW_CONFIDENCE } from "@/lib/pipeline/calc";
 import { confidenceColor } from "@/lib/pipeline/confidence";
 import { useDocumentGuides } from "@/lib/pipeline/documentGuides";
 import { useDocLabels, useFieldExplain, useFieldLabel } from "@/lib/pipeline/labels";
 import DocumentPreview from "./DocumentPreview";
+import IncomeContributionChart from "./IncomeContributionChart";
 import s from "./pipeline.module.css";
 
 type UploadSlot = {
@@ -60,6 +61,80 @@ const BENEFIT_AMOUNT_FIELDS = [
   "annual_benefit",
 ];
 
+const MISSING_FIELD_BOXES: Partial<Record<DocumentType, Record<string, NormBox>>> = {
+  application_summary: {
+    person_name: [0.06, 0.15, 0.34, 0.2],
+    household_size: [0.58, 0.15, 0.79, 0.2],
+    address: [0.06, 0.23, 0.55, 0.28],
+    application_date: [0.06, 0.32, 0.34, 0.37],
+  },
+};
+
+function placeholderBox(type: DocumentType, key: string, index: number): NormBox {
+  const exact = MISSING_FIELD_BOXES[type]?.[key];
+  if (exact) return exact;
+  const top = Math.min(0.14 + index * 0.075, 0.8);
+  return [0.08, top, 0.55, Math.min(top + 0.045, 0.9)];
+}
+
+function expectedKeysFor(type: DocumentType, documentFields: readonly ExtractedField[]): string[] {
+  if (type === "unknown") return [];
+  if (type !== "benefit_letter") return EXPECTED_FIELDS[type];
+  const amountKey = BENEFIT_AMOUNT_FIELDS.find((key) =>
+    documentFields.some((field) => field.key === key),
+  );
+  return [...EXPECTED_FIELDS.benefit_letter, amountKey ?? "monthly_benefit"];
+}
+
+function reviewFieldsForDocument(
+  document: DocumentRecord,
+  allFields: readonly ExtractedField[],
+): ExtractedField[] {
+  const documentFields = allFields.filter((field) => field.documentId === document.id);
+  const expected = expectedKeysFor(document.documentType, documentFields);
+  const used = new Set<string>();
+  const ordered = expected.map((key, index) => {
+    const extracted = documentFields.find((field) => field.key === key);
+    if (extracted) {
+      used.add(extracted.id);
+      return extracted;
+    }
+    return {
+      id: `missing:${document.id}:${key}`,
+      documentId: document.id,
+      key,
+      value: "",
+      page: 1,
+      bbox: placeholderBox(document.documentType, key, index),
+      confidence: 0,
+      reviewStatus: "extracted" as const,
+    };
+  });
+  return [...ordered, ...documentFields.filter((field) => !used.has(field.id))];
+}
+
+function manualIncomeOptions(
+  document: DocumentRecord,
+  field: ExtractedField,
+  documentFields: readonly ExtractedField[],
+): { isIncome?: boolean; incomeFrequency?: PayFrequency } {
+  if (document.documentType === "pay_stub" && field.key === "gross_pay") {
+    const raw = documentFields.find((item) => item.key === "pay_frequency")?.value;
+    const candidate = raw?.toLowerCase().replace(/[^a-z]/g, "");
+    const normalized = (["weekly", "biweekly", "semimonthly", "monthly", "annual"] as const)
+      .find((frequency) => frequency === candidate);
+    return { isIncome: Boolean(normalized), incomeFrequency: normalized };
+  }
+  const benefitFrequency = field.key.match(/^(weekly|biweekly|semimonthly|monthly|annual)_benefit$/)?.[1];
+  if (document.documentType === "benefit_letter" && benefitFrequency) {
+    return { isIncome: true, incomeFrequency: benefitFrequency as PayFrequency };
+  }
+  if (document.documentType === "gig_statement" && field.key === "gross_receipts") {
+    return { isIncome: true, incomeFrequency: "monthly" };
+  }
+  return {};
+}
+
 function expectedSlots(labels: Record<DocumentType, string>, t: Copy): UploadSlot[] {
   return [
     {
@@ -93,10 +168,6 @@ function expectedSlots(labels: Record<DocumentType, string>, t: Copy): UploadSlo
       description: t.slotDescGig,
     },
   ];
-}
-
-function sleep(ms: number): Promise<void> {
-  return new Promise((resolve) => window.setTimeout(resolve, ms));
 }
 
 function normalizeIdentity(value: string): string {
@@ -392,8 +463,9 @@ export default function ProfileStep() {
     fields,
     busy,
     addFiles,
+    addManualField,
     confirmField,
-    correctField,
+    editFieldForReview,
     goToStep,
     pendingReviewFieldId,
     clearReviewRequest,
@@ -424,8 +496,15 @@ export default function ProfileStep() {
   const [correcting, setCorrecting] = useState(false);
   const [draft, setDraft] = useState("");
   const [correctError, setCorrectError] = useState<string | null>(null);
+  const [reviewFeedback, setReviewFeedback] = useState<string | null>(null);
   const fieldHeadingRef = useRef<HTMLHeadingElement>(null);
   const reviewSectionRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    if (!reviewFeedback) return;
+    const timer = window.setTimeout(() => setReviewFeedback(null), 1400);
+    return () => window.clearTimeout(timer);
+  }, [reviewFeedback]);
 
   useEffect(() => {
     if (documents.length > 0 && !isParsing) setReviewOpen(true);
@@ -474,11 +553,6 @@ export default function ProfileStep() {
     if (assignedId) return documentsById.get(assignedId);
     return documents.find((document) => document.documentType === type && !assignedDocumentIds.has(document.id));
   };
-  const labelForDocument = (document: DocumentRecord | undefined): string => {
-    if (!document) return docLabels.unknown;
-    const slot = slots.find((item) => slotDocumentIds[item.type] === document.id);
-    return slot?.label ?? docLabels[document.documentType];
-  };
   const canParse = Object.values(queuedFiles).some(Boolean) && !busy && !isParsing;
 
   const reviewDocuments = documents;
@@ -488,22 +562,26 @@ export default function ProfileStep() {
   );
   const doc = reviewDocuments[currentDocumentIndex] ?? reviewDocuments[0];
   const nextDocument = reviewDocuments[currentDocumentIndex + 1];
-  const reviewFields = doc ? fields.filter((item) => item.documentId === doc.id) : [];
+  const reviewFields = doc ? reviewFieldsForDocument(doc, fields) : [];
   const safeIndex = Math.min(index, Math.max(0, reviewFields.length - 1));
   const field = reviewFields[safeIndex];
-  const confirmedCount = reviewFields.filter((item) => item.reviewStatus !== "extracted").length;
-  const currentDocumentConfirmed = reviewFields.every((item) => item.reviewStatus !== "extracted");
-  const allDocumentsConfirmed = fields.every((item) => item.reviewStatus !== "extracted");
+  const needsConfirmation = (item: ExtractedField) =>
+    item.reviewStatus === "extracted" || item.reviewStatus === "edited";
+  const confirmedCount = reviewFields.filter((item) => !needsConfirmation(item)).length;
+  const currentDocumentConfirmed = reviewFields.every((item) => !needsConfirmation(item));
+  const allDocumentsConfirmed = reviewDocuments.every((document) =>
+    reviewFieldsForDocument(document, fields).every((item) => !needsConfirmation(item)),
+  );
   const isLastReviewDocument = currentDocumentIndex >= reviewDocuments.length - 1;
   const canProceed = isLastReviewDocument
     ? allDocumentsConfirmed && reviewDocuments.length > 0
     : currentDocumentConfirmed;
-  const proceedLabel =
-    isLastReviewDocument || !nextDocument
-      ? c.goUnderstand
-      : fmt(c.goNextDocument, { name: labelForDocument(nextDocument) });
+  const proceedLabel = isLastReviewDocument || !nextDocument ? c.goUnderstand : c.goNextDocument;
+  const fieldIsMissing = Boolean(field?.id.startsWith("missing:"));
   const fieldStatusLabel = field
-    ? field.reviewStatus === "extracted"
+    ? fieldIsMissing
+      ? c.parameterNotPresent
+      : field.reviewStatus === "extracted" || field.reviewStatus === "edited"
       ? c.stExtracted
       : field.reviewStatus === "corrected"
         ? c.stCorrected
@@ -558,13 +636,23 @@ export default function ProfileStep() {
       .then((records) => ({ ok: true as const, records }))
       .catch(() => ({ ok: false as const, records: [] }));
 
+    const animateProgress = (type: DocumentType) =>
+      new Promise<void>((resolve) => {
+        const duration = 1000;
+        const startedAt = performance.now();
+        const tick = (now: number) => {
+          const progress = Math.min(100, ((now - startedAt) / duration) * 100);
+          setSlotProgress((prev) => ({ ...prev, [type]: progress }));
+          if (progress < 100) window.requestAnimationFrame(tick);
+          else resolve();
+        };
+        window.requestAnimationFrame(tick);
+      });
+
     for (const { slot } of uploadedSlots) {
       setSlotStatus((prev) => ({ ...prev, [slot.type]: "parsing" }));
       setSlotProgress((prev) => ({ ...prev, [slot.type]: 0 }));
-      window.requestAnimationFrame(() => {
-        setSlotProgress((prev) => ({ ...prev, [slot.type]: 100 }));
-      });
-      await sleep(1000);
+      await animateProgress(slot.type);
     }
 
     const result = await parseResult;
@@ -618,7 +706,9 @@ export default function ProfileStep() {
 
   const confirmAndGoNext = () => {
     if (!field) return;
-    if (field.reviewStatus === "extracted") confirmField(field.id);
+    if (!needsConfirmation(field)) return;
+    confirmField(field.id);
+    setReviewFeedback(`✓ ${c.stConfirmed}`);
     if (safeIndex < reviewFields.length - 1) go(safeIndex + 1);
   };
 
@@ -913,16 +1003,12 @@ export default function ProfileStep() {
                 <>
               <div className={s.fieldNavBar}>
                 <div className={s.reviewMeta} aria-label={c.wAriaProgress}>
-                  <span className={s.documentChip}>{labelForDocument(doc)}</span>
-                  <span aria-hidden="true">·</span>
-                  <span>{fmt(c.documentOf, { n: currentDocumentIndex + 1, total: reviewDocuments.length })}</span>
-                  <span aria-hidden="true">·</span>
                   <span>{fmt(c.fieldOf, { n: safeIndex + 1, total: reviewFields.length })}</span>
                   <span aria-hidden="true">·</span>
                   <span>{fmt(c.fieldsConfirmed, { n: confirmedCount, total: reviewFields.length })}</span>
                   <span
                     className={`${s.statusChip} ${
-                      field.reviewStatus === "extracted" ? s.chipExtracted : s.chipConfirmed
+                      needsConfirmation(field) ? s.chipExtracted : s.chipConfirmed
                     }`}
                   >
                     {fieldStatusLabel}
@@ -1001,9 +1087,13 @@ export default function ProfileStep() {
                       <div className={s.actions}>
                         <button
                           type="button"
-                          className="primary-button"
+                          className={`primary-button ${s.reviewActionButton}`}
                           onClick={() => {
                             const trimmed = draft.trim();
+                            if (fieldIsMissing && !trimmed) {
+                              setCorrectError(c.valueRequired);
+                              return;
+                            }
                             // Money/number fields must never go negative (the math
                             // layer rejects negatives by design — validate here).
                             const numericKey =
@@ -1021,7 +1111,17 @@ export default function ProfileStep() {
                                 return;
                               }
                             }
-                            correctField(field.id, trimmed);
+                            if (fieldIsMissing) {
+                              addManualField(doc.id, field.key, trimmed, {
+                                ...manualIncomeOptions(doc, field, reviewFields),
+                                bbox: field.bbox,
+                                page: field.page,
+                                requiresConfirmation: true,
+                              });
+                            } else {
+                              editFieldForReview(field.id, trimmed);
+                            }
+                            setReviewFeedback(`✓ ${fieldIsMissing ? c.stRenterEntered : c.stCorrected}`);
                             setCorrecting(false);
                             setCorrectError(null);
                           }}
@@ -1042,29 +1142,44 @@ export default function ProfileStep() {
                     </>
                   ) : (
                     <>
-                      <p className={s.fieldValue} aria-live="polite">
-                        {field.value}
+                      <p className={`${s.fieldValue} ${fieldIsMissing ? s.fieldValueMissing : ""}`} aria-live="polite">
+                        {fieldIsMissing ? c.parameterNotPresent : field.value}
                       </p>
                       <div className={s.actions}>
-                        <button
-                          type="button"
-                          className="primary-button"
-                          onClick={confirmAndGoNext}
-                        >
-                          {c.confirm}
-                        </button>
-                        <button type="button" className="secondary-button" onClick={startCorrect}>
-                          {c.correct}
-                        </button>
+                        {fieldIsMissing ? (
+                          <button type="button" className={`primary-button ${s.reviewActionButton}`} onClick={startCorrect}>
+                            {c.insertManually}
+                          </button>
+                        ) : (
+                          <>
+                            <button
+                              type="button"
+                              className={`primary-button ${s.reviewActionButton}`}
+                              onClick={confirmAndGoNext}
+                              disabled={!needsConfirmation(field)}
+                            >
+                              {c.confirm}
+                            </button>
+                            <button type="button" className={`secondary-button ${s.reviewActionButton}`} onClick={startCorrect}>
+                              {c.correct}
+                            </button>
+                          </>
+                        )}
                       </div>
                     </>
                   )}
+                  {reviewFeedback && (
+                    <p className={s.reviewFeedback} role="status" aria-live="polite">
+                      {reviewFeedback}
+                    </p>
+                  )}
+                  <IncomeContributionChart activeDocumentId={doc.id} />
                 </div>
 
                 <DocumentPreview
                   doc={doc}
                   field={field}
-                  fields={fields.filter((item) => item.documentId === doc.id)}
+                  fields={reviewFields}
                 />
               </div>
                 </>
@@ -1072,7 +1187,7 @@ export default function ProfileStep() {
                 <div className={s.reviewGrid}>
                   <div>
                     <h3 className={s.fieldKey} ref={fieldHeadingRef} tabIndex={-1}>
-                      {labelForDocument(doc)}
+                      {c.wAriaReviewer}
                     </h3>
                     <p className={s.hint}>{c.wNoFields}</p>
                   </div>

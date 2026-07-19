@@ -111,6 +111,7 @@
   border: 1px solid var(--input);
   border-radius: 0.6rem;
   background: color-mix(in srgb, var(--muted) 60%, var(--background));
+  isolation: isolate;
 }
 .viewerScroll:focus-visible { outline-offset: -3px; }
 .viewerScroll { cursor: grab; user-select: none; }
@@ -130,11 +131,14 @@
   position: relative;
   background: #fff;
   box-shadow: 0 1px 4px color-mix(in srgb, var(--foreground) 18%, transparent);
+  contain: paint;
+  isolation: isolate;
 }
 .pdfCanvas {
   display: block;
   width: 100%;
   height: 100%;
+  background: #fff;
 }
 /* Box color = the field's confidence, same green→red ramp as the meter
    (--conf is set inline per box by PdfViewer). */
@@ -357,7 +361,7 @@
   inset: 0 auto 0 0;
   width: 0%;
   background: linear-gradient(90deg, color-mix(in srgb, var(--primary) 32%, transparent), color-mix(in srgb, var(--primary) 14%, transparent));
-  transition: width 1000ms linear;
+  transition: width 40ms linear;
 }
 .uploadSlotDone .uploadSlotFill {
   background: linear-gradient(90deg, color-mix(in srgb, #228b4e 30%, transparent), color-mix(in srgb, #228b4e 10%, transparent));
@@ -1004,7 +1008,139 @@ button.reviewerTab:hover,
   font: inherit;
   font-weight: 700;
 }
+.fieldValueMissing {
+  border-color: color-mix(in srgb, var(--danger) 68%, var(--input));
+  background: color-mix(in srgb, var(--danger) 7%, var(--background));
+  color: var(--danger);
+}
 .actions { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-top: 1rem; }
+.reviewActionButton {
+  transition: transform 120ms ease, filter 120ms ease, box-shadow 120ms ease;
+}
+.reviewActionButton:active:not(:disabled) {
+  transform: scale(1.045);
+  filter: saturate(1.15) brightness(0.96);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 22%, transparent);
+}
+.reviewFeedback {
+  display: inline-flex;
+  align-items: center;
+  min-height: 1.9rem;
+  margin: 0.65rem 0 0;
+  border-radius: 999px;
+  background: color-mix(in srgb, #228b4e 12%, var(--background));
+  color: #1f7a45;
+  padding: 0.25rem 0.65rem;
+  font-size: 0.82rem;
+  font-weight: 850;
+  animation: reviewFeedbackIn 180ms ease-out;
+}
+@keyframes reviewFeedbackIn {
+  from { opacity: 0; transform: translateY(0.2rem); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .reviewActionButton { transition: none; }
+  .reviewActionButton:active:not(:disabled) { transform: none; }
+  .reviewFeedback { animation: none; }
+}
+
+.incomeChart {
+  display: flex;
+  width: 100%;
+  max-width: 27rem;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.9rem;
+  margin-top: 1.4rem;
+  border-top: 1px solid var(--input);
+  padding-top: 1.2rem;
+}
+.incomeChartTitle {
+  width: 100%;
+  margin: 0;
+  font-size: 1rem;
+  text-align: center;
+}
+.incomeDonut {
+  position: relative;
+  width: 12rem;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  transition: background 220ms ease;
+}
+.incomeDonut::after {
+  content: "";
+  position: absolute;
+  inset: 0.82rem;
+  border-radius: 50%;
+  background: var(--background);
+}
+.incomeDonutCenter {
+  position: absolute;
+  inset: 1.05rem;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.12rem;
+  text-align: center;
+}
+.incomeDonutCenter strong {
+  font-size: 0.98rem;
+  font-variant-numeric: tabular-nums;
+}
+.incomeDonutCenter span {
+  color: var(--muted-foreground);
+  font-weight: 750;
+  line-height: 1.15;
+}
+.incomeDonutCenter span { font-size: 0.72rem; }
+.incomeLegend {
+  width: 100%;
+}
+.incomeLegend p {
+  margin: 0;
+}
+.incomeLegend p {
+  color: var(--muted-foreground);
+  font-size: 0.78rem;
+  line-height: 1.35;
+  text-align: center;
+}
+.incomeLegend ul {
+  display: grid;
+  gap: 0.45rem;
+  width: min(100%, 18rem);
+  margin: 0 auto;
+  padding: 0;
+  list-style: none;
+}
+.incomeLegend li {
+  display: grid;
+  grid-template-columns: 0.65rem minmax(0, 1fr);
+  align-items: start;
+  gap: 0.45rem;
+}
+.incomeLegendDot {
+  width: 0.65rem;
+  height: 0.65rem;
+  margin-top: 0.15rem;
+  border-radius: 50%;
+}
+.incomeLegend strong,
+.incomeLegend small {
+  display: block;
+}
+.incomeLegend strong {
+  font-size: 0.8rem;
+}
+.incomeLegend small {
+  color: var(--muted-foreground);
+  font-size: 0.72rem;
+  font-variant-numeric: tabular-nums;
+}
 
 /* Confidence meter */
 .confidenceWrap {
@@ -1089,41 +1225,94 @@ button.reviewerTab:hover,
 .reasonCode { font-weight: 800; font-size: 0.85rem; overflow-wrap: anywhere; }
 .reasonBlocking .reasonCode { color: var(--danger); }
 
-.statusRow {
-  display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem;
+.prepareToolbar {
+  display: flex;
+  width: 100%;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.65rem 1rem;
+}
+.reviewSummary {
+  display: flex;
+  min-width: 0;
+  flex: 1 1 34rem;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.45rem;
+}
+.pendingFieldLinks {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.45rem;
+}
+.reviewIssueTag,
+.pendingFieldButton {
+  min-height: 36px;
+  border: 1px solid color-mix(in srgb, var(--warn) 48%, var(--input));
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--warn) 8%, var(--background));
+  color: var(--foreground);
+  padding: 0.35rem 0.7rem;
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+.reviewIssueTag {
+  display: inline-flex;
+  align-items: center;
+}
+.pendingFieldButton { cursor: pointer; }
+.pendingFieldButton:hover {
+  border-color: var(--primary);
+  color: var(--primary-dark);
 }
 
-/* Prepare: controls rail on the left, the big document preview on the right
-   (~half the screen, like a PDF pane). Collapses to one column below 960px.
-   Vertical rhythm in the rail comes from the flex gap, not per-element margins. */
+/* Prepare: compact controls first, then a full-width paperwork preview. */
 .prepareGrid {
-  display: grid;
-  grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
-  gap: clamp(1.5rem, 3vw, 2.75rem);
-  align-items: start;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1.15rem, 2.5vw, 1.75rem);
   margin-top: 0.5rem;
 }
 .prepareControls {
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 1.15rem;
+  align-items: flex-start;
+  gap: 0.8rem;
 }
 .prepareControls > * { margin: 0; }
-.prepareDoc { min-width: 0; }
+.prepareDoc {
+  width: 100%;
+  min-width: 0;
+}
 .railGroup { display: grid; gap: 0.6rem; }
 .railGroup .reasonList { margin: 0; }
 .railHeading { margin: 0; font-size: 1rem; }
-.railActions { display: flex; flex-direction: column; align-items: stretch; gap: 0.6rem; }
-.railActions > button { width: 100%; }
-.deleteZone { border-top: 1px solid var(--input); padding-top: 1.15rem; }
-.deleteZone .actions { margin-top: 0; }
-@media (min-width: 961px) {
-  /* keep the controls in view while the long document scrolls (site header is sticky) */
-  .prepareControls { position: sticky; top: 5.5rem; }
+.railActions {
+  display: flex;
+  margin-left: auto;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.55rem;
 }
-@media (max-width: 960px) {
-  .prepareGrid { grid-template-columns: 1fr; }
+.railActions > button,
+.deleteZone > button {
+  width: auto;
+  min-height: 38px;
+  padding: 0.45rem 0.85rem;
+  font-size: 0.85rem;
+}
+.deleteZone {
+  display: flex;
+  align-items: center;
+  margin: 0 !important;
+  padding-top: 0;
+}
+.deleteZone .actions {
+  margin-top: 0;
+  align-items: center;
 }
 .verdict {
   display: inline-flex; align-items: center; gap: 0.5rem;
@@ -1177,7 +1366,18 @@ button.reviewerTab:hover,
 .badgeHud { color: var(--primary-dark); background: color-mix(in srgb, var(--secondary) 45%, transparent); }
 .badgeFederal { color: var(--foreground); }
 .badgeConvention { color: var(--muted-foreground); }
-.sampleRow { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.75rem; }
+.samplePrompt {
+  display: grid;
+  gap: 0.55rem;
+  margin-top: 0.8rem;
+}
+.sampleLabel {
+  margin: 0;
+  color: var(--muted-foreground);
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+.sampleRow { display: flex; flex-wrap: wrap; gap: 0.5rem; }
 .sampleChip {
   border: 1px solid var(--input); background: transparent; border-radius: 999px;
   padding: 0.45rem 0.75rem; min-height: 44px; cursor: pointer; font: inherit;
@@ -1345,8 +1545,8 @@ button.reviewerTab:hover,
 .qaCard {
   display: flex;
   flex-direction: column;
-  height: 100%;
-  min-height: min(84vh, 60rem);
+  height: min(68vh, 46rem);
+  min-height: 34rem;
   background: color-mix(in srgb, var(--secondary) 42%, var(--background));
   border-color: color-mix(in srgb, var(--primary) 30%, var(--input));
 }
@@ -1357,13 +1557,29 @@ button.reviewerTab:hover,
   padding-bottom: 0.75rem;
   border-bottom: 1px solid color-mix(in srgb, var(--input) 70%, transparent);
 }
-.chatHeaderDot {
-  width: 0.6rem;
-  height: 0.6rem;
+.chatHeaderAvatar {
+  position: relative;
+  display: grid;
+  width: 2.65rem;
+  height: 2.65rem;
   flex: none;
+  place-items: center;
+}
+.chatHeaderAvatar img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 0.75rem;
+}
+.chatHeaderDot {
+  position: absolute;
+  right: -0.08rem;
+  bottom: -0.08rem;
+  width: 0.7rem;
+  height: 0.7rem;
   border-radius: 50%;
+  border: 2px solid var(--background);
   background: var(--success);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--success) 25%, transparent);
 }
 .chatHeaderTitle {
   margin: 0;
@@ -1394,6 +1610,27 @@ button.reviewerTab:hover,
   flex-direction: column;
   gap: 0.5rem;
 }
+.chatAssistantRow,
+.chatThinking {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.55rem;
+  align-self: flex-start;
+  max-width: 95%;
+}
+.chatAssistantAvatar {
+  display: grid;
+  width: 1.8rem;
+  height: 1.8rem;
+  flex: none;
+  place-items: center;
+}
+.chatAssistantAvatar img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 0.5rem;
+}
 .chatQuestion {
   align-self: flex-end;
   max-width: 85%;
@@ -1406,11 +1643,33 @@ button.reviewerTab:hover,
   font-size: 0.92rem;
 }
 .chatAnswer {
-  align-self: flex-start;
-  max-width: 92%;
+  min-width: 0;
   padding: 0.6rem 0.8rem;
   border-radius: 0.85rem 0.85rem 0.85rem 0.2rem;
   background: var(--background);
+}
+.thinkingBubble {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  min-height: 2.25rem;
+  padding: 0.5rem 0.8rem;
+  border-radius: 0.85rem 0.85rem 0.85rem 0.2rem;
+  background: var(--background);
+}
+.thinkingBubble i {
+  width: 0.42rem;
+  height: 0.42rem;
+  border-radius: 50%;
+  background: var(--primary-dark);
+  animation: thinking-dot 1.1s ease-in-out infinite;
+}
+.thinkingBubble i:nth-child(2) { animation-delay: 140ms; }
+.thinkingBubble i:nth-child(3) { animation-delay: 280ms; }
+
+@keyframes thinking-dot {
+  0%, 60%, 100% { opacity: 0.28; transform: translateY(0); }
+  30% { opacity: 1; transform: translateY(-0.22rem); }
 }
 
 .summaryList { display: grid; gap: 0.5rem; margin: 0; padding: 0; list-style: none; }
@@ -1466,5 +1725,9 @@ button.reviewerTab:hover,
   .mathRow { grid-template-columns: 1fr auto; gap: 0.25rem 0.75rem; }
   .mathSrcCell { grid-column: 1 / -1; }
   .mathNum { white-space: normal; }
-  .qaCard { min-height: 0; }
+  .qaCard { height: auto; min-height: 34rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .thinkingBubble i { animation: none; opacity: 0.65; }
 }

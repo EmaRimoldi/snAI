@@ -23,6 +23,7 @@ import type {
   ReadinessResult,
   Submission,
   Citation,
+  NormBox,
 } from "@/lib/pipeline/types";
 import {
   computeGrossAnnualCents,
@@ -78,9 +79,16 @@ type AppValue = {
     documentId: string,
     key: string,
     value: string,
-    options?: { isIncome?: boolean; incomeFrequency?: ExtractedField["incomeFrequency"] },
+    options?: {
+      isIncome?: boolean;
+      incomeFrequency?: ExtractedField["incomeFrequency"];
+      bbox?: NormBox;
+      page?: number;
+      requiresConfirmation?: boolean;
+    },
   ) => void;
   confirmField: (id: string) => void;
+  editFieldForReview: (id: string, value: string) => void;
   correctField: (id: string, value: string) => void;
   lock: () => void;
   unlock: () => void;
@@ -248,7 +256,13 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
     documentId: string,
     key: string,
     value: string,
-    options?: { isIncome?: boolean; incomeFrequency?: ExtractedField["incomeFrequency"] },
+    options?: {
+      isIncome?: boolean;
+      incomeFrequency?: ExtractedField["incomeFrequency"];
+      bbox?: NormBox;
+      page?: number;
+      requiresConfirmation?: boolean;
+    },
   ) => {
     const cleanValue = value.trim();
     if (!cleanValue) return;
@@ -259,10 +273,10 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
         documentId,
         key,
         value: cleanValue,
-        page: 1,
-        bbox: [0, 0, 0, 0],
+        page: options?.page ?? 1,
+        bbox: options?.bbox ?? [0, 0, 0, 0],
         confidence: 1,
-        reviewStatus: "renter_entered",
+        reviewStatus: options?.requiresConfirmation ? "edited" : "renter_entered",
         isIncome: options?.isIncome,
         incomeFrequency: options?.incomeFrequency,
       },
@@ -271,7 +285,18 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
 
   const confirmField = useCallback((id: string) => {
     setFields((prev) =>
-      prev.map((f) => (f.id === id && f.reviewStatus === "extracted" ? { ...f, reviewStatus: "confirmed" } : f)),
+      prev.map((f) =>
+        f.id === id && (f.reviewStatus === "extracted" || f.reviewStatus === "edited")
+          ? { ...f, reviewStatus: "confirmed" }
+          : f,
+      ),
+    );
+  }, []);
+
+  // A Reviewer edit stays pending until the renter explicitly confirms it.
+  const editFieldForReview = useCallback((id: string, value: string) => {
+    setFields((prev) =>
+      prev.map((f) => (f.id === id ? { ...f, value, reviewStatus: "edited" } : f)),
     );
   }, []);
 
@@ -357,7 +382,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
   const buildSubmission = useCallback((): Submission => {
     const thresholdCents = thresholdCentsForSize(household.size);
     const citations: Citation[] = fields
-      .filter((f) => f.reviewStatus !== "extracted")
+      .filter((f) => f.reviewStatus !== "extracted" && f.reviewStatus !== "edited")
       .map((f) => {
         const doc = documents.find((d) => d.id === f.documentId);
         return {
@@ -404,6 +429,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
       addFiles,
       addManualField,
       confirmField,
+      editFieldForReview,
       correctField,
       lock: () => setLocked(true),
       unlock: () => setLocked(false),
@@ -416,7 +442,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
       step, stepUnlocked, documents, fields, busy, locked, quarantineCount, grossIncomeCents,
       errorCount, readiness, displayStatus, unresolvedCount, missingRequired, presentTypes,
       household.size, household.confirmed, pendingReviewFieldId,
-      goToStep, addFiles, addManualField, confirmField, correctField, deleteSession, buildSubmission,
+      goToStep, addFiles, addManualField, confirmField, editFieldForReview, correctField, deleteSession, buildSubmission,
       requestReviewField, clearReviewRequest, deletionProof, clearDeletionProof, setDocumentPageCount,
     ],
   );

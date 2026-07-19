@@ -256,7 +256,15 @@ export default function PdfViewer({
         const viewport = page.getViewport({ scale: scale * effDpr });
         canvas.width = Math.floor(viewport.width);
         canvas.height = Math.floor(viewport.height);
-        const task = page.render({ canvas, viewport });
+        // Keep the canvas explicitly opaque while navigation changes the crop.
+        // Resizing a canvas clears it before pdf.js repaints; without a render
+        // background Chromium can briefly composite that cleared surface as
+        // black against the animated page grid.
+        const task = page.render({
+          canvas,
+          viewport,
+          background: "rgb(255, 255, 255)",
+        });
         tasks.push(task);
         try {
           await task.promise;
@@ -374,7 +382,11 @@ export default function PdfViewer({
       const viewport = page.getViewport({ scale: (MINIMAP_WIDTH / base.width) * dpr });
       canvas.width = Math.floor(viewport.width);
       canvas.height = Math.floor(viewport.height);
-      task = page.render({ canvas, viewport });
+      task = page.render({
+        canvas,
+        viewport,
+        background: "rgb(255, 255, 255)",
+      });
       await task.promise.catch(() => undefined);
     };
     void render();
@@ -551,7 +563,7 @@ export default function PdfViewer({
                           type="button"
                           className={cls}
                           style={style}
-                          aria-label={`${humanize(f.key)}: ${f.value} — ${fmt(c.page, { n: f.page })}`}
+                          aria-label={`${humanize(f.key)}: ${f.value || c.parameterNotPresent} — ${fmt(c.page, { n: f.page })}`}
                           aria-current={isActive ? "true" : undefined}
                           onClick={() => onSelectField?.(f.id)}
                         />

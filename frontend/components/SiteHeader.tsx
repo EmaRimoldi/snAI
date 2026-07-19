@@ -4,12 +4,9 @@ import { useEffect, useRef, useState } from "react";
 import { SUPPORTED_LANGUAGES, useI18n } from "@/lib/i18n";
 import type { Language } from "@/lib/i18n";
 import LanguageFlag from "@/components/LanguageFlag";
-import HeaderStatus from "@/components/HeaderStatus";
 
 type SiteHeaderProps = {
   onHome: () => void;
-  /** Show the pipeline status/error chips (only meaningful in the app view). */
-  showStatus?: boolean;
   onDiscover: () => void;
   activeView: "landing" | "app" | "discover";
 };
@@ -18,7 +15,6 @@ export default function SiteHeader({
   onHome,
   onDiscover,
   activeView,
-  showStatus = false,
 }: SiteHeaderProps) {
   const { language, setLanguage, t } = useI18n();
   const [isLanguageMenuOpen, setIsLanguageMenuOpen] = useState(false);
@@ -88,7 +84,6 @@ export default function SiteHeader({
       </a>
 
       <div className="nav-actions">
-        {showStatus && <HeaderStatus />}
         <button
           type="button"
           className="nav-link-button"

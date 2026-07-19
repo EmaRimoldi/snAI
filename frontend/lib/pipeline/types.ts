@@ -12,7 +12,7 @@ export type DocumentType =
 
 export type PayFrequency = "weekly" | "biweekly" | "semimonthly" | "monthly" | "annual";
 
-export type FieldReviewStatus = "extracted" | "confirmed" | "corrected" | "renter_entered";
+export type FieldReviewStatus = "extracted" | "edited" | "confirmed" | "corrected" | "renter_entered";
 
 /** Normalized bounding box, top-left origin, each value in [0,1] of the page. */
 export type NormBox = readonly [number, number, number, number];

@@ -42,7 +42,7 @@ const ERROR_TARGET_FIELD: Partial<Record<ReviewReasonCode, string>> = {
 };
 
 function isResolved(f: ExtractedField): boolean {
-  return f.reviewStatus !== "extracted";
+  return f.reviewStatus !== "extracted" && f.reviewStatus !== "edited";
 }
 
 export default function HeaderStatus() {

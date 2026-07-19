@@ -5,6 +5,7 @@
 // (with citations) — refusing decision requests, abstaining out of corpus.
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import Image from "next/image";
 import { useApp } from "@/lib/pipeline/state";
 import { useCopy } from "@/lib/pipeline/copy";
 import { useI18n } from "@/lib/i18n";
@@ -125,15 +126,8 @@ export default function UnderstandStep() {
           {c.incomeCalcTitle}
         </h2>
 
-        <div className={`${s.formula} ${s.formulaFlat}`}>
-          <div className={s.confidenceHead} style={{ fontSize: "0.9rem", marginBottom: "0.4rem" }}>
-            <span>{c.formulaHead}</span>
-          </div>
-          {countedSources.length === 0 ? (
-            <p className={s.hint} style={{ margin: 0 }}>
-              {c.confirmSizeNote}
-            </p>
-          ) : (
+        {countedSources.length > 0 && (
+          <div className={`${s.formula} ${s.formulaFlat}`}>
             <div className={s.mathTable}>
               <div className={`${s.mathRow} ${s.mathHead}`} aria-hidden="true">
                 <span className={s.mathSrcCell}>{c.source}</span>
@@ -162,15 +156,14 @@ export default function UnderstandStep() {
                 </span>
               </div>
             </div>
-          )}
-        </div>
+          </div>
+        )}
 
         <ul className={s.flatList}>
           <li className={s.flatRow}>
             <span className={s.summaryKey}>{c.householdSize}</span>
             <span className={s.summaryVal}>
               {householdSize ?? "—"}
-              {!householdSizeConfirmed && ` — ${c.confirmSizeNote}`}
             </span>
           </li>
           <li className={s.flatRow}>
@@ -222,12 +215,14 @@ export default function UnderstandStep() {
             {MTSP_2026.ruleId} ({MTSP_2026.sourceLocator}) ↗
           </a>
         </p>
-        <p className={s.hint}>{c.notDecision}</p>
       </section>
 
       <section className={`${s.card} ${s.qaCard}`} aria-labelledby="rules-h">
         <div className={s.chatHeader}>
-          <span className={s.chatHeaderDot} aria-hidden="true" />
+          <span className={s.chatHeaderAvatar} aria-hidden="true">
+            <Image src="/logo.svg" alt="" width={42} height={42} />
+            <span className={s.chatHeaderDot} />
+          </span>
           <div>
             <h2 id="rules-h" className={s.chatHeaderTitle}>
               {c.rulesTitle}
@@ -237,13 +232,15 @@ export default function UnderstandStep() {
         </div>
 
         {thread.length === 0 && !asking && (
-          <div className={s.sampleRow}>
-            <span className={s.hint}>{c.tryAsking}:</span>
-            {sampleQuestions.map((q) => (
-              <button key={q} type="button" className={s.sampleChip} onClick={() => void runAsk(q)} disabled={asking}>
-                {q}
-              </button>
-            ))}
+          <div className={s.samplePrompt}>
+            <p className={s.sampleLabel}>{c.tryAsking}:</p>
+            <div className={s.sampleRow}>
+              {sampleQuestions.map((q) => (
+                <button key={q} type="button" className={s.sampleChip} onClick={() => void runAsk(q)} disabled={asking}>
+                  {q}
+                </button>
+              ))}
+            </div>
           </div>
         )}
 
@@ -256,15 +253,28 @@ export default function UnderstandStep() {
                   {c.aiFallback}
                 </p>
               )}
-              <div className={s.chatAnswer}>
-                <AiAnswer response={entry.response} documents={documents} onSuggestion={(question) => void runAsk(question)} />
+              <div className={s.chatAssistantRow}>
+                <span className={s.chatAssistantAvatar} aria-hidden="true">
+                  <Image src="/logo.svg" alt="" width={28} height={28} />
+                </span>
+                <div className={s.chatAnswer}>
+                  <AiAnswer response={entry.response} documents={documents} onSuggestion={(question) => void runAsk(question)} />
+                </div>
               </div>
             </div>
           ))}
           {asking && (
-            <p className={s.hint} role="status">
-              {c.aiThinking}
-            </p>
+            <div className={s.chatThinking} role="status" aria-label={c.aiThinking}>
+              <span className={s.chatAssistantAvatar} aria-hidden="true">
+                <Image src="/logo.svg" alt="" width={28} height={28} />
+              </span>
+              <span className={s.thinkingBubble} aria-hidden="true">
+                <i />
+                <i />
+                <i />
+              </span>
+              <span className="visually-hidden">{c.aiThinking}</span>
+            </div>
           )}
         </div>
 

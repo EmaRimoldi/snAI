@@ -92,7 +92,7 @@ function buildDocRows(
     if (match) {
       used.add(match.id);
       rows.push(
-        match.reviewStatus === "extracted"
+        match.reviewStatus === "extracted" || match.reviewStatus === "edited"
           ? { kind: "unconfirmed", id: match.id, label }
           : { kind: "present", id: match.id, label, field: match },
       );
@@ -103,7 +103,7 @@ function buildDocRows(
   for (const f of docFields) {
     if (used.has(f.id)) continue;
     rows.push(
-      f.reviewStatus === "extracted"
+      f.reviewStatus === "extracted" || f.reviewStatus === "edited"
         ? { kind: "unconfirmed", id: f.id, label: fieldLabel(f.key) }
         : { kind: "present", id: f.id, label: fieldLabel(f.key), field: f },
     );
@@ -165,6 +165,9 @@ export default function ReceiptDocument() {
   const comparisonLabel =
     comparison === "below_or_equal" ? c.cmpBelow : comparison === "above" ? c.cmpAbove : c.cmpNone;
   const isReady = readiness.status === "READY_TO_REVIEW";
+  const visibleReadinessReasons = readiness.reasons.filter(
+    (reason) => reason.code !== "MISSING_HOUSEHOLD_SIZE",
+  );
   const generatedDate = new Intl.DateTimeFormat(language, { dateStyle: "long" }).format(new Date());
 
   const startEdit = (f: ExtractedField) => {
@@ -255,7 +258,8 @@ export default function ReceiptDocument() {
   return (
     <>
       <p className={r.banner} role="note">
-        {c.sampleBanner}
+        <span className={r.bannerIcon} aria-hidden="true">!</span>
+        <span>{c.sampleBanner}</span>
       </p>
       <div className={r.stack} data-print-region>
         <article className={r.page} aria-labelledby="receipt-doc-h">
@@ -304,7 +308,7 @@ export default function ReceiptDocument() {
               return (
                 <section key={doc.id} className={r.section}>
                   <h4 className={r.secTitle}>
-                    {docLabels[doc.documentType]} <span className={r.fileName}>· {doc.fileName}</span>
+                    {docLabels[doc.documentType]}
                   </h4>
                   <ul className={r.rows}>
                     {rows.map((spec) =>
@@ -356,9 +360,9 @@ export default function ReceiptDocument() {
                   {isReady ? c.statusReady : c.statusNeeds}
                 </span>
               </p>
-              {readiness.reasons.length > 0 && (
+              {visibleReadinessReasons.length > 0 && (
                 <ul className={r.reasonNotes}>
-                  {readiness.reasons.map((reason, i) => (
+                  {visibleReadinessReasons.map((reason, i) => (
                     <li key={`${reason.code}-${i}`} className={r.note}>
                       <strong>{reasonTitles[reason.code]}</strong> — {reasonTexts[reason.code]}
                       {reason.detail && reason.code === "MISSING_REQUIRED_DOCUMENT"

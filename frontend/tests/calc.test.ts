@@ -7,6 +7,7 @@ import {
   compareToThreshold,
   computeGrossAnnualCents,
   computeReadiness,
+  countUnresolved,
   deriveDisplayStatus,
   deriveIncomeSources,
   thresholdCentsForSize,
@@ -90,6 +91,14 @@ describe("compareToThreshold", () => {
   });
   it("has no comparison without a frozen threshold", () => {
     expect(compareToThreshold(1, null)).toBe("no_frozen_threshold");
+  });
+});
+
+describe("review confirmation", () => {
+  it("keeps an edited value unresolved until Confirm is clicked", () => {
+    const application = doc("application_summary");
+    expect(countUnresolved([field(application, "person_name", "Edited name", {}, "edited")])).toBe(1);
+    expect(countUnresolved([field(application, "person_name", "Edited name", {}, "confirmed")])).toBe(0);
   });
 });
 

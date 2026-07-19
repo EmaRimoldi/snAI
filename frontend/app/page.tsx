@@ -88,7 +88,6 @@ function RealDoorApp() {
         onHome={showLanding}
         onDiscover={showDiscover}
         activeView={view}
-        showStatus={view === "app"}
       />
 
       <main id="main" className={`site-main ${view === "discover" ? "site-main-discover" : ""}`}>

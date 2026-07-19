@@ -109,7 +109,11 @@ body {
     rgb(0 0 0 / 0.32) 100%
   );
   transition: --grid-active 180ms ease-out;
-  will-change: background-position, mask-image;
+  /* Avoid promoting the full-screen mask to a separate GPU surface. That
+     layer could flash black while the PDF canvas resized between fields. */
+  contain: strict;
+  isolation: isolate;
+  will-change: background-position;
 }
 
 @keyframes cursor-grid-drift {
@@ -562,6 +566,15 @@ a { -webkit-tap-highlight-color: transparent; }
 
 .primary-button:hover { background: #7d3e2e; }
 
+.secondary-button:disabled,
+.primary-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.42;
+}
+
+.secondary-button:disabled:hover { background: transparent; }
+.primary-button:disabled:hover { background: var(--primary-dark); }
+
 .site-main {
   flex: 1;
   display: flex;
@@ -572,7 +585,9 @@ a { -webkit-tap-highlight-color: transparent; }
 }
 
 .site-main-discover {
-  width: min(100%, 96rem);
+  /* Match the header container exactly: title, filters and map share the same
+     left/right edges as the RealDoor navigation. */
+  width: min(100%, 80rem);
 }
 
 /* The landing fills the space under the header and distributes its three
@@ -596,6 +611,7 @@ a { -webkit-tap-highlight-color: transparent; }
 }
 
 .hero-heading {
+  width: 100%;
   max-width: 62rem;
   margin: 0 auto;
   color: var(--foreground);
@@ -603,10 +619,18 @@ a { -webkit-tap-highlight-color: transparent; }
   font-weight: 700;
   letter-spacing: -0.045em;
   line-height: 1.06;
+  text-align: center;
   text-wrap: balance;
 }
 
-.hero-heading-line { display: block; }
+.hero-heading-line {
+  position: relative;
+  left: 50%;
+  display: block;
+  width: max-content;
+  transform: translateX(-50%);
+  text-align: center;
+}
 
 .hero-subheadline.is-typing::after {
   content: "";
@@ -945,7 +969,12 @@ a { -webkit-tap-highlight-color: transparent; }
   .phase-section { grid-template-columns: 1fr; gap: 1rem; }
   .phase-card { min-height: auto; padding: 2rem 1.75rem; }
   .account-panel { right: 1.25rem; }
-  .hero-heading-line { white-space: normal; }
+  .hero-heading-line {
+    position: static;
+    width: 100%;
+    transform: none;
+    white-space: normal;
+  }
 }
 
 @media (min-width: 721px) {

@@ -203,9 +203,21 @@ export default function DiscoverView({ headingRef }: DiscoverViewProps) {
       const L = leafletModule.default ?? leafletModule;
       leafletRef.current = L;
 
+      const datasetBounds = L.latLngBounds(
+        properties
+          .filter(
+            (property) =>
+              Number.isFinite(property.latitude) && Number.isFinite(property.longitude),
+          )
+          .map((property) => [property.latitude, property.longitude] as LatLngTuple),
+      );
+
       const map = L.map(mapContainer, {
         scrollWheelZoom: false,
         zoomControl: true,
+        minZoom: 11,
+        maxBounds: datasetBounds.pad(0.18),
+        maxBoundsViscosity: 1,
       }).setView([42.3601, -71.0589], 11);
 
       standardTileLayerRef.current = L.tileLayer(standardTileUrl, {
