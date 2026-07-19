@@ -34,7 +34,7 @@ import {
   thresholdCentsForSize,
   centsToDollars,
 } from "@/lib/pipeline/calc";
-import { classifyDocument, extractFields } from "@/lib/engine/extract";
+import { processBatch } from "@/lib/engine/extract";
 
 export type Step = "profile" | "understand" | "prepare";
 
@@ -72,7 +72,14 @@ type AppValue = {
   goToStep: (step: Step) => void;
   requestReviewField: (id: string) => void;
   clearReviewRequest: () => void;
-  addFiles: (files: File[]) => Promise<void>;
+  setDocumentPageCount: (id: string, pageCount: number) => void;
+  addFiles: (files: File[]) => Promise<DocumentRecord[]>;
+  addManualField: (
+    documentId: string,
+    key: string,
+    value: string,
+    options?: { isIncome?: boolean; incomeFrequency?: ExtractedField["incomeFrequency"] },
+  ) => void;
   confirmField: (id: string) => void;
   correctField: (id: string, value: string) => void;
   lock: () => void;
@@ -149,34 +156,42 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
     [stepUnlocked],
   );
 
+  // Keep one engine request for the whole upload batch. This prevents one
+  // document from being silently dropped when several PDFs are selected.
   const addFiles = useCallback(async (files: File[]) => {
-    if (files.length === 0) return;
+    if (files.length === 0) return [];
     setBusy(true);
     try {
-      for (const file of files) {
-        const id = `doc-${shortId()}`;
-        const { documentType, confidence } = await classifyDocument(file);
-        const { fields: docFields, quarantinedText } = await extractFields({
-          id,
-          fileName: file.name,
-          documentType,
-        });
-        const record: DocumentRecord = {
-          id,
-          fileName: file.name,
-          fileUrl: URL.createObjectURL(file),
-          mimeType: file.type || "application/octet-stream",
-          documentType,
-          classifyConfidence: confidence,
-          pageCount: 1,
-          quarantinedText,
-        };
-        setDocuments((prev) => [...prev, record]);
-        setFields((prev) => [...prev, ...docFields]);
-      }
+      const inputs = files.map((file) => ({ id: `doc-${shortId()}`, file }));
+      const results = await processBatch(inputs);
+      const records: DocumentRecord[] = inputs.map(({ id, file }, index) => ({
+        id,
+        fileName: file.name,
+        fileUrl: URL.createObjectURL(file),
+        file,
+        mimeType: file.type || "application/octet-stream",
+        documentType: results[index].documentType,
+        classifyConfidence: results[index].confidence,
+        pageCount: 1,
+        quarantinedText: results[index].quarantinedText,
+        extractionError: results[index].extractionError,
+      }));
+      setDocuments((previous) => [...previous, ...records]);
+      setFields((previous) => [...previous, ...results.flatMap((result) => result.fields)]);
+      return records;
     } finally {
       setBusy(false);
     }
+  }, []);
+
+  const setDocumentPageCount = useCallback((id: string, pageCount: number) => {
+    setDocuments((previous) =>
+      previous.some((document) => document.id === id && document.pageCount !== pageCount)
+        ? previous.map((document) =>
+            document.id === id ? { ...document, pageCount } : document,
+          )
+        : previous,
+    );
   }, []);
 
   useEffect(() => {
@@ -225,6 +240,31 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
       demoStartedRef.current = false;
     };
   }, [addFiles]);
+
+  const addManualField = useCallback((
+    documentId: string,
+    key: string,
+    value: string,
+    options?: { isIncome?: boolean; incomeFrequency?: ExtractedField["incomeFrequency"] },
+  ) => {
+    const cleanValue = value.trim();
+    if (!cleanValue) return;
+    setFields((previous) => [
+      ...previous,
+      {
+        id: `${documentId}:manual:${key}:${shortId()}`,
+        documentId,
+        key,
+        value: cleanValue,
+        page: 1,
+        bbox: [0, 0, 0, 0],
+        confidence: 1,
+        reviewStatus: "renter_entered",
+        isIncome: options?.isIncome,
+        incomeFrequency: options?.incomeFrequency,
+      },
+    ]);
+  }, []);
 
   const confirmField = useCallback((id: string) => {
     setFields((prev) =>
@@ -335,7 +375,9 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
       goToStep,
       requestReviewField,
       clearReviewRequest,
+      setDocumentPageCount,
       addFiles,
+      addManualField,
       confirmField,
       correctField,
       lock: () => setLocked(true),
@@ -347,8 +389,8 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
       step, stepUnlocked, documents, fields, busy, locked, quarantineCount, grossIncomeCents,
       errorCount, readiness, displayStatus, unresolvedCount, missingRequired, presentTypes,
       household.size, household.confirmed, pendingReviewFieldId,
-      goToStep, addFiles, confirmField, correctField, deleteSession, buildSubmission,
-      requestReviewField, clearReviewRequest,
+      goToStep, addFiles, addManualField, confirmField, correctField, deleteSession, buildSubmission,
+      requestReviewField, clearReviewRequest, setDocumentPageCount,
     ],
   );
 

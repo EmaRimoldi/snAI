@@ -35,12 +35,16 @@ export type DocumentRecord = {
   id: string;
   fileName: string;
   fileUrl: string; // object URL (client) or storage signed URL
+  /** Raw uploaded bytes, client memory only — dies with the session (never transmitted or stored). */
+  file?: File;
   mimeType: string;
   documentType: DocumentType;
   classifyConfidence: number;
   pageCount: number;
   /** Untrusted / injected text found in the document — quarantined, never a field. */
   quarantinedText?: string;
+  /** Parser/OCR failure for this specific document; other documents may still parse. */
+  extractionError?: string;
 };
 
 export type Comparison = "below_or_equal" | "above" | "no_frozen_threshold";
