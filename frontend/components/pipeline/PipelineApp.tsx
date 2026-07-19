@@ -11,6 +11,7 @@ import Stepper from "./Stepper";
 import ProfileStep from "./ProfileStep";
 import UnderstandStep from "./UnderstandStep";
 import PrepareStep from "./PrepareStep";
+import AiChatWidget from "@/components/ai/AiChatWidget";
 import s from "./pipeline.module.css";
 
 type Props = { headingRef?: RefObject<HTMLHeadingElement | null>; headingId?: string };
@@ -40,5 +41,10 @@ function PipelineInner({ headingRef, headingId }: Props) {
 // The state provider now lives in app/page.tsx (above SiteHeader) so the
 // header status chips share the same application record.
 export default function PipelineApp({ headingRef, headingId }: Props) {
-  return <PipelineInner headingRef={headingRef} headingId={headingId} />;
+  return (
+    <>
+      <PipelineInner headingRef={headingRef} headingId={headingId} />
+      <AiChatWidget />
+    </>
+  );
 }

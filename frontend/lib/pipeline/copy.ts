@@ -103,6 +103,10 @@ const en = {
     "I can only answer from the frozen rule corpus and didn't find a matching rule. Try asking about income limits, the effective date, annualizing income, or readiness.",
   refusal:
     "RealDoor can't tell you whether you qualify, or whether you'll be approved or denied — those remain human decisions. It only prepares and checks your paperwork and compares income to a published limit.",
+  aiThinking: "Checking sources…",
+  aiPrivacy:
+    "AI privacy: only confirmed numeric values, statuses, and source references are sent — never your files, raw document text, name, address, or filename. Avoid typing personal details in the question.",
+  aiFallback: "The live AI guide was unavailable, so RealDoor used its local frozen-rule fallback.",
 
   prepareTitle: "Prepare and finish",
   readinessTitle: "File readiness",

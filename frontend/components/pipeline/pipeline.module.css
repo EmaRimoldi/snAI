@@ -291,6 +291,23 @@
   color: var(--foreground); font: inherit;
 }
 .qaAnswer { margin-top: 1rem; border-top: 1px solid var(--input); padding-top: 1rem; }
+.aiOutcomeRow { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; }
+.aiOutcome {
+  display: inline-flex; align-items: center; min-height: 1.6rem;
+  padding: 0.1rem 0.55rem; border-radius: 999px;
+  border: 1px solid var(--input); color: var(--primary-dark);
+  font-size: 0.72rem; font-weight: 800; text-transform: uppercase;
+}
+.aiAnswerText { margin: 0.65rem 0 0; line-height: 1.65; }
+.aiCitations { display: flex; flex-wrap: wrap; gap: 0.45rem; margin-top: 0.75rem; }
+.aiCitationChip {
+  display: inline-flex; align-items: center; min-height: 32px;
+  max-width: 100%; padding: 0.28rem 0.65rem; border: 1px solid var(--input);
+  border-radius: 999px; color: var(--primary-dark); background: var(--background);
+  font-size: 0.76rem; font-weight: 750; text-decoration: none; overflow-wrap: anywhere;
+}
+.aiPrivacy { margin: 0.8rem 0 0; color: var(--muted-foreground); font-size: 0.78rem; }
+.aiNotice { margin: 0.6rem 0 0; color: var(--primary-dark); font-size: 0.82rem; font-weight: 700; }
 .citation {
   margin-top: 0.75rem; padding: 0.75rem 0.9rem;
   border: 1px solid var(--input); border-radius: 0.8rem;

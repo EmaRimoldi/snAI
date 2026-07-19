@@ -23,6 +23,7 @@ const csp = [
 ].join("; ");
 
 const nextConfig: NextConfig = {
+  devIndicators: false,
   async headers() {
     return [
       {
