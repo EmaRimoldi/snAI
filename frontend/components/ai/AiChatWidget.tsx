@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useI18n } from "@/lib/i18n";
+import { useCopy } from "@/lib/pipeline/copy";
 import { useApp } from "@/lib/pipeline/state";
 import { askRealDoor } from "@/lib/ai/client";
 import { buildSafeUnderstandingContext } from "@/lib/ai/context";
@@ -16,6 +17,7 @@ type ChatEntry =
 
 export default function AiChatWidget() {
   const { language, t } = useI18n();
+  const copy = useCopy();
   const {
     documents,
     fields,
@@ -83,7 +85,7 @@ export default function AiChatWidget() {
         context,
       });
     } catch {
-      response = localRulesFallback(question);
+      response = localRulesFallback(question, { refusal: copy.refusal, abstain: copy.abstain });
       fallback = true;
     }
     setEntries((current) => [...current, { id: newId(), role: "assistant", response, fallback }]);

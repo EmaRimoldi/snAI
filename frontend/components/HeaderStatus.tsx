@@ -12,9 +12,9 @@
 import { useEffect, useRef, useState } from "react";
 import { useApp } from "@/lib/pipeline/state";
 import { useCopy, fmt } from "@/lib/pipeline/copy";
+import { humanize, useDocLabels, useFieldLabel, useReasonTexts } from "@/lib/pipeline/labels";
 import type {
   DisplayStatus,
-  DocumentType,
   ExtractedField,
   ReviewReasonCode,
 } from "@/lib/pipeline/types";
@@ -35,10 +35,6 @@ const ERROR_TARGET_FIELD: Partial<Record<ReviewReasonCode, string>> = {
   EMPLOYMENT_LETTER_EXPIRED: "document_date",
   GIG_INCOME_UNCORROBORATED: "gross_receipts",
 };
-
-function humanize(key: string): string {
-  return key.replace(/_/g, " ").replace(/\b\w/g, (m) => m.toUpperCase());
-}
 
 function isResolved(f: ExtractedField): boolean {
   return f.reviewStatus !== "extracted";
@@ -94,23 +90,9 @@ export default function HeaderStatus() {
     PACKET_LOCKED: c.statusLocked,
   };
 
-  const docLabel = (t: DocumentType): string => {
-    const map: Record<DocumentType, string> = {
-      application_summary: c.docApplication_summary,
-      pay_stub: c.docPay_stub,
-      employment_letter: c.docEmployment_letter,
-      benefit_letter: c.docBenefit_letter,
-      gig_statement: c.docGig_statement,
-      unknown: c.docUnknown,
-    };
-    return map[t];
-  };
-
-  const reasonText: Partial<Record<ReviewReasonCode, string>> = {
-    PAY_STUB_TOTAL_CONFLICT: c.rc_PAY_STUB_TOTAL_CONFLICT,
-    EMPLOYMENT_LETTER_EXPIRED: c.rc_EMPLOYMENT_LETTER_EXPIRED,
-    GIG_INCOME_UNCORROBORATED: c.rc_GIG_INCOME_UNCORROBORATED,
-  };
+  const docLabels = useDocLabels();
+  const fieldLabel = useFieldLabel();
+  const reasonText: Record<ReviewReasonCode, string> = useReasonTexts();
 
   // Errors first (they set the red state), then pending confirmations, then
   // missing documents (informational).
@@ -126,8 +108,8 @@ export default function HeaderStatus() {
       return {
         key: `err-${r.code}-${r.documentId ?? i}`,
         label: target
-          ? `${humanize(target.key)} · ${doc ? docLabel(doc.documentType) : ""}`
-          : (doc ? docLabel(doc.documentType) : humanize(r.code)),
+          ? `${fieldLabel(target.key)} · ${doc ? docLabels[doc.documentType] : ""}`
+          : (doc ? docLabels[doc.documentType] : humanize(r.code)),
         explain: reasonText[r.code] ?? humanize(r.code),
         onSelect: () => {
           setOpen(false);
@@ -142,7 +124,7 @@ export default function HeaderStatus() {
       const doc = documents.find((d) => d.id === f.documentId);
       return {
         key: `pending-${f.id}`,
-        label: `${humanize(f.key)} · ${doc ? docLabel(doc.documentType) : ""}`,
+        label: `${fieldLabel(f.key)} · ${doc ? docLabels[doc.documentType] : ""}`,
         explain: c.stExtracted,
         onSelect: () => {
           setOpen(false);
@@ -152,7 +134,7 @@ export default function HeaderStatus() {
     });
   const docEntries = missingRequired.map((t) => ({
     key: `missing-${t}`,
-    label: docLabel(t),
+    label: docLabels[t],
     explain: `${c.missing} — ${c.rc_MISSING_REQUIRED_DOCUMENT}`,
     onSelect: () => {
       setOpen(false);

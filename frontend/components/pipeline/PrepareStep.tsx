@@ -10,7 +10,7 @@ import { useState } from "react";
 import { useApp } from "@/lib/pipeline/state";
 import type { DeletionProof } from "@/lib/pipeline/state";
 import { useCopy, fmt } from "@/lib/pipeline/copy";
-import { humanize, useReasonTexts } from "@/lib/pipeline/labels";
+import { humanize, useDocLabels, useReasonTexts } from "@/lib/pipeline/labels";
 import ReceiptDocument from "./ReceiptDocument";
 import s from "./pipeline.module.css";
 
@@ -29,6 +29,7 @@ export default function PrepareStep() {
   } = useApp();
 
   const reasonText = useReasonTexts();
+  const docLabels = useDocLabels();
   const [proof, setProof] = useState<DeletionProof | null>(null);
   const [showRaw, setShowRaw] = useState(false);
   const [confirmingDelete, setConfirmingDelete] = useState(false);
@@ -119,7 +120,9 @@ export default function PrepareStep() {
                     <span className={s.reasonCode}>{r.code}</span>
                     <span>
                       {reasonText[r.code]}
-                      {r.detail && r.code === "MISSING_REQUIRED_DOCUMENT" ? ` (${humanize(r.detail)})` : ""}
+                      {r.detail && r.code === "MISSING_REQUIRED_DOCUMENT"
+                        ? ` (${(docLabels as Record<string, string | undefined>)[r.detail] ?? humanize(r.detail)})`
+                        : ""}
                     </span>
                   </li>
                 ))}

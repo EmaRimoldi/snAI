@@ -180,3 +180,21 @@ Prepare): receipt visible by default, edit on receipt recomputes income/readines
 (gross-pay conflict fires PAY_STUB_TOTAL_CONFLICT), lock hides edit buttons, print emulation renders
 the receipt alone with watermark, 320px collapses rows to one column (remaining 320px horizontal
 overflow comes from the pre-existing header nav, not the receipt), ES localization + delete flow OK.
+
+## 2026-07-19 — Understand step: structured math, support chat, full i18n; engine classifier fix
+
+- Understand redesign (visually verified via headless-Chromium screenshots): calculation left /
+  large support-chat right (tinted shell, presence header, bubbles, docked input, scroll-pinned
+  thread, sample questions until first message); math as a labeled 3-column table (Source ·
+  Calculation · Per year) with per-source rows + Total; green/red published-limit banner (text
+  carries meaning; non-decisional note kept); de-boxed cards (hairline rows, single container each).
+- Income derivation now groups pay stubs into ONE corroborated wage source (latest pay_date wins) —
+  fixes double-counting with the real engine (HH-001 was showing $112,632).
+- **Engine fix** (`realdoor/cli.py`): filename-hint order put bare "letter" before "benefit", so
+  `*_benefit_letter.pdf` uploaded without a manifest classified as employment_letter and its income
+  was dropped (HH-003 showed $30,030 instead of $40,230). Specific hints now match first; official
+  set re-verified (159/159 fields, 6/6 households, classifier spot-check on HH-001/3/4).
+- Dev fixture route generalized to serve ANY official household's complete set via
+  NEXT_PUBLIC_DEMO_HOUSEHOLD; NEXT_PUBLIC_DEMO_STEP=understand debug mode auto-confirms and jumps.
+- Verified HH-003 end-to-end in-browser: Pay $1,155×26 + Benefit $850×12 = $40,230 vs $92,580
+  (size 3), header shows the READY-with-missing-letter oracle quirk as informational.

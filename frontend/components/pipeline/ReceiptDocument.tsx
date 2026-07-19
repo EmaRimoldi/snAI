@@ -14,7 +14,7 @@ import { useCopy, fmt } from "@/lib/pipeline/copy";
 import { useI18n } from "@/lib/i18n";
 import { formatMoneyCents, compareToThreshold, thresholdCentsForSize } from "@/lib/pipeline/calc";
 import { MTSP_2026 } from "@/lib/data/mtsp2026";
-import { humanize, useDocLabels, useReasonTexts } from "@/lib/pipeline/labels";
+import { humanize, useDocLabels, useFieldLabel, useReasonTexts } from "@/lib/pipeline/labels";
 import s from "./pipeline.module.css";
 import r from "./receipt.module.css";
 
@@ -71,13 +71,18 @@ type RowSpec =
   | { kind: "missing"; id: string; label: string };
 
 /** Resolve a document's expected entries against its actually-parsed fields;
- * parsed-but-unexpected extras are appended so no real data is hidden. */
-function buildDocRows(doc: DocumentRecord, docFields: readonly ExtractedField[]): RowSpec[] {
+ * parsed-but-unexpected extras are appended so no real data is hidden.
+ * `fieldLabel` supplies the localized display label for a field key. */
+function buildDocRows(
+  doc: DocumentRecord,
+  docFields: readonly ExtractedField[],
+  fieldLabel: (key: string) => string,
+): RowSpec[] {
   const rows: RowSpec[] = [];
   const used = new Set<string>();
   for (const entry of EXPECTED_DOC_FIELDS[doc.documentType]) {
     const match = docFields.find((f) => entry.keys.includes(f.key));
-    const label = humanize(entry.label);
+    const label = fieldLabel(entry.label);
     if (match) {
       used.add(match.id);
       rows.push(
@@ -93,8 +98,8 @@ function buildDocRows(doc: DocumentRecord, docFields: readonly ExtractedField[])
     if (used.has(f.id)) continue;
     rows.push(
       f.reviewStatus === "extracted"
-        ? { kind: "unconfirmed", id: f.id, label: humanize(f.key) }
-        : { kind: "present", id: f.id, label: humanize(f.key), field: f },
+        ? { kind: "unconfirmed", id: f.id, label: fieldLabel(f.key) }
+        : { kind: "present", id: f.id, label: fieldLabel(f.key), field: f },
     );
   }
   return rows;
@@ -122,7 +127,9 @@ export default function ReceiptDocument() {
     presentTypes,
   } = useApp();
   const docLabels = useDocLabels();
+  const fieldLabel = useFieldLabel();
   const reasonTexts = useReasonTexts();
+  const money = (cents: number): string => formatMoneyCents(cents, language);
 
   const [editingId, setEditingId] = useState<string | null>(null);
   const [draft, setDraft] = useState("");
@@ -280,7 +287,7 @@ export default function ReceiptDocument() {
             </section>
 
             {documents.map((doc) => {
-              const rows = buildDocRows(doc, fields.filter((f) => f.documentId === doc.id));
+              const rows = buildDocRows(doc, fields.filter((f) => f.documentId === doc.id), fieldLabel);
               return (
                 <section key={doc.id} className={r.section}>
                   <h4 className={r.secTitle}>
@@ -307,13 +314,13 @@ export default function ReceiptDocument() {
                 <li className={r.row}>
                   <span className={r.rowKey}>{c.annualizedIncome}</span>
                   <span className={r.rowVal} aria-live="polite">
-                    {formatMoneyCents(grossIncomeCents)}
+                    {money(grossIncomeCents)}
                   </span>
                 </li>
                 <li className={r.row}>
                   <span className={r.rowKey}>{c.threshold60}</span>
                   <span className={r.rowVal}>
-                    {thresholdCents === null ? c.cmpNone : formatMoneyCents(thresholdCents)}
+                    {thresholdCents === null ? c.cmpNone : money(thresholdCents)}
                   </span>
                 </li>
                 <li className={r.row}>
@@ -342,7 +349,7 @@ export default function ReceiptDocument() {
                     <li key={`${reason.code}-${i}`} className={r.note}>
                       <strong>{reason.code}</strong> — {reasonTexts[reason.code]}
                       {reason.detail && reason.code === "MISSING_REQUIRED_DOCUMENT"
-                        ? ` (${humanize(reason.detail)})`
+                        ? ` (${(docLabels as Record<string, string | undefined>)[reason.detail] ?? humanize(reason.detail)})`
                         : ""}
                     </li>
                   ))}

@@ -5,6 +5,7 @@
 
 import type {
   DocumentRecord,
+  DocumentType,
   ExtractedField,
   Comparison,
   DisplayStatus,
@@ -53,8 +54,8 @@ export function thresholdCentsForSize(size: number): number | null {
   return dollars === null ? null : dollars * 100;
 }
 
-export function formatMoneyCents(cents: number): string {
-  return (cents / 100).toLocaleString("en-US", {
+export function formatMoneyCents(cents: number, locale: string = "en-US"): string {
+  return (cents / 100).toLocaleString(locale, {
     style: "currency",
     currency: "USD",
     minimumFractionDigits: 2,
@@ -67,22 +68,70 @@ export function centsToDollars(cents: number): number {
   return Math.round(cents) / 100;
 }
 
+/** One documented income source in the formula breakdown. `counted: false`
+ *  means it corroborates an already-counted source and is NOT added (§8). */
+export type IncomeSourceEntry = {
+  fieldId: string;
+  documentId: string;
+  key: string;
+  documentType: DocumentType;
+  periodCents: number;
+  frequency: PayFrequency;
+  annualCents: number;
+  counted: boolean;
+};
+
 /**
- * Gross annual income (cents) from CONFIRMED/CORRECTED income fields only.
- * Each income field is one documented source; same-source stubs are modelled as a
- * single field upstream, so we do not double-count. Gig receipts are monthly (×12).
+ * Derive the income sources from CONFIRMED/CORRECTED fields only.
+ * Domain law (§8): multiple pay stubs from the same recurring wage source
+ * corroborate — the stub with the latest pay_date is counted once, the others
+ * confirm it. Benefit letters and gig statements each stand on their own
+ * (gig receipts are monthly, ×12).
  */
-export function computeGrossAnnualCents(fields: readonly ExtractedField[]): number {
-  let total = 0;
-  for (const f of fields) {
-    if (!f.isIncome) continue;
-    if (f.reviewStatus !== "confirmed" && f.reviewStatus !== "corrected" && f.reviewStatus !== "renter_entered") {
-      continue; // only confirmed values flow downstream
-    }
-    const freq = f.incomeFrequency ?? "monthly";
-    total += annualizeCents(toCents(f.value), freq);
-  }
-  return total;
+export function deriveIncomeSources(
+  documents: readonly DocumentRecord[],
+  fields: readonly ExtractedField[],
+): IncomeSourceEntry[] {
+  const resolvedIncome = fields.filter((f) => f.isIncome && isResolved(f));
+  const docType = (id: string): DocumentType =>
+    documents.find((d) => d.id === id)?.documentType ?? "unknown";
+
+  // Wages: pick the pay stub with the latest confirmed pay_date as THE source.
+  const stubs = resolvedIncome.filter((f) => docType(f.documentId) === "pay_stub");
+  const payDate = (f: ExtractedField): number => {
+    const raw = fields.find((x) => x.documentId === f.documentId && x.key === "pay_date")?.value;
+    const parsed = Date.parse(raw ?? "");
+    return Number.isNaN(parsed) ? 0 : parsed;
+  };
+  const countedStubId =
+    stubs.length > 0 ? [...stubs].sort((a, b) => payDate(b) - payDate(a))[0].id : undefined;
+
+  return resolvedIncome.map((f) => {
+    const documentType = docType(f.documentId);
+    const frequency = f.incomeFrequency ?? "monthly";
+    const periodCents = toCents(f.value);
+    const counted = documentType !== "pay_stub" || f.id === countedStubId;
+    return {
+      fieldId: f.id,
+      documentId: f.documentId,
+      key: f.key,
+      documentType,
+      periodCents,
+      frequency,
+      annualCents: annualizeCents(periodCents, frequency),
+      counted,
+    };
+  });
+}
+
+/** Gross annual income (cents): the sum of COUNTED sources only. */
+export function computeGrossAnnualCents(
+  documents: readonly DocumentRecord[],
+  fields: readonly ExtractedField[],
+): number {
+  return deriveIncomeSources(documents, fields)
+    .filter((s) => s.counted)
+    .reduce((sum, s) => sum + s.annualCents, 0);
 }
 
 function isExpired(dateStr: string): boolean {

@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "dev:household": "NEXT_PUBLIC_DEMO_HOUSEHOLD=HH-001 NEXT_PUBLIC_ENGINE=http://127.0.0.1:8787 next dev",
+    "dev:understand": "NEXT_PUBLIC_DEMO_HOUSEHOLD=HH-001 NEXT_PUBLIC_ENGINE=http://127.0.0.1:8787 NEXT_PUBLIC_DEMO_STEP=understand next dev",
     "build": "next build",
     "start": "next start"
   },
