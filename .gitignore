@@ -1,0 +1,44 @@
+# ── RealDoor repo-root ignore ─────────────────────────────────────────────
+# The Next.js app has its own frontend/.gitignore for build/dep artifacts.
+# This file covers repo-root, machine-local, and tooling files.
+
+# Local MCP + Claude Code config (machine-specific, may point at local paths).
+# Playwright + Remotion MCP servers live in .mcp.json — kept out of git on purpose.
+.mcp.json
+.mcp.local.json
+.claude/settings.local.json
+
+# Environment & secrets (real secrets belong in Vercel env vars, never in git)
+.env
+.env.*
+!.env.example
+
+# Dependencies (safety net; frontend/ ignores its own node_modules)
+node_modules/
+
+# Build log scratch, if kept local
+BUILDLOG.local.md
+
+# Editor / IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS junk
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Logs & debug output
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
