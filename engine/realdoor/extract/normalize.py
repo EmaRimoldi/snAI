@@ -18,7 +18,7 @@ from .. import config
 from ..calc import FREQUENCY
 from ..models import DocumentRecord, ExtractedField
 from ..safety import INSTRUCTION_RE
-from .ocr import ocr_tokens
+from .ocr import ocr_available, ocr_tokens
 from .tokens import Token
 from .vector import vector_pages
 
@@ -941,7 +941,17 @@ def tokenize_document(
     pages = []
     for index, tokens in enumerate(token_pages):
         if len(tokens) < MIN_VECTOR_TOKENS:
-            tokens = ocr_tokens(pdf_path, page_size, index)
+            # Rasterized page. Without a working OCR stack (poppler/tesseract
+            # absent at the venue/deployment) the page yields NO tokens — the
+            # document abstains per field and the renter types the values.
+            # An OCR failure on one page must never take down the document.
+            if ocr_available():
+                try:
+                    tokens = ocr_tokens(pdf_path, page_size, index)
+                except Exception:
+                    tokens = []
+            else:
+                tokens = []
         pages.append(tokens)
     return pages, page_size, rasterized
 

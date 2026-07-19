@@ -8,11 +8,16 @@ both extraction paths feed the same normalizer.
 from __future__ import annotations
 
 import os
+import shutil
 from pathlib import Path
 
-import pdf2image
-import pytesseract
-from pytesseract import Output
+try:  # the pip packages import fine without the system binaries; guard anyway
+    import pdf2image
+    import pytesseract
+    from pytesseract import Output
+    _OCR_IMPORTS = True
+except Exception:  # pragma: no cover - missing packages on a slim deployment
+    _OCR_IMPORTS = False
 
 from .tokens import Token
 
@@ -30,6 +35,25 @@ MIN_CONFIDENCE = settings.ocr("min_confidence")
 # faint gray above it, while the small gray field labels stay below it.
 # (140 wiped label rows the watermark crossed; 190 keeps labels crisp.)
 BINARIZE_THRESHOLD = settings.ocr("binarize_threshold")
+
+
+_OCR_AVAILABLE: bool | None = None
+
+
+def ocr_available() -> bool:
+    """True when the OCR path can actually run: pdf2image/pytesseract are
+    importable AND the system binaries (poppler's pdftoppm + tesseract) exist.
+    When False, rasterized pages ABSTAIN per field instead of failing — the
+    renter types the values (frozen convention: a feature path, not a failure).
+    """
+    global _OCR_AVAILABLE
+    if _OCR_AVAILABLE is None:
+        _OCR_AVAILABLE = bool(
+            _OCR_IMPORTS
+            and shutil.which("pdftoppm")
+            and shutil.which("tesseract")
+        )
+    return _OCR_AVAILABLE
 
 
 def ocr_tokens(

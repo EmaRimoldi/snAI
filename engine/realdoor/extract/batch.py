@@ -37,9 +37,16 @@ class BatchStats:
 
 
 def _tokenize_job(args):
-    """Worker-process entry: expensive I/O only, results pickle cleanly."""
+    """Worker-process entry: expensive I/O only, results pickle cleanly.
+
+    Per-document isolation: one unreadable/corrupt PDF must never abort the
+    whole batch — it degrades to an empty (abstained) document instead."""
     pdf_path, *_rest = args
-    return tokenize_document(pdf_path)
+    try:
+        return tokenize_document(pdf_path)
+    except Exception:
+        from .. import config
+        return [[]], config.PAGE_SIZE_POINTS, True
 
 
 def batch_extract(

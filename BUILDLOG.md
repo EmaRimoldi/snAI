@@ -343,3 +343,10 @@ changes: official 6/6 exact.
   canvases + bbox overlays, confidence meter, negative-guard rejection, reactive warnings,
   Understand math + citations, Prepare receipt with new reason codes, ES/ZH sweeps, 375/800px
   scroll-clean. PR #6 auto-marked MERGED on push.
+- 2026-07-19 · All-PDF-types robustness: OCR availability detection (`ocr_available()`), per-page
+  abstain when poppler/tesseract are absent (raster docs → 0 fields, HTTP 200 — never a 422),
+  per-document batch isolation, i18n×5 parse-failure banner in Profile (role=alert), engine
+  Dockerfile with full OCR (smoke-tested: raster hh-001 d02 → 9 fields in-container). Regression
+  green: batch_run 1132/1132 + 59/59, oracle route official 6/6 + dev splits 53/53, E2E site
+  workflow HH-001/HH-002 PASS, degraded-mode E2E PASS, vitest 23/23, next build clean. Prod's
+  /api/engine function lives outside the repo — needs a redeploy to pick this up.

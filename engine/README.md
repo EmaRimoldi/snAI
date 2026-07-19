@@ -271,3 +271,32 @@ extraction artifact as the CLI). The frontend adapter
 confidence, bottom-left-points -> top-left-normalized bbox conversion (§7),
 `untrusted_instruction_text` -> quarantine display. Without
 `NEXT_PUBLIC_ENGINE` the frontend stays on the standalone mock.
+
+## Deployment (production engine)
+
+The engine needs two **system binaries** for OCR of rasterized PDFs:
+`pdftoppm` (poppler-utils) and `tesseract` (+ an English model). Without
+them the engine still runs — rasterized pages **abstain per field** (HTTP
+200, zero fields for that document; the renter types the values, which the
+UI marks `renter_entered`). One unreadable PDF never fails the batch: each
+document is isolated, so the worst case is one abstained document, never a
+4xx for the whole upload.
+
+The production-ready path is the container image:
+
+```bash
+docker build -t realdoor-engine engine/
+docker run -p 8787:8787 realdoor-engine       # full OCR included
+```
+
+Smoke-tested: vector PDFs extract directly, rasterized PDFs OCR to full
+fields inside the image (`POST /extract` with hh-001 d01+d02 → 200, 4+9
+fields).
+
+**Vercel note:** the deployed `/api/engine` function that
+`realdoor-boston.vercel.app` rewrites to (see `frontend/vercel.json`) is not
+in this repo and its serverless runtime has no poppler/tesseract. With this
+engine version it degrades gracefully (abstain instead of the old
+whole-batch 422). For full OCR in production, point `NEXT_PUBLIC_ENGINE` (or
+the rewrite) at a host running the Docker image above and add that origin to
+`ALLOWED_ORIGINS` in `server.py`.

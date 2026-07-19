@@ -416,6 +416,7 @@ export default function ProfileStep() {
   const [slotStatus, setSlotStatus] = useState<Partial<Record<DocumentType, SlotState>>>({});
   const [slotProgress, setSlotProgress] = useState<Partial<Record<DocumentType, number>>>({});
   const [isParsing, setIsParsing] = useState(false);
+  const [parseFailed, setParseFailed] = useState(false);
   const [reviewOpen, setReviewOpen] = useState(documents.length > 0);
   const [reviewDocumentId, setReviewDocumentId] = useState<string | null>(null);
   const [activeGuideType, setActiveGuideType] = useState<Exclude<DocumentType, "unknown"> | null>(null);
@@ -540,6 +541,7 @@ export default function ProfileStep() {
   const startParsing = async () => {
     if (!canParse) return;
     setIsParsing(true);
+    setParseFailed(false);
     setReviewOpen(false);
 
     for (const slot of slots) {
@@ -587,6 +589,7 @@ export default function ProfileStep() {
       setSlotDocumentIds((prev) => ({ ...prev, ...nextSlotDocumentIds }));
       setSlotStatus((prev) => ({ ...prev, ...nextStatuses }));
     } else {
+      setParseFailed(true);
       setSlotStatus((prev) => {
         const next = { ...prev };
         for (const { slot } of uploadedSlots) next[slot.type] = "error";
@@ -683,6 +686,12 @@ export default function ProfileStep() {
           <span aria-hidden="true" />
         </button>
       </div>
+
+      {parseFailed && (
+        <p className={s.parseFailedBanner} role="alert">
+          {c.wParseFailed}
+        </p>
+      )}
 
       <div className={s.uploadStack}>
         {orderedSlots.map((slot) => {
