@@ -269,7 +269,9 @@ export function parseChatRequest(value: unknown): ChatRequest {
   const locale = typeof raw.locale === "string" && (SUPPORTED_LOCALES as readonly string[]).includes(raw.locale)
     ? raw.locale as SupportedLocale
     : "en";
-  const question = typeof raw.question === "string" ? raw.question.trim() : "";
+  // NFC-normalize before any regex gate: browsers (notably macOS) may submit
+  // decomposed (NFD) text, which would never match the NFC literals in policy.ts.
+  const question = typeof raw.question === "string" ? raw.question.normalize("NFC").trim() : "";
   if (!question || question.length > 1_000) {
     throw new Error("question must contain between 1 and 1000 characters.");
   }

@@ -193,6 +193,62 @@ test("off-domain prompts abstain without spending a model call", () => {
   }), null);
 });
 
+test("realistic in-domain phrasings reach the model instead of abstaining", () => {
+  const prompts: Array<[string, ChatRequest["locale"]]> = [
+    ["Which rule sets the effective date?", "en"],
+    ["What happens when I delete my session?", "en"],
+    ["Is my information private?", "en"],
+    ["What can you help me with?", "en"],
+    ["Do I need proof of employment?", "en"],
+    ["¿Cuál es el umbral para mi hogar?", "es"],
+    ["¿Me puedes ayudar con esto?", "es"],
+    ["这个门槛是多少？", "zh"],
+    ["Giấy tờ nào còn thiếu?", "vi"],
+  ];
+  for (const [question, locale] of prompts) {
+    assert.equal(classifyRequest(general(question, locale)), null, question);
+  }
+});
+
+test("bare what-are-the-rules questions get a deterministic cited overview", () => {
+  const cases: Array<[string, ChatRequest["locale"]]> = [
+    ["What are the rules?", "en"],
+    ["List the rules", "en"],
+    ["¿Cuáles son las reglas?", "es"],
+    ["规则是什么？", "zh"],
+    ["Ano ang mga patakaran?", "tl"],
+    ["Quy tắc là gì?", "vi"],
+  ];
+  for (const [question, locale] of cases) {
+    const decision = classifyRequest(general(question, locale));
+    assert.equal(decision?.outcome, "answered", question);
+    assert.equal(decision?.policyCode, "NONE", question);
+    assert.ok((decision?.citationRefs.length ?? 0) >= 4, question);
+  }
+  assert.equal(classifyRequest(general("Which rule sets the effective date?")), null);
+});
+
+test("decomposed (NFD) unicode questions still pass the domain gate", () => {
+  const parsed = parseChatRequest({
+    mode: "general",
+    locale: "vi",
+    question: "Giấy tờ nào còn thiếu?".normalize("NFD"),
+  });
+  assert.equal(classifyRequest(parsed), null);
+});
+
+test("broadened vocabulary still leaves generic chatter out of domain", () => {
+  for (const question of [
+    "What's trending on social media today?",
+    "Tell me about the solar system",
+    "hello there",
+  ]) {
+    const result = classifyRequest(general(question));
+    assert.equal(result?.policyCode, "OUT_OF_DOMAIN", question);
+    assert.equal(result?.outcome, "abstained", question);
+  }
+});
+
 test("system prompt states the out-of-domain boundary explicitly", () => {
   assert.match(SYSTEM_PROMPT, /You are not a general-purpose assistant/);
   assert.match(SYSTEM_PROMPT, /For every unrelated request, return outcome "abstained" and policy_code "OUT_OF_DOMAIN"/);
