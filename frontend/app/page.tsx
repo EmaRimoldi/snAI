@@ -35,7 +35,10 @@ function RealDoorApp() {
   }, [language, t, view]);
 
   useEffect(() => {
-    if (window.location.hash === "#discover") {
+    if (window.location.hash === "#app") {
+      pendingFocusRef.current = null;
+      setView("app");
+    } else if (window.location.hash === "#discover") {
       pendingFocusRef.current = null;
       setView("discover");
     }

@@ -61,7 +61,13 @@ type AppValue = {
   householdSizeConfirmed: boolean;
   // actions
   goToStep: (step: Step) => void;
-  addFiles: (files: File[]) => Promise<void>;
+  addFiles: (files: File[]) => Promise<DocumentRecord[]>;
+  addManualField: (
+    documentId: string,
+    key: string,
+    value: string,
+    options?: { isIncome?: boolean; incomeFrequency?: ExtractedField["incomeFrequency"] },
+  ) => void;
   confirmField: (id: string) => void;
   correctField: (id: string, value: string) => void;
   lock: () => void;
@@ -94,8 +100,9 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
   const applicationIdRef = useRef<string>(`APP-${shortId()}`);
 
   const addFiles = useCallback(async (files: File[]) => {
-    if (files.length === 0) return;
+    if (files.length === 0) return [];
     setBusy(true);
+    const addedRecords: DocumentRecord[] = [];
     try {
       for (const file of files) {
         const id = `doc-${shortId()}`;
@@ -115,12 +122,39 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
           pageCount: 1,
           quarantinedText,
         };
+        addedRecords.push(record);
         setDocuments((prev) => [...prev, record]);
         setFields((prev) => [...prev, ...docFields]);
       }
+      return addedRecords;
     } finally {
       setBusy(false);
     }
+  }, []);
+
+  const addManualField = useCallback((
+    documentId: string,
+    key: string,
+    value: string,
+    options?: { isIncome?: boolean; incomeFrequency?: ExtractedField["incomeFrequency"] },
+  ) => {
+    const cleanValue = value.trim();
+    if (!cleanValue) return;
+    setFields((prev) => [
+      ...prev,
+      {
+        id: `${documentId}:manual:${key}:${shortId()}`,
+        documentId,
+        key,
+        value: cleanValue,
+        page: 1,
+        bbox: [0, 0, 0, 0],
+        confidence: 1,
+        reviewStatus: "renter_entered",
+        isIncome: options?.isIncome,
+        incomeFrequency: options?.incomeFrequency,
+      },
+    ]);
   }, []);
 
   const confirmField = useCallback((id: string) => {
@@ -213,6 +247,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
       householdSizeConfirmed: household.confirmed,
       goToStep: setStep,
       addFiles,
+      addManualField,
       confirmField,
       correctField,
       lock: () => setLocked(true),
@@ -223,7 +258,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
     [
       step, documents, fields, busy, locked, quarantineCount, grossIncomeCents, errorCount,
       readiness, missingRequired, presentTypes, household.size, household.confirmed,
-      addFiles, confirmField, correctField, deleteSession, buildSubmission,
+      addFiles, addManualField, confirmField, correctField, deleteSession, buildSubmission,
     ],
   );
 

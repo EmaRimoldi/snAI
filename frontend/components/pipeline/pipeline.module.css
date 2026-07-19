@@ -121,6 +121,382 @@
   background: color-mix(in srgb, var(--secondary) 42%, var(--background));
 }
 
+.uploadHero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+.kicker {
+  margin: 0 0 0.25rem;
+  color: var(--primary-dark);
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.requiredLegend {
+  margin: 0.45rem 0 0;
+  color: var(--muted-foreground);
+  font-size: 0.84rem;
+  font-weight: 800;
+}
+.requiredLegend span,
+.requiredStar {
+  color: var(--danger);
+}
+.requiredStar {
+  display: inline-block;
+  margin-left: 0.28rem;
+  font-weight: 950;
+}
+.uploadStack {
+  display: grid;
+  gap: 0.75rem;
+}
+.uploadSlot {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--input);
+  border-radius: 1.15rem;
+  background: var(--background);
+  transition: border-color 160ms ease, background-color 160ms ease;
+}
+.uploadSlotHasFile {
+  border-color: color-mix(in srgb, var(--primary) 48%, var(--input));
+  background: color-mix(in srgb, var(--primary) 8%, var(--background));
+}
+.uploadSlotDone {
+  border-color: color-mix(in srgb, #228b4e 58%, var(--input));
+}
+.uploadSlotError {
+  border-color: color-mix(in srgb, var(--danger) 70%, var(--input));
+}
+.uploadSlotFill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 0%;
+  background: linear-gradient(90deg, color-mix(in srgb, var(--primary) 32%, transparent), color-mix(in srgb, var(--primary) 14%, transparent));
+  transition: width 1000ms linear;
+}
+.uploadSlotDone .uploadSlotFill {
+  background: linear-gradient(90deg, color-mix(in srgb, #228b4e 30%, transparent), color-mix(in srgb, #228b4e 10%, transparent));
+}
+.uploadSlotError .uploadSlotFill {
+  background: color-mix(in srgb, var(--danger) 18%, transparent);
+}
+.uploadSlotBody {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.9rem 1rem;
+}
+.uploadSlotMain {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  min-width: 0;
+}
+.uploadSlotNumber {
+  display: inline-flex;
+  width: 2rem;
+  height: 2rem;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--secondary) 70%, var(--background));
+  color: var(--primary-dark);
+  font-weight: 900;
+}
+.uploadSlotMain h3 {
+  margin: 0;
+  font-size: 1rem;
+  letter-spacing: -0.02em;
+}
+.uploadSlotMain p {
+  margin: 0.15rem 0 0;
+  color: var(--muted-foreground);
+  font-size: 0.88rem;
+}
+.fileName {
+  max-width: 30rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--foreground) !important;
+  font-weight: 800;
+}
+.uploadSlotActions {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+.uploadIconButton {
+  display: inline-flex;
+  position: relative;
+  width: 2.65rem;
+  height: 2.65rem;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--input);
+  border-radius: 50%;
+  background: var(--background);
+  color: var(--primary-dark);
+  padding: 0;
+  font-weight: 850;
+}
+.uploadIconButton:hover {
+  border-color: var(--primary);
+  background: color-mix(in srgb, var(--primary) 8%, var(--background));
+}
+.uploadGlyph {
+  position: absolute;
+  top: 0.42rem;
+  font-size: 1.25rem;
+  line-height: 1;
+  font-weight: 950;
+}
+.uploadTray {
+  position: absolute;
+  bottom: 0.64rem;
+  width: 1.05rem;
+  height: 0.38rem;
+  border: 2px solid currentColor;
+  border-top: 0;
+  border-radius: 0 0 0.22rem 0.22rem;
+}
+.uploadStatusIcon {
+  display: inline-flex;
+  width: 2.1rem;
+  height: 2.1rem;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--input);
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--background) 76%, transparent);
+  color: var(--muted-foreground);
+  font-size: 1rem;
+  font-weight: 950;
+}
+.uploadStatusParsing {
+  border-color: var(--primary);
+  color: var(--primary-dark);
+}
+.uploadStatusDone {
+  border-color: color-mix(in srgb, #228b4e 65%, var(--input));
+  background: color-mix(in srgb, #228b4e 12%, var(--background));
+  color: #1f7a45;
+}
+.uploadStatusAlert {
+  border-color: color-mix(in srgb, var(--danger) 70%, var(--input));
+  background: color-mix(in srgb, var(--danger) 10%, var(--background));
+  color: var(--danger);
+}
+.playButton {
+  display: inline-flex;
+  width: 3rem;
+  height: 3rem;
+  min-height: 3rem;
+  flex: none;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 50%;
+  background: var(--primary);
+  color: var(--primary-foreground);
+  padding: 0;
+  font: inherit;
+  font-weight: 900;
+}
+.playButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+.playButton span {
+  width: 0;
+  height: 0;
+  border-top: 0.38rem solid transparent;
+  border-bottom: 0.38rem solid transparent;
+  border-left: 0.62rem solid currentColor;
+  transform: translateX(0.08rem);
+}
+.parseResult {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  border-radius: 1.25rem;
+  padding: 1rem 1.15rem;
+  border: 1px solid var(--input);
+}
+.parseResultReady {
+  border-color: color-mix(in srgb, #228b4e 60%, var(--input));
+  background: color-mix(in srgb, #228b4e 10%, var(--background));
+}
+.parseResultAlert {
+  border-color: color-mix(in srgb, var(--danger) 58%, var(--input));
+  background: color-mix(in srgb, var(--danger) 8%, var(--background));
+}
+.parseResultLabel {
+  margin: 0 0 0.2rem;
+  font-size: 1.05rem;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+}
+.resultIcon {
+  display: inline-flex;
+  width: 2.35rem;
+  height: 2.35rem;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: var(--background);
+  font-size: 1.15rem;
+  font-weight: 950;
+}
+.parseResultReady .resultIcon { color: #1f7a45; }
+.parseResultAlert .resultIcon { color: var(--danger); }
+.parseResultActions {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 0.65rem;
+}
+.reviewerTabs {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(9.5rem, 1fr));
+  gap: 0.6rem;
+  margin: 1rem 0;
+}
+.reviewerTab {
+  position: relative;
+  display: flex;
+  min-width: 0;
+  min-height: 4.6rem;
+  width: 100%;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.12rem;
+  border: 1px solid var(--input);
+  border-radius: 1rem;
+  background: var(--background);
+  color: var(--foreground);
+  padding: 0.72rem 2.35rem 0.72rem 0.85rem;
+  text-align: center;
+  font: inherit;
+}
+button.reviewerTab {
+  cursor: pointer;
+}
+button.reviewerTab:hover,
+.reviewerTabActive {
+  border-color: var(--primary);
+  background: color-mix(in srgb, var(--primary) 8%, var(--background));
+}
+.reviewerTab span:first-child {
+  font-weight: 900;
+  letter-spacing: -0.01em;
+}
+.reviewerTab small {
+  max-width: 100%;
+  overflow: hidden;
+  color: var(--muted-foreground);
+  font-size: 0.76rem;
+  font-weight: 750;
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.reviewerTabIcon {
+  position: absolute;
+  top: 50%;
+  right: 0.65rem;
+  transform: translateY(-50%);
+  display: inline-flex;
+  width: 1.8rem;
+  height: 1.8rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-weight: 950;
+}
+.reviewerTabDone {
+  border: 1px solid color-mix(in srgb, #228b4e 65%, var(--input));
+  background: color-mix(in srgb, #228b4e 12%, var(--background));
+  color: #1f7a45;
+}
+.reviewerTabAlert {
+  border: 1px solid color-mix(in srgb, var(--danger) 70%, var(--input));
+  background: color-mix(in srgb, var(--danger) 10%, var(--background));
+  color: var(--danger);
+}
+.reviewerTabMissing {
+  border-style: dashed;
+  color: var(--muted-foreground);
+}
+.reviewerIssuePanel {
+  display: grid;
+  gap: 0.75rem;
+  margin: 1rem 0;
+  border: 1px solid color-mix(in srgb, var(--danger) 44%, var(--input));
+  border-radius: 1rem;
+  background: color-mix(in srgb, var(--danger) 7%, var(--background));
+  padding: 0.85rem 0.95rem;
+}
+.missingList,
+.manualFieldList {
+  display: grid;
+  gap: 0.6rem;
+  margin: 0.75rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+.missingItem,
+.manualFieldItem {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.7rem 0.85rem;
+  border: 1px solid var(--input);
+  border-radius: 0.9rem;
+  background: var(--background);
+}
+.missingItem {
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+.manualFieldItem strong,
+.missingItem strong {
+  display: block;
+}
+.manualFieldItem span,
+.missingItem span {
+  display: block;
+  color: var(--muted-foreground);
+  font-size: 0.84rem;
+}
+.manualInput {
+  min-height: 44px;
+  width: min(14rem, 26vw);
+  border: 1px solid var(--input);
+  border-radius: 999px;
+  background: var(--background);
+  color: var(--foreground);
+  padding: 0.45rem 0.8rem;
+}
+
 /* Checklist */
 .checklist { display: grid; gap: 0.5rem; margin: 1rem 0 0; padding: 0; list-style: none; }
 .checkItem {
@@ -316,4 +692,19 @@
   .globals { grid-template-columns: 1fr; }
   .stepper { flex-direction: column; }
   .reviewGrid { grid-template-columns: 1fr; }
+  .uploadHero,
+  .uploadSlotBody,
+  .uploadSlotActions,
+  .parseResult {
+    align-items: stretch;
+    flex-direction: column;
+  }
+  .uploadSlotActions { justify-content: flex-start; }
+  .manualFieldItem,
+  .missingItem {
+    grid-template-columns: 1fr;
+  }
+  .manualInput {
+    width: 100%;
+  }
 }
