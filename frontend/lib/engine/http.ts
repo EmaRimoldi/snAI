@@ -33,6 +33,12 @@ type EngineDocument = {
   fields: EngineField[];
 };
 
+type EngineError = {
+  document_id?: string;
+  file_name?: string;
+  detail: string;
+};
+
 const DOC_TYPES: readonly DocumentType[] = [
   "application_summary",
   "pay_stub",
@@ -81,8 +87,14 @@ function incomeFrequencyFor(
   if (doc.document_type === "pay_stub" && fieldName === "gross_pay") {
     return normalizeFrequency(fieldValue("pay_frequency"));
   }
-  if (doc.document_type === "benefit_letter" && fieldName.endsWith("_benefit")) {
-    return normalizeFrequency(fieldValue("benefit_frequency")) ?? normalizeFrequency(fieldName.replace("_benefit", ""));
+  // The engine names the benefit amount by its frequency (monthly_benefit,
+  // annual_benefit, weekly_benefit, …) — any of them is the income field.
+  const benefitMatch = fieldName.match(/^(weekly|biweekly|semimonthly|monthly|annual)_benefit$/);
+  if (doc.document_type === "benefit_letter" && benefitMatch) {
+    return (
+      normalizeFrequency(fieldValue("benefit_frequency")) ??
+      (benefitMatch[1] as PayFrequency)
+    );
   }
   if (doc.document_type === "gig_statement" && fieldName === "gross_receipts") {
     return "monthly"; // §5: gig gross_receipts × 12
@@ -145,7 +157,10 @@ export async function httpProcessBatch(
   if (!response.ok) {
     throw new Error(`engine /extract failed (${response.status})`);
   }
-  const artifact = (await response.json()) as { documents: EngineDocument[] };
+  const artifact = (await response.json()) as {
+    documents: EngineDocument[];
+    stats?: { errors?: EngineError[] };
+  };
   if (artifact.documents.length !== inputs.length) {
     throw new Error(
       `engine returned ${artifact.documents.length} documents for ${inputs.length} files`,
@@ -160,11 +175,15 @@ export async function httpProcessBatch(
       );
     }
     const { fields, quarantinedText } = toExtractResult(record, id);
+    const extractionError = artifact.stats?.errors?.find(
+      (error) => error.document_id === record.document_id || error.file_name === record.file_name,
+    )?.detail;
     return {
       documentType: toDocumentType(record.document_type),
       confidence: classifyConfidence(record),
       fields,
       quarantinedText,
+      extractionError,
     };
   });
 }

@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { RefObject } from "react";
-import type { Circle, LatLngTuple, LayerGroup, Map, TileLayer } from "leaflet";
+import type { LatLngTuple, LayerGroup, Map, TileLayer } from "leaflet";
 import propertiesJson from "@/data/lihtc-properties.json";
 import styles from "./discovery.module.css";
 
@@ -81,10 +81,6 @@ function getBedroomLabel(property: PropertyRecord) {
   return availableBedroomTypes.at(-1)?.[2] ?? "Not reported";
 }
 
-function milesToMeters(miles: number) {
-  return miles * 1609.344;
-}
-
 function distanceMiles(
   property: Pick<PropertyRecord, "latitude" | "longitude">,
   reference: { latitude: number; longitude: number },
@@ -130,6 +126,7 @@ export default function DiscoverView({ headingRef }: DiscoverViewProps) {
   const [near, setNear] = useState<keyof typeof referencePoints | "">("");
   const [distance, setDistance] = useState("");
   const [mapStyle, setMapStyle] = useState<"standard" | "satellite">("standard");
+  const [mapReady, setMapReady] = useState(false);
   const [selectedPropertyId, setSelectedPropertyId] = useState<string | null>(null);
 
   const mapContainerRef = useRef<HTMLDivElement>(null);
@@ -137,7 +134,6 @@ export default function DiscoverView({ headingRef }: DiscoverViewProps) {
   const mapRef = useRef<Map | null>(null);
   const standardTileLayerRef = useRef<TileLayer | null>(null);
   const satelliteTileLayerRef = useRef<TileLayer | null>(null);
-  const searchRadiusLayerRef = useRef<LayerGroup | null>(null);
   const propertyMarkerLayerRef = useRef<LayerGroup | null>(null);
 
   const selectedReference = near ? referencePoints[near] : null;
@@ -178,9 +174,11 @@ export default function DiscoverView({ headingRef }: DiscoverViewProps) {
 
   useEffect(() => {
     let cancelled = false;
+    let resizeObserver: ResizeObserver | null = null;
 
     async function initializeMap() {
-      if (mapRef.current || !mapContainerRef.current) return;
+      const mapContainer = mapContainerRef.current;
+      if (mapRef.current || !mapContainer) return;
 
       const leafletModule = (await import("leaflet")) as LeafletApi & {
         default?: LeafletApi;
@@ -190,7 +188,7 @@ export default function DiscoverView({ headingRef }: DiscoverViewProps) {
       const L = leafletModule.default ?? leafletModule;
       leafletRef.current = L;
 
-      const map = L.map(mapContainerRef.current, {
+      const map = L.map(mapContainer, {
         scrollWheelZoom: false,
         zoomControl: true,
       }).setView([42.3601, -71.0589], 11);
@@ -206,14 +204,26 @@ export default function DiscoverView({ headingRef }: DiscoverViewProps) {
         attribution: "Tiles &copy; Esri",
       });
 
-      searchRadiusLayerRef.current = L.layerGroup().addTo(map);
       propertyMarkerLayerRef.current = L.layerGroup().addTo(map);
       mapRef.current = map;
+      setMapReady(true);
+
+      if (typeof ResizeObserver !== "undefined") {
+        resizeObserver = new ResizeObserver(() => {
+          map.invalidateSize();
+        });
+        resizeObserver.observe(mapContainer);
+      }
+
+      window.requestAnimationFrame(() => {
+        map.invalidateSize();
+      });
     }
 
     initializeMap();
     return () => {
       cancelled = true;
+      resizeObserver?.disconnect();
       mapRef.current?.remove();
       mapRef.current = null;
     };
@@ -223,7 +233,7 @@ export default function DiscoverView({ headingRef }: DiscoverViewProps) {
     const map = mapRef.current;
     const standardTileLayer = standardTileLayerRef.current;
     const satelliteTileLayer = satelliteTileLayerRef.current;
-    if (!map || !standardTileLayer || !satelliteTileLayer) return;
+    if (!mapReady || !map || !standardTileLayer || !satelliteTileLayer) return;
 
     if (mapStyle === "satellite") {
       if (map.hasLayer(standardTileLayer)) map.removeLayer(standardTileLayer);
@@ -232,37 +242,15 @@ export default function DiscoverView({ headingRef }: DiscoverViewProps) {
       if (map.hasLayer(satelliteTileLayer)) map.removeLayer(satelliteTileLayer);
       if (!map.hasLayer(standardTileLayer)) standardTileLayer.addTo(map);
     }
-  }, [mapStyle]);
+  }, [mapReady, mapStyle]);
 
   useEffect(() => {
     const L = leafletRef.current;
     const map = mapRef.current;
-    const radiusLayer = searchRadiusLayerRef.current;
     const markerLayer = propertyMarkerLayerRef.current;
-    if (!L || !map || !radiusLayer || !markerLayer) return;
+    if (!mapReady || !L || !map || !markerLayer) return;
 
-    radiusLayer.clearLayers();
     markerLayer.clearLayers();
-
-    let radiusCircle: Circle | null = null;
-    if (selectedReference && selectedDistance) {
-      radiusCircle = L.circle([selectedReference.latitude, selectedReference.longitude], {
-        className: styles.searchRadiusCircle,
-        radius: milesToMeters(selectedDistance),
-        color: "#d31b12",
-        weight: 3,
-        opacity: 0.95,
-        dashArray: "10 8",
-        fillColor: "#d31b12",
-        fillOpacity: 0.13,
-      }).addTo(radiusLayer);
-
-      radiusCircle.bindTooltip(`${selectedReference.label} · within ${selectedDistance} mi`, {
-        direction: "top",
-        opacity: 1,
-        sticky: true,
-      });
-    }
 
     const bounds: LatLngTuple[] = [];
     filteredProperties.forEach((property) => {
@@ -286,6 +274,21 @@ export default function DiscoverView({ headingRef }: DiscoverViewProps) {
         sticky: true,
       });
 
+      marker.on("mouseover", () => {
+        marker.bringToFront();
+        marker.setStyle({
+          radius: isSelected ? 10.5 : 8.5,
+          weight: 3,
+          fillOpacity: 1,
+        });
+      });
+      marker.on("mouseout", () => {
+        marker.setStyle({
+          radius: isSelected ? 8 : 6,
+          weight: isSelected ? 3 : 2,
+          fillOpacity: 0.95,
+        });
+      });
       marker.on("click", () => setSelectedPropertyId(property.hud_id));
       marker.addTo(markerLayer);
       bounds.push([property.latitude, property.longitude]);
@@ -293,17 +296,17 @@ export default function DiscoverView({ headingRef }: DiscoverViewProps) {
 
     window.requestAnimationFrame(() => {
       map.invalidateSize();
-      if (radiusCircle) {
-        map.fitBounds(radiusCircle.getBounds(), { padding: [48, 48] });
-      } else if (bounds.length === 1) {
+      if (bounds.length === 1) {
         map.setView(bounds[0], 14);
       } else if (bounds.length > 1) {
         map.fitBounds(bounds, { padding: [48, 48], maxZoom: 14 });
+      } else if (selectedReference) {
+        map.setView([selectedReference.latitude, selectedReference.longitude], 12);
       } else {
         map.setView([42.3601, -71.0589], 11);
       }
     });
-  }, [filteredProperties, selectedDistance, selectedPropertyId, selectedReference]);
+  }, [filteredProperties, mapReady, selectedDistance, selectedPropertyId, selectedReference]);
 
   const resetSelectedAnd = (next: () => void) => {
     setSelectedPropertyId(null);
@@ -336,9 +339,6 @@ export default function DiscoverView({ headingRef }: DiscoverViewProps) {
               Discover properties
             </h1>
             <p className={styles.discoverRecordCount}>PlaceHolder</p>
-          </div>
-          <div className={styles.discoverBadges} aria-label="Discovery guardrails">
-            <span className={styles.discoverBadge}>Availability unknown</span>
           </div>
         </div>
 

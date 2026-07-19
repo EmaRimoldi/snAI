@@ -4,18 +4,19 @@ import { useEffect, useState } from "react";
 import type { RefObject } from "react";
 import { useI18n } from "@/lib/i18n";
 
-const TYPE_SPEED_MS = 60;
-const DELETE_SPEED_MS = 35;
-const FULL_PHRASE_PAUSE_MS = 1000;
-const BETWEEN_PHRASES_PAUSE_MS = 350;
+const TYPE_SPEED_MS = 48;
+const DELETE_SPEED_MS = 28;
+const FULL_PHRASE_PAUSE_MS = 1600;
+const BETWEEN_PHRASES_PAUSE_MS = 240;
 
 type HeroSellingPointsProps = {
   headingRef: RefObject<HTMLHeadingElement | null>;
 };
 
 export default function HeroSellingPoints({ headingRef }: HeroSellingPointsProps) {
-  const { language, t, tList } = useI18n();
-  const [text, setText] = useState(() => t("hero.rotatingHeadline"));
+  const { language, tList } = useI18n();
+  const headlineLines = tList("hero.primaryHeadlineLines");
+  const [text, setText] = useState(() => tList("hero.rotatingSupportingLines")[0] ?? "");
   const [isTyping, setIsTyping] = useState(false);
   const [motionPreferenceVersion, setMotionPreferenceVersion] = useState(0);
 
@@ -27,25 +28,25 @@ export default function HeroSellingPoints({ headingRef }: HeroSellingPointsProps
   }, []);
 
   useEffect(() => {
-    const headline = t("hero.rotatingHeadline");
-    const phrases = [headline, ...tList("hero.rotatingSellingPoints")];
+    const phrases = tList("hero.rotatingSupportingLines");
+    const firstPhrase = phrases[0] ?? "";
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     let cancelled = false;
     let timer: number | undefined;
 
-    setText(headline);
+    setText(firstPhrase);
     setIsTyping(!reduceMotion);
 
     const startCycle = () => {
       if (cancelled) return;
 
       if (reduceMotion) {
-        setText(headline);
+        setText(firstPhrase);
         return;
       }
 
       let phraseIndex = 0;
-      let characterIndex = headline.length;
+      let characterIndex = firstPhrase.length;
       let isDeleting = true;
       setIsTyping(true);
 
@@ -80,17 +81,29 @@ export default function HeroSellingPoints({ headingRef }: HeroSellingPointsProps
       cancelled = true;
       if (timer !== undefined) window.clearTimeout(timer);
     };
-  }, [language, motionPreferenceVersion, t, tList]);
+  }, [language, motionPreferenceVersion, tList]);
 
   return (
-    <h1
-      id="hero-heading"
-      ref={headingRef}
-      className={isTyping ? "hero-heading is-cycle is-typing" : "hero-heading is-cycle"}
-      tabIndex={-1}
-      aria-live="off"
-    >
-      {text}
-    </h1>
+    <>
+      <h1
+        id="hero-heading"
+        ref={headingRef}
+        className="hero-heading"
+        tabIndex={-1}
+        aria-label={headlineLines.join(" ")}
+      >
+        {headlineLines.map((line) => (
+          <span key={line} className="hero-heading-line" aria-hidden="true">
+            {line}
+          </span>
+        ))}
+      </h1>
+      <p
+        className={isTyping ? "hero-subheadline is-typing" : "hero-subheadline"}
+        aria-live="off"
+      >
+        {text}
+      </p>
+    </>
   );
 }

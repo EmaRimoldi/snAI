@@ -29,13 +29,17 @@ const en = {
     signout: "Sign out",
   },
   hero: {
-    rotatingHeadline: "Housing paperwork in minutes.",
-    subheadline: "Housing paperwork, made clear.",
-    rotatingSellingPoints: [
-      "Catch missing details early.",
-      "Save on preparation fees.",
-      "Safe checks. Published rules.",
+    primaryHeadlineLines: [
+      "Preparing your housing paperwork",
+      "has never been this easy.",
     ],
+    rotatingSupportingLines: [
+      "One step at a time",
+      "See your next step in minutes, not days",
+      "Catch errors before they cost you weeks",
+    ],
+    assurancesLabel: "Get started details",
+    assurances: ["No account needed", "Your documents stay private", "Free to use"],
   },
   input: {
     sectionLabel: "Document assistant",
@@ -49,6 +53,17 @@ const en = {
       "One step at a time",
       "Nothing is decided without you",
     ],
+  },
+  aiChat: {
+    openLabel: "Open RealDoor assistant",
+    closeLabel: "Close assistant",
+    title: "RealDoor assistant",
+    placeholder: "How can I help you?",
+    sendLabel: "Send message",
+    empty: "Ask about the rules, your confirmed values, or what your file still needs.",
+    thinking: "Checking trusted sources…",
+    privacy: "Do not type names, addresses, or other personal details. Files and raw document text are never sent to the assistant.",
+    fallback: "The live assistant was unavailable, so RealDoor used its local frozen-rule fallback.",
   },
   phases: {
     ariaLabel: "How RealDoor helps",
@@ -98,13 +113,17 @@ const es: Dictionary = {
     signout: "Cerrar sesión",
   },
   hero: {
-    rotatingHeadline: "Documentos listos en minutos.",
-    subheadline: "Los trámites de vivienda, más claros.",
-    rotatingSellingPoints: [
-      "Detecta a tiempo lo que falta.",
-      "Ahorra en la preparación.",
-      "Revisiones seguras. Reglas vigentes.",
+    primaryHeadlineLines: [
+      "Preparar tus documentos de vivienda",
+      "nunca había sido tan fácil.",
     ],
+    rotatingSupportingLines: [
+      "Un paso a la vez",
+      "Descubre tu siguiente paso en minutos, no en días",
+      "Detecta errores antes de que te cuesten semanas",
+    ],
+    assurancesLabel: "Detalles para comenzar",
+    assurances: ["No necesitas una cuenta", "Tus documentos son privados", "Uso gratuito"],
   },
   input: {
     sectionLabel: "Asistente de documentos",
@@ -118,6 +137,17 @@ const es: Dictionary = {
       "Un paso a la vez",
       "Nada se decide sin ti",
     ],
+  },
+  aiChat: {
+    openLabel: "Abrir el asistente de RealDoor",
+    closeLabel: "Cerrar el asistente",
+    title: "Asistente de RealDoor",
+    placeholder: "¿Cómo puedo ayudarte?",
+    sendLabel: "Enviar mensaje",
+    empty: "Pregunta sobre las reglas, tus valores confirmados o lo que todavía falta en tu expediente.",
+    thinking: "Consultando fuentes confiables…",
+    privacy: "No escribas nombres, direcciones ni otros datos personales. Los archivos y el texto original nunca se envían al asistente.",
+    fallback: "El asistente en vivo no estaba disponible; RealDoor usó las reglas congeladas locales.",
   },
   phases: {
     ariaLabel: "Cómo ayuda RealDoor",
@@ -165,13 +195,10 @@ const zh: Dictionary = {
     signout: "退出登录",
   },
   hero: {
-    rotatingHeadline: "住房文件，几分钟完成。",
-    subheadline: "住房手续，一目了然。",
-    rotatingSellingPoints: [
-      "尽早发现缺失信息。",
-      "节省准备费用。",
-      "安全检查，依据公开规则。",
-    ],
+    primaryHeadlineLines: ["准备住房申请材料", "从未如此简单。"],
+    rotatingSupportingLines: ["一步一步来", "几分钟内了解下一步，而不是等上几天", "尽早发现错误，避免耽误数周"],
+    assurancesLabel: "开始使用详情",
+    assurances: ["无需账户", "您的文件保持私密", "免费使用"],
   },
   input: {
     sectionLabel: "文件助手",
@@ -185,6 +212,17 @@ const zh: Dictionary = {
       "一步一步来",
       "没有您的确认，什么都不会决定",
     ],
+  },
+  aiChat: {
+    openLabel: "打开 RealDoor 助手",
+    closeLabel: "关闭助手",
+    title: "RealDoor 助手",
+    placeholder: "我能为您做些什么？",
+    sendLabel: "发送消息",
+    empty: "您可以询问规则、已确认的数值，或材料中仍缺少什么。",
+    thinking: "正在核对可信来源…",
+    privacy: "请勿输入姓名、地址或其他个人信息。文件和原始文档文字绝不会发送给助手。",
+    fallback: "实时助手暂时不可用，RealDoor 已改用本地冻结规则。",
   },
   phases: {
     ariaLabel: "RealDoor 如何帮助您",
@@ -232,13 +270,17 @@ const tl: Dictionary = {
     signout: "Mag-sign out",
   },
   hero: {
-    rotatingHeadline: "Papeles, handa sa ilang minuto.",
-    subheadline: "Mga papeles sa pabahay, ginawang malinaw.",
-    rotatingSellingPoints: [
-      "Maagang makita ang kulang.",
-      "Makatipid sa paghahanda.",
-      "Ligtas. Ayon sa patakaran.",
+    primaryHeadlineLines: [
+      "Paghahanda ng mga papeles sa pabahay",
+      "hindi pa naging ganito kadali.",
     ],
+    rotatingSupportingLines: [
+      "Isang hakbang sa bawat pagkakataon",
+      "Alamin ang susunod mong hakbang sa loob ng ilang minuto, hindi araw",
+      "Mahuli ang mga pagkakamali bago ka maantala nang ilang linggo",
+    ],
+    assurancesLabel: "Mga detalye bago magsimula",
+    assurances: ["Hindi kailangan ng account", "Pribado ang iyong mga dokumento", "Libreng gamitin"],
   },
   input: {
     sectionLabel: "Katulong sa dokumento",
@@ -252,6 +294,17 @@ const tl: Dictionary = {
       "Isang hakbang sa bawat pagkakataon",
       "Walang pinagpapasyahan nang wala ka",
     ],
+  },
+  aiChat: {
+    openLabel: "Buksan ang RealDoor assistant",
+    closeLabel: "Isara ang assistant",
+    title: "RealDoor assistant",
+    placeholder: "Paano kita matutulungan?",
+    sendLabel: "Ipadala ang mensahe",
+    empty: "Magtanong tungkol sa mga patakaran, kumpirmadong halaga, o kung ano pa ang kulang sa file.",
+    thinking: "Sinusuri ang mga mapagkakatiwalaang sanggunian…",
+    privacy: "Huwag mag-type ng pangalan, address, o ibang personal na detalye. Hindi ipinapadala sa assistant ang mga file o hilaw na teksto.",
+    fallback: "Hindi available ang live assistant, kaya ginamit ng RealDoor ang lokal na frozen-rule fallback.",
   },
   phases: {
     ariaLabel: "Paano tumutulong ang RealDoor",
@@ -299,13 +352,14 @@ const vi: Dictionary = {
     signout: "Đăng xuất",
   },
   hero: {
-    rotatingHeadline: "Hồ sơ sẵn sàng trong vài phút.",
-    subheadline: "Thủ tục nhà ở, rõ ràng hơn.",
-    rotatingSellingPoints: [
-      "Phát hiện sớm phần còn thiếu.",
-      "Tiết kiệm phí chuẩn bị.",
-      "Kiểm tra an toàn. Theo quy định.",
+    primaryHeadlineLines: ["Chuẩn bị giấy tờ nhà ở", "chưa bao giờ dễ dàng đến thế."],
+    rotatingSupportingLines: [
+      "Từng bước một",
+      "Biết bước tiếp theo chỉ trong vài phút, không phải vài ngày",
+      "Phát hiện lỗi trước khi chúng khiến bạn mất hàng tuần",
     ],
+    assurancesLabel: "Thông tin trước khi bắt đầu",
+    assurances: ["Không cần tài khoản", "Giấy tờ của bạn luôn riêng tư", "Sử dụng miễn phí"],
   },
   input: {
     sectionLabel: "Trợ lý giấy tờ",
@@ -319,6 +373,17 @@ const vi: Dictionary = {
       "Từng bước một",
       "Không có gì được quyết định nếu thiếu bạn",
     ],
+  },
+  aiChat: {
+    openLabel: "Mở trợ lý RealDoor",
+    closeLabel: "Đóng trợ lý",
+    title: "Trợ lý RealDoor",
+    placeholder: "Tôi có thể giúp gì cho bạn?",
+    sendLabel: "Gửi tin nhắn",
+    empty: "Hãy hỏi về quy định, các giá trị đã xác nhận hoặc hồ sơ còn thiếu gì.",
+    thinking: "Đang kiểm tra các nguồn đáng tin cậy…",
+    privacy: "Không nhập tên, địa chỉ hoặc thông tin cá nhân khác. Tệp và văn bản gốc không bao giờ được gửi cho trợ lý.",
+    fallback: "Trợ lý trực tiếp không khả dụng nên RealDoor đã dùng bộ quy tắc cục bộ đã đóng băng.",
   },
   phases: {
     ariaLabel: "RealDoor giúp bạn như thế nào",

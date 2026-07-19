@@ -1,7 +1,7 @@
 """Batch runner: process whole document sets in parallel, report success
 rate and timing.  Guarantees at most ONE LLM call per set batch.
 
-Usage: batch_run.py [set ...] [--workers N]     (default sets: all five)
+Usage: batch_run.py [set ...] [--workers N]     (default sets: all seven)
 """
 from __future__ import annotations
 
@@ -18,7 +18,7 @@ from realdoor.models import load_document_records
 from realdoor.pipeline import group_by_household, process_household
 from score_extraction import bbox_hit, value_match
 
-ALL_SETS = ["official", "dev", "dev2", "dev3", "dev4", "dev5"]
+ALL_SETS = ["official", "dev", "dev2", "dev3", "dev4", "dev5", "dev6"]
 # The first fixture set predates the numbering; accept both spellings.
 _ALIASES = {"dev1": "dev", "synthetic_documents": "official"}
 

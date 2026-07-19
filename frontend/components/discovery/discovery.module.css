@@ -32,28 +32,6 @@
   font-weight: 700;
 }
 
-.discoverBadges {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: end;
-  gap: 0.5rem;
-}
-
-.discoverBadge {
-  display: inline-flex;
-  min-height: 36px;
-  align-items: center;
-  gap: 0.45rem;
-  border: 1px solid color-mix(in srgb, #9a5b00 35%, var(--input));
-  border-radius: 999px;
-  background: #fff8eb;
-  color: #5d3900;
-  padding: 0.35rem 0.7rem;
-  font-size: 0.82rem;
-  font-weight: 750;
-  white-space: nowrap;
-}
-
 .discoverFilters {
   display: flex;
   flex-wrap: wrap;
@@ -108,7 +86,7 @@
 
 .discoverShell {
   display: grid;
-  min-height: 30rem;
+  min-height: clamp(36rem, 74vh, 52rem);
   overflow: hidden;
   grid-template-columns: minmax(0, 1fr) minmax(22rem, 25rem);
   border: 1px solid var(--input);
@@ -126,7 +104,7 @@
 
 .discoverMap {
   position: relative;
-  min-height: 30rem;
+  min-height: clamp(36rem, 74vh, 52rem);
   overflow: hidden;
   background: #eee8dc;
 }
@@ -138,6 +116,8 @@
 }
 
 .leafletMap :global(.leaflet-container) {
+  width: 100%;
+  height: 100%;
   background: #eee8dc;
   font: inherit;
 }
@@ -196,10 +176,6 @@
   font-size: 0.72rem;
   font-weight: 700;
   line-height: 1.35;
-}
-
-.searchRadiusCircle {
-  filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.9));
 }
 
 .mapModeToggle {
@@ -408,10 +384,6 @@
 @media (max-width: 720px) {
   .discoverTitleRow {
     display: grid;
-  }
-
-  .discoverBadges {
-    justify-content: start;
   }
 
   .filterField {

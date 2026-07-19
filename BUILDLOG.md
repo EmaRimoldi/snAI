@@ -1,5 +1,29 @@
 # BUILDLOG
 
+## 2026-07-19 — Bounded AI assistant for Understand
+
+**Shipped locally on branch `AI`:**
+- A versioned policy and prompt contract for a narrow RealDoor assistant: it explains the frozen
+  challenge rules, workflow, and confirmed deterministic results; it abstains on general-purpose,
+  legal, cross-applicant, protected-trait, vacancy, and program-decision requests.
+- Supabase `understand-chat` Edge Function with JWT authentication, input allowlisting, deterministic
+  pre-gates, OpenAI Structured Outputs, citation resolution, post-generation decision-language lint,
+  safe fallback answers, and metadata-only audit logging.
+- Supabase migrations for `ai_request_events`: RLS enabled, browser roles denied, service-role-only
+  access, and rate-limit indexes. The migrations are applied to the shared project.
+- A localized floating AI launcher appears only after **Get started** and opens a right-side chat drawer
+  across Profile, Understand, and Prepare. The landing stays aligned with the team’s latest design. The
+  browser sends only confirmed structured fields and never names, addresses, raw OCR, filenames, URLs,
+  or uploaded documents.
+- A server-side arithmetic integrity gate independently recomputes source annualization, annualized total,
+  the frozen household threshold, and the comparison before any model request.
+- Policy/evaluation tests covering corpus hash parity, all 36 organizer QA cases, all 24 adversarial
+  categories, multilingual off-domain prompts, allowlist sanitization, grounding, and decision lint.
+
+**Deployment boundary:** the function code is ready but not deployed pending explicit authorization
+for the disclosed OpenAI data transfer. Anonymous Auth is enabled and `OPENAI_API_KEY` is present in
+the Supabase Edge Function secrets; only function deployment remains.
+
 ## 2026-07-18 — After-login pipeline (Profile → Understand → Prepare), demo build
 
 **Shipped** (all new files unless noted; signed-in users now enter the pipeline):
@@ -95,53 +119,148 @@ the browser (upload → confirm → lock walk; delete-session → NOT_STARTED).
 **Note:** exported `submission.readiness_status` untouched — UNCONFIRMED_FIELDS still blocks it, so
 final outcomes after full confirmation are identical to before.
 
-## 2026-07-19 — Real PDF viewer with bounding-box overlays (branch pdfviewer)
+## 2026-07-19 — Prepare: SAMPLE readiness receipt (paper preview, inline edit, print-to-PDF)
 
 **Shipped:**
-- `pdfjs-dist` (exact 6.1.200) renders the actual uploaded PDFs in the review pane
-  (`components/pipeline/PdfViewer.tsx`): every page as a canvas inside a FIXED-size scrollable box,
-  ALL extracted-field boxes overlaid as clickable buttons (click = jump to that field, same
-  focus-managed path as the error menu). Active box highlighted; confirmed boxes tinted green.
-- Zoom: +/− / fit-width buttons (44px, localized), Ctrl+wheel / trackpad pinch (non-passive
-  listener), +/− keys on the focused region; zoom grows the PDF inside the box, never the box.
-- **Auto-crop:** navigating to a value zooms so its box is comfortably framed (~55% width, capped)
-  and centers the viewport on it; smooth unless prefers-reduced-motion. Manual zoom respected until
-  the next navigation.
-- Bytes stay in the browser: `DocumentRecord.file` (File) → `getDocument({data})` — never fetched or
-  uploaded; Supabase Storage deliberately NOT used (user decision; deletion-proof stays trivial,
-  offline-venue safe). Worker is a same-origin Turbopack asset (`lib/pdf/pdfjs.ts`); CSP gained only
-  `worker-src 'self'`.
-- Batch parse: one `POST /extract` for a whole upload (`processBatch` seam in `lib/engine/extract.ts`
-  + `httpProcessBatch` in `lib/engine/http.ts`, response mapped by index with file_name sanity
-  check); killed the fragile per-file classify/extract filename cache. Mock engine unchanged
-  (per-file, deterministic). `pageCount` now set from pdf.js via `setDocumentPageCount`.
-- Non-PDF/image uploads and pdf.js failures fall back to the old schematic + open-original link.
-- New copy (viewer label, zoom, page x of y, preview error) in all five languages.
+- New `frontend/components/pipeline/ReceiptDocument.tsx` + `receipt.module.css` — the Prepare step's
+  Summary card is replaced by a stacked "paper" document (SAMPLE watermark + banner + on-document
+  kicker so the flag survives print): applicant/household, documents checklist, confirmed details
+  with per-row Correct (edit-in-place via `correctField`, hidden when locked; recompute cascades
+  live), income calculation (annualized / FY2026 60% limit / comparison / effective date), file
+  readiness (status + coded reasons + non-decisional note), and a refusal-form footer.
+- "Save receipt as PDF" = `window.print()` + print isolation in `globals.css` (scoped with
+  `body:has([data-print-region])` so printing pages without a receipt is untouched; the show rules
+  carry the same `:has()` prefix — a bare `[data-print-region] *` loses the specificity fight and
+  prints blank). "View raw data" keeps the `submission.json` `<pre>`; JSON download unchanged.
+- ~18 new copy keys × all five languages; `deleteConfirm` now mentions the receipt (all five);
+  removed dead `previewBtn`/`summaryTitle` keys. Supabase `i18n_translations` mirror for pipeline
+  copy still follows the earlier fold-in follow-up (§14).
 
-**Verified:** `npm run build` clean; engine `POST /extract` with all 4 HH-001 PDFs → 4 docs in
-order, 0 LLM calls; `npm run dev:household` (engine mode, port 3000) serving with worker asset
-emitted. Browser click-through (boxes, auto-crop, zoom) pending user check.
+**Revised after user direction + code review (same day):** the receipt's data sections now mirror
+the parsed-document schema — one section per uploaded document listing every expected field for its
+type (`EXPECTED_DOC_FIELDS` in `ReceiptDocument.tsx`; benefit amount is a dynamic one-of across
+weekly/biweekly/semimonthly/monthly/annual keys; `declared_income` optional). Values come only from
+parsed fields — never invented; absent entries render red "Still missing", extracted-but-unconfirmed
+ones red "Needs your check", and a document's quarantined text is flagged ("⚠ Quarantined text —
+ignored") without ever rendering its content. Review fixes: lock now force-closes an in-flight
+editor and gates start/save (was a HIGH: save still worked if the editor was open when lock fired);
+income-tagged corrections are validated non-negative/parseable with an inline `role="alert"` error
+(`invalidAmount` ×5 languages) — this also guards the pre-existing `annualizeCents` throw-on-negative
+crash (no error boundary exists in the app) and the silent `toCents("garbage") → $0` coercion, on
+this surface; focus returns to the row's Correct button after save/cancel; `humanize`/doc-label/
+reason-text helpers extracted to `lib/pipeline/labels.ts` (were copy-pasted ×3); edit inputs capped
+at `maxLength={120}`; redundant threshold double-lookup dropped.
 
-**Viewer refinements (same session):** anchored zoom (buttons/keys = viewport center, Ctrl+wheel =
-cursor) with scrollbar-gutter fix for the fit-width oscillation; auto-center only on navigation
-(manual zoom/pan never snapped back); viewer box size fully locked (grid min-width clamp);
-boxes colored by the shared green→red confidence ramp (`lib/pipeline/confidence.ts`, CSS var
-`--conf`), slightly dilated (0.6% page pad) so characters stay readable; auto-crop now fills ~80%
-of the viewer width; confidence meter uses the same ramp.
+**Simplified (user-directed, same day):** Prepare collapsed from three cards to ONE surface —
+title + a plain-language intro ("Check your receipt below — correct anything marked in red…"), the
+readiness chip with the lock/unlock button beside it (locked swaps the note to `lockedNote`),
+reasons only when they exist, a single visible actions row (Save receipt as PDF = the one primary
+button; Download packet / Edit details / View raw data secondary), then the receipt document, with
+delete-with-confirm last behind a separator rule. New `prepareIntro` copy ×5; `controlsTitle`
+removed (`noReasons` kept — HeaderStatus uses it); `.statusRow` added to `pipeline.module.css`.
+Verified: tsc clean; one h2 on the step; print isolation intact after the restructure; 375px stacks
+cleanly (remaining overflow is the pre-existing header nav).
 
-**Viewer additions:** coordinate-space fix (`position: relative` on the scroll box — centering and
-zoom-anchor math were measuring offsets against a distant ancestor); side minimap (96px, constant
-fit-to-width thumbnail of the active page with a live viewport rectangle, click-to-pan, hidden
-<720px, aria-hidden decorative); "Snap to value" toolbar button re-running the auto-crop on the
-active field (localized ×5).
+**Split view (user-directed, same day):** Prepare is now a two-pane layout on desktop — controls
+rail on the left (intro, status + lock, reasons, actions, delete), the big paper document preview
+on the right at ~60% of the card (`.prepareGrid` 2fr/3fr in `pipeline.module.css`, collapses to one
+column ≤960px; the rail is `position: sticky` under the sticky header so actions stay reachable
+while the document scrolls). `.shell` widened 62rem → 72rem so the document truly reads as half the
+screen (all steps get the wider canvas). Verified: doc pane ≈592px right-of-rail at 1440px, sticky
+rail pinned at ~88px mid-scroll, mobile stacks controls→document, print still emits only the
+receipt.
 
-## 2026-07-19 — Pipeline copy complete in all five languages; viewer drag-to-pan
+**Full i18n pass on Prepare (user-directed, same day):** audited every string on the step against
+all five languages. Added the 17 missing keys to each of es/zh/tl/vi (`doc*` ×6, `rc_*` ×6,
+`reasonsTitle`, `stExtracted`, `quarantineTitle`, `effective`, `cmpNone`, `lockedNote`, `unlockBtn`,
+`deletedProof`, `noDocs`). New `FIELD_LABELS` map in `copy.ts` (25 parsed-field keys × 5 languages)
+with `useFieldLabel()` in `labels.ts` (fallback language → en → humanize) — receipt rows no longer
+show humanized-English keys in other languages. Reason `detail` doc names now use localized
+`docLabels` instead of `humanize`. Dropped `text-transform: capitalize` on `.rowKey` (wrong for
+es/vi casing; labels carry their own). Verified live in all four non-English languages (field
+labels, red markers, doc sections, quarantine flag, rail) with a zero-residual-English sweep.
+Still English-only elsewhere (pre-existing, outside Prepare): ProfileStep field-review headings and
+`FIELD_EXPLAIN` explanations — `useFieldLabel` is ready for Profile as a follow-up.
 
-- `lib/pipeline/copy.ts`: es/zh/tl/vi are now FULL `Copy` objects (was `Partial` with EN fallback) —
-  switching language changes every pipeline string (~120 keys/language), enforced at compile time
-  like `dictionaries.ts`. Field explanations ("Why this is needed") localized too via
-  `useFieldExplain()` (16 fields × 5 languages); the EN-only `FIELD_EXPLAIN` export is gone.
-  Supabase `i18n_translations` mirroring of pipeline copy remains a follow-up (table writes are
-  dashboard-only; bundled copy is the offline source of truth).
-- PdfViewer: mouse drag-to-pan on the page background (pointer capture; boxes stay clickable;
-  touch keeps native scrolling; grab/grabbing cursor).
+**Brand + leaner rail (user-directed, same day):** the receipt's document header now carries the
+RealDoor brand (logo.svg + name) top-right opposite the kicker/title (`.brand` in
+`receipt.module.css`; prints with the page). Left rail slimmed: `prepareIntro` shortened in all five
+languages ("Correct anything marked in red, then save your receipt as a PDF."), and the
+`verdictNote` line dropped from the rail — the non-decisional note remains on the document's
+readiness section, and `lockedNote` still appears when locked.
+
+**Reason codes localized (user-flagged, same day):** the raw `UNCONFIRMED_FIELDS` /
+`MISSING_REQUIRED_DOCUMENT`-style constants were showing untranslated in the reason lists. New
+`rcTitle_*` short titles ×6 codes ×5 languages + `useReasonTitles()` in `labels.ts`; the rail shows
+only the localized title, the receipt shows the localized title with the raw code demoted to a small
+muted `.codeRef` (kept on the artifact — organizer evidence vocabulary; `submission.json` codes
+unchanged). Verified in ES via a triggered PAY_STUB_TOTAL_CONFLICT.
+
+**Known quirk (pre-existing, unchanged):** the DeletionProof panel in PrepareStep is unreachable —
+`deleteSession()` navigates back to Profile, unmounting PrepareStep before the proof renders. Also
+pre-existing: ProfileStep's correction input still lacks the numeric guard (same crash path), and
+there's no route-level `error.tsx` boundary — both worth a follow-up.
+
+**Verified:** `tsc --noEmit` clean; Playwright click-through (upload → confirm all → Understand →
+Prepare): receipt visible by default, edit on receipt recomputes income/readiness/header chips
+(gross-pay conflict fires PAY_STUB_TOTAL_CONFLICT), lock hides edit buttons, print emulation renders
+the receipt alone with watermark, 320px collapses rows to one column (remaining 320px horizontal
+overflow comes from the pre-existing header nav, not the receipt), ES localization + delete flow OK.
+
+## 2026-07-19 — Understand step: structured math, support chat, full i18n; engine classifier fix
+
+- Understand redesign (visually verified via headless-Chromium screenshots): calculation left /
+  large support-chat right (tinted shell, presence header, bubbles, docked input, scroll-pinned
+  thread, sample questions until first message); math as a labeled 3-column table (Source ·
+  Calculation · Per year) with per-source rows + Total; green/red published-limit banner (text
+  carries meaning; non-decisional note kept); de-boxed cards (hairline rows, single container each).
+- Income derivation now groups pay stubs into ONE corroborated wage source (latest pay_date wins) —
+  fixes double-counting with the real engine (HH-001 was showing $112,632).
+- **Engine fix** (`realdoor/cli.py`): filename-hint order put bare "letter" before "benefit", so
+  `*_benefit_letter.pdf` uploaded without a manifest classified as employment_letter and its income
+  was dropped (HH-003 showed $30,030 instead of $40,230). Specific hints now match first; official
+  set re-verified (159/159 fields, 6/6 households, classifier spot-check on HH-001/3/4).
+- Dev fixture route generalized to serve ANY official household's complete set via
+  NEXT_PUBLIC_DEMO_HOUSEHOLD; NEXT_PUBLIC_DEMO_STEP=understand debug mode auto-confirms and jumps.
+- Verified HH-003 end-to-end in-browser: Pay $1,155×26 + Benefit $850×12 = $40,230 vs $92,580
+  (size 3), header shows the READY-with-missing-letter oracle quirk as informational.
+
+## 2026-07-19 — Oracle verification of the full main-branch pipeline (frontend + engine)
+
+- New dev-only diagnostic `frontend/app/api/dev-oracle-check/route.ts`: runs the REAL frontend
+  pipeline (engine adapter + calc.ts) over all six official households' PDFs server-side,
+  simulating full renter confirmation; returns computed values only (expectations stay outside
+  product code — the caller compares against the oracle).
+- **Found & fixed a §8 violation:** the frontend annualized a pay stub's PRINTED gross, so HH-002
+  computed $72,540 instead of $49,920. `deriveIncomeSources` now uses the internally consistent
+  basis (regular_hours × hourly_rate, printed-gross fallback when absent) — engine-aligned.
+- Result: all six households reproduce the oracle EXACTLY through the frontend path (income,
+  readiness status, blocking codes, comparison). Engine path re-verified separately after the
+  classifier fix (batch_run official: 159/159 fields, 6/6 households, 0 LLM calls).
+
+## 2026-07-19 — AI chat: greetings, softer out-of-scope card, suggestion chips
+
+Plain greetings (hi / hola / kumusta / xin chào / 你好…, anchored so "hi, what are the rules?"
+still routes to the real question) now get a localized deterministic reply citing
+GUIDE-FLOW-001 (`understand-chat` v6). `AiAnswer`: per-outcome pill styling; OUT_OF_DOMAIN
+abstains show a soft dashed "Out of scope" pill (×5 languages) with two tappable
+sample-question chips (reuses `sampleChip`, re-asks through the existing handlers) instead of
+the raw policy code; other non-NONE codes demoted to small muted text. Policy tests 22/22;
+greeting verified live in en/es; poem control still abstains. Verified at API + tsc level —
+an in-panel visual pass on the unlocked Understand chat is still worth a click-through.
+
+## 2026-07-19 — Dev-split verification: frontend now matches gold on ALL splits' calculations
+
+- Engine: batch_run across official+dev1–dev6 = 1132/1132 fields, 59/59 households, LLM ≤2/set.
+- Frontend (real pipeline via dev-oracle-check?set=…): **53/53 dev-split incomes and comparisons
+  correct** after three fixes: (1) adapter counts any `<freq>_benefit` field (engine names the
+  amount by frequency — annual_benefit was dropped); (2) employment-letter-only households derive
+  the wage source from confirmed weekly_hours × hourly_rate (weekly) when no stub exists; (3)
+  household size is now nullable — never defaulted to 1; absent/unreadable size ⇒ no frozen
+  threshold ⇒ `no_frozen_threshold` (display shows "—"). Engine server also gained
+  `refine_document_type`: inferred types are corrected from extracted fields (hintless dev3-style
+  filenames had classified stubs/letters as application summaries on the upload path).
+- Remaining, deliberate: 9/53 dev households differ ONLY by reason codes the frontend demo does not
+  implement (BENEFIT_LETTER/PAY_STUB/GIG_STATEMENT_EXPIRED, EMPLOYMENT_RATE_CONFLICT,
+  MISSING_HOUSEHOLD_SIZE, MISSING_INCOME_EVIDENCE, NO_FROZEN_THRESHOLD, UNVERIFIED_INCOME_CLAIM) —
+  the engine implements all of them and stays the authority for submission scoring.

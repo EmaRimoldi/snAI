@@ -39,6 +39,8 @@ function PipelineInner({ headingRef, headingId }: Props) {
 
 // The state provider now lives in app/page.tsx (above SiteHeader) so the
 // header status chips share the same application record.
+// The floating chat launcher was removed — the rules chat lives as a full
+// panel inside the Understand step instead.
 export default function PipelineApp({ headingRef, headingId }: Props) {
   return <PipelineInner headingRef={headingRef} headingId={headingId} />;
 }

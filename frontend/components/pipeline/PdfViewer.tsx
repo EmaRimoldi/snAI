@@ -502,65 +502,65 @@ export default function PdfViewer({
           tabIndex={0}
           onKeyDown={onScrollerKeyDown}
         >
-        {numPages === 0 ? (
-          <p className={s.viewerLoading} role="status">
-            {c.reading}
-          </p>
-        ) : (
-          <div className={s.viewerContent} ref={contentRef}>
-            {basePages.map((base, index) => (
-              <div
-                key={index}
-                className={s.pdfPageWrap}
-                style={{
-                  width: base.width * scale,
-                  height: base.height * scale,
-                  marginBottom: index < numPages - 1 ? PAGE_GAP : 0,
-                }}
-                ref={(el) => {
-                  pageWrapRefs.current[index] = el;
-                }}
-              >
-                <canvas
-                  className={s.pdfCanvas}
-                  ref={(el) => {
-                    canvasRefs.current[index] = el;
+          {numPages === 0 ? (
+            <p className={s.viewerLoading} role="status">
+              {c.reading}
+            </p>
+          ) : (
+            <div className={s.viewerContent} ref={contentRef}>
+              {basePages.map((base, index) => (
+                <div
+                  key={index}
+                  className={s.pdfPageWrap}
+                  style={{
+                    width: base.width * scale,
+                    height: base.height * scale,
+                    marginBottom: index < numPages - 1 ? PAGE_GAP : 0,
                   }}
-                />
-                {fields
-                  .filter((f) => f.page === index + 1)
-                  .map((f) => {
-                    const [rawX1, rawTop, rawX2, rawBottom] = f.bbox;
-                    const x1 = Math.max(0, rawX1 - BOX_PAD);
-                    const yTop = Math.max(0, rawTop - BOX_PAD);
-                    const x2 = Math.min(1, rawX2 + BOX_PAD);
-                    const yBottom = Math.min(1, rawBottom + BOX_PAD);
-                    const isActive = f.id === activeFieldId;
-                    const cls = isActive ? `${s.bboxBtn} ${s.bboxActive}` : s.bboxBtn;
-                    const style = {
-                      left: `${x1 * 100}%`,
-                      top: `${yTop * 100}%`,
-                      width: `${(x2 - x1) * 100}%`,
-                      height: `${(yBottom - yTop) * 100}%`,
-                      // Same ramp as the confidence meter, consumed by the CSS.
-                      "--conf": confidenceColor(f.confidence),
-                    } as React.CSSProperties;
-                    return (
-                      <button
-                        key={f.id}
-                        type="button"
-                        className={cls}
-                        style={style}
-                        aria-label={`${humanize(f.key)}: ${f.value} — ${fmt(c.page, { n: f.page })}`}
-                        aria-current={isActive ? "true" : undefined}
-                        onClick={() => onSelectField?.(f.id)}
-                      />
-                    );
-                  })}
-              </div>
-            ))}
-          </div>
-        )}
+                  ref={(el) => {
+                    pageWrapRefs.current[index] = el;
+                  }}
+                >
+                  <canvas
+                    className={s.pdfCanvas}
+                    ref={(el) => {
+                      canvasRefs.current[index] = el;
+                    }}
+                  />
+                  {fields
+                    .filter((f) => f.page === index + 1)
+                    .map((f) => {
+                      const [rawX1, rawTop, rawX2, rawBottom] = f.bbox;
+                      const x1 = Math.max(0, rawX1 - BOX_PAD);
+                      const yTop = Math.max(0, rawTop - BOX_PAD);
+                      const x2 = Math.min(1, rawX2 + BOX_PAD);
+                      const yBottom = Math.min(1, rawBottom + BOX_PAD);
+                      const isActive = f.id === activeFieldId;
+                      const cls = isActive ? `${s.bboxBtn} ${s.bboxActive}` : s.bboxBtn;
+                      const style = {
+                        left: `${x1 * 100}%`,
+                        top: `${yTop * 100}%`,
+                        width: `${(x2 - x1) * 100}%`,
+                        height: `${(yBottom - yTop) * 100}%`,
+                        // Same ramp as the confidence meter, consumed by the CSS.
+                        "--conf": confidenceColor(f.confidence),
+                      } as React.CSSProperties;
+                      return (
+                        <button
+                          key={f.id}
+                          type="button"
+                          className={cls}
+                          style={style}
+                          aria-label={`${humanize(f.key)}: ${f.value} — ${fmt(c.page, { n: f.page })}`}
+                          aria-current={isActive ? "true" : undefined}
+                          onClick={() => onSelectField?.(f.id)}
+                        />
+                      );
+                    })}
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
         {numPages > 0 && (

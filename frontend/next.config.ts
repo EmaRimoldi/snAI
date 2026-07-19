@@ -5,7 +5,7 @@ const SUPABASE_URL =
 
 // When the real engine is enabled (NEXT_PUBLIC_ENGINE=http://...), its origin
 // must be allowed by connect-src or the browser blocks the /extract calls.
-const ENGINE = process.env.NEXT_PUBLIC_ENGINE ?? "mock";
+const ENGINE = process.env.NEXT_PUBLIC_ENGINE ?? "http://127.0.0.1:8787";
 const ENGINE_ORIGIN = ENGINE.startsWith("http") ? new URL(ENGINE).origin : "";
 
 const isDev = process.env.NODE_ENV === "development";
@@ -16,7 +16,7 @@ const csp = [
   `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""}`,
   `connect-src 'self' ${SUPABASE_URL}${ENGINE_ORIGIN ? ` ${ENGINE_ORIGIN}` : ""}`,
   "style-src 'self' 'unsafe-inline'",
-  "img-src 'self' data:",
+  "img-src 'self' data: https://*.tile.openstreetmap.org https://server.arcgisonline.com",
   "worker-src 'self'",
   "font-src 'self'",
   "base-uri 'none'",
@@ -24,6 +24,7 @@ const csp = [
 ].join("; ");
 
 const nextConfig: NextConfig = {
+  devIndicators: false,
   async headers() {
     return [
       {

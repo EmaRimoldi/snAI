@@ -49,6 +49,7 @@ export type DeletionProof = { documentsRemoved: number; fieldsRemoved: number; a
 
 type AppValue = {
   step: Step;
+  stepUnlocked: Record<Step, boolean>;
   documents: DocumentRecord[];
   fields: ExtractedField[];
   busy: boolean;
@@ -63,7 +64,7 @@ type AppValue = {
   unresolvedCount: number;
   missingRequired: DocumentType[];
   presentTypes: DocumentType[];
-  householdSize: number;
+  householdSize: number | null;
   householdSizeConfirmed: boolean;
   /** Field the header error menu asked to open in Profile (null = none). */
   pendingReviewFieldId: string | null;
@@ -91,6 +92,10 @@ const AppContext = createContext<AppValue | null>(null);
 
 const AUTOLOAD_HOUSEHOLD =
   process.env.NODE_ENV === "development" ? process.env.NEXT_PUBLIC_DEMO_HOUSEHOLD : undefined;
+/** Debug: pretend earlier steps are done — auto-confirm every extracted field
+ *  after the demo autoload and jump straight to this step ("understand" | "prepare"). */
+const DEMO_STEP =
+  process.env.NODE_ENV === "development" ? process.env.NEXT_PUBLIC_DEMO_STEP : undefined;
 
 type DemoHouseholdResponse = {
   householdId: string;
@@ -102,12 +107,16 @@ function shortId(): string {
   return uuid.replace(/-/g, "").slice(0, 8).toUpperCase();
 }
 
-function readHouseholdSize(fields: readonly ExtractedField[]): { size: number; confirmed: boolean } {
+/** Household size comes ONLY from the documents (never inferred, never
+ *  defaulted): null when absent/unreadable, which yields no frozen threshold. */
+function readHouseholdSize(
+  fields: readonly ExtractedField[],
+): { size: number | null; confirmed: boolean } {
   const candidates = fields.filter((f) => f.key === "household_size");
   const confirmed = candidates.find((f) => f.reviewStatus === "confirmed" || f.reviewStatus === "corrected");
   const chosen = confirmed ?? candidates[0];
   const n = chosen ? parseInt(chosen.value, 10) : NaN;
-  return { size: Number.isFinite(n) && n > 0 ? n : 1, confirmed: Boolean(confirmed) };
+  return { size: Number.isFinite(n) && n > 0 ? n : null, confirmed: Boolean(confirmed) };
 }
 
 export function AppStateProvider({ children }: { children: ReactNode }) {
@@ -117,6 +126,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
   const [busy, setBusy] = useState(false);
   const [locked, setLocked] = useState(false);
   const [pendingReviewFieldId, setPendingReviewFieldId] = useState<string | null>(null);
+  const [understandVisited, setUnderstandVisited] = useState(false);
 
   const requestReviewField = useCallback((id: string) => {
     setStep("profile");
@@ -126,27 +136,48 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
   const applicationIdRef = useRef<string>(`APP-${shortId()}`);
   const demoStartedRef = useRef(false);
 
-  // One batched engine call per drop: the real engine's /extract accepts all
-  // files in a single request (and caps its LLM backup per batch).
+  // Sequential pipeline: Understand opens with the first upload, Prepare only
+  // after the renter has actually passed through Understand.
+  const stepUnlocked: Record<Step, boolean> = useMemo(() => {
+    const understandOpen = documents.length > 0;
+    return {
+      profile: true,
+      understand: understandOpen,
+      prepare: understandOpen && understandVisited,
+    };
+  }, [documents.length, understandVisited]);
+
+  const goToStep = useCallback(
+    (next: Step) => {
+      if (!stepUnlocked[next]) return;
+      if (next === "understand") setUnderstandVisited(true);
+      setStep(next);
+    },
+    [stepUnlocked],
+  );
+
+  // Keep one engine request for the whole upload batch. This prevents one
+  // document from being silently dropped when several PDFs are selected.
   const addFiles = useCallback(async (files: File[]) => {
     if (files.length === 0) return [];
     setBusy(true);
     try {
       const inputs = files.map((file) => ({ id: `doc-${shortId()}`, file }));
       const results = await processBatch(inputs);
-      const records: DocumentRecord[] = inputs.map(({ id, file }, i) => ({
+      const records: DocumentRecord[] = inputs.map(({ id, file }, index) => ({
         id,
         fileName: file.name,
         fileUrl: URL.createObjectURL(file),
         file,
         mimeType: file.type || "application/octet-stream",
-        documentType: results[i].documentType,
-        classifyConfidence: results[i].confidence,
-        pageCount: 1, // corrected by the viewer once pdf.js opens the document
-        quarantinedText: results[i].quarantinedText,
+        documentType: results[index].documentType,
+        classifyConfidence: results[index].confidence,
+        pageCount: 1,
+        quarantinedText: results[index].quarantinedText,
+        extractionError: results[index].extractionError,
       }));
-      setDocuments((prev) => [...prev, ...records]);
-      setFields((prev) => [...prev, ...results.flatMap((r) => r.fields)]);
+      setDocuments((previous) => [...previous, ...records]);
+      setFields((previous) => [...previous, ...results.flatMap((result) => result.fields)]);
       return records;
     } finally {
       setBusy(false);
@@ -154,15 +185,17 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const setDocumentPageCount = useCallback((id: string, pageCount: number) => {
-    setDocuments((prev) =>
-      prev.some((d) => d.id === id && d.pageCount !== pageCount)
-        ? prev.map((d) => (d.id === id ? { ...d, pageCount } : d))
-        : prev,
+    setDocuments((previous) =>
+      previous.some((document) => document.id === id && document.pageCount !== pageCount)
+        ? previous.map((document) =>
+            document.id === id ? { ...document, pageCount } : document,
+          )
+        : previous,
     );
   }, []);
 
   useEffect(() => {
-    if (AUTOLOAD_HOUSEHOLD !== "HH-001" || demoStartedRef.current) return;
+    if (!AUTOLOAD_HOUSEHOLD || demoStartedRef.current) return;
     demoStartedRef.current = true;
     let cancelled = false;
 
@@ -179,6 +212,17 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
         return new File([bytes.buffer], name, { type });
       });
       await addFiles(files);
+      if (DEMO_STEP === "understand" || DEMO_STEP === "prepare") {
+        // Debug shortcut: simulate a completed Profile step (all values
+        // confirmed by the renter) and open the requested step directly.
+        setFields((prev) =>
+          prev.map((f) =>
+            f.reviewStatus === "extracted" ? { ...f, reviewStatus: "confirmed" as const } : f,
+          ),
+        );
+        setUnderstandVisited(true);
+        setStep(DEMO_STEP);
+      }
     };
 
     // Deferring one task avoids doing the expensive extraction twice during
@@ -205,8 +249,8 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
   ) => {
     const cleanValue = value.trim();
     if (!cleanValue) return;
-    setFields((prev) => [
-      ...prev,
+    setFields((previous) => [
+      ...previous,
       {
         id: `${documentId}:manual:${key}:${shortId()}`,
         documentId,
@@ -244,6 +288,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
     setDocuments([]);
     setFields([]);
     setLocked(false);
+    setUnderstandVisited(false);
     setStep("profile");
     return proof;
   }, [documents, fields]);
@@ -256,7 +301,10 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
     () => REQUIRED_CHECKLIST.filter((t) => !presentTypes.includes(t)),
     [presentTypes],
   );
-  const grossIncomeCents = useMemo(() => computeGrossAnnualCents(fields), [fields]);
+  const grossIncomeCents = useMemo(
+    () => computeGrossAnnualCents(documents, fields),
+    [documents, fields],
+  );
   const readiness = useMemo(
     () => computeReadiness(documents, fields, missingRequired),
     [documents, fields, missingRequired],
@@ -307,6 +355,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
   const value: AppValue = useMemo(
     () => ({
       step,
+      stepUnlocked,
       documents,
       fields,
       busy,
@@ -323,7 +372,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
       householdSize: household.size,
       householdSizeConfirmed: household.confirmed,
       pendingReviewFieldId,
-      goToStep: setStep,
+      goToStep,
       requestReviewField,
       clearReviewRequest,
       setDocumentPageCount,
@@ -337,10 +386,10 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
       buildSubmission,
     }),
     [
-      step, documents, fields, busy, locked, quarantineCount, grossIncomeCents, errorCount,
-      readiness, displayStatus, unresolvedCount, missingRequired, presentTypes,
+      step, stepUnlocked, documents, fields, busy, locked, quarantineCount, grossIncomeCents,
+      errorCount, readiness, displayStatus, unresolvedCount, missingRequired, presentTypes,
       household.size, household.confirmed, pendingReviewFieldId,
-      addFiles, addManualField, confirmField, correctField, deleteSession, buildSubmission,
+      goToStep, addFiles, addManualField, confirmField, correctField, deleteSession, buildSubmission,
       requestReviewField, clearReviewRequest, setDocumentPageCount,
     ],
   );

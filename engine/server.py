@@ -25,8 +25,9 @@ from fastapi import FastAPI, File, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 
 from realdoor import settings
-from realdoor.cli import infer_document_type
-from realdoor.extract.batch import batch_extract
+from realdoor.cli import infer_document_type, refine_document_type
+from realdoor.extract.batch import BatchStats, batch_extract
+from realdoor.models import DocumentRecord
 
 ALLOWED_ORIGINS = [
     "http://localhost:3000",
@@ -41,6 +42,52 @@ app.add_middleware(
     allow_methods=["GET", "POST"],
     allow_headers=["*"],
 )
+
+
+def _empty_document(job: tuple) -> DocumentRecord:
+    _path, doc_id, household_id, document_type, file_name = job
+    return DocumentRecord(
+        document_id=doc_id,
+        household_id=household_id,
+        document_type=document_type,
+        file_name=file_name,
+        fields=[],
+        rasterized=None,
+        contains_adversarial_text=None,
+    )
+
+
+def _best_effort_extract(jobs: list[tuple]) -> tuple[list[DocumentRecord], BatchStats, list[dict]]:
+    """Extract every upload without letting one bad/OCR-missing file drop the batch."""
+    try:
+        # The HTTP bridge already runs inside a long-lived uvicorn process.
+        # On local/macOS dev the nested ProcessPool path can terminate abruptly
+        # for multi-file uploads, which made the frontend appear to parse only
+        # some documents. Keep the request batched, but run tokenization serially
+        # for the interactive server.
+        docs, stats = batch_extract(jobs, max_workers=1)
+        return docs, stats, []
+    except Exception:
+        docs: list[DocumentRecord] = []
+        errors: list[dict] = []
+        stats = BatchStats(documents=len(jobs), workers=1)
+        for job in jobs:
+            try:
+                partial_docs, partial_stats = batch_extract([job], max_workers=1)
+                docs.extend(partial_docs)
+                stats.tokenize_seconds += partial_stats.tokenize_seconds
+                stats.match_seconds += partial_stats.match_seconds
+                stats.llm_seconds += partial_stats.llm_seconds
+                stats.llm_calls += partial_stats.llm_calls
+                stats.llm_labels_sent += partial_stats.llm_labels_sent
+            except Exception as exc:
+                docs.append(_empty_document(job))
+                errors.append({
+                    "document_id": job[1],
+                    "file_name": job[4],
+                    "detail": str(exc),
+                })
+        return docs, stats, errors
 
 
 @app.get("/health")
@@ -69,10 +116,11 @@ async def extract(files: list[UploadFile] = File(...)) -> dict:
                     name,
                 )
             )
-        try:
-            docs, stats = batch_extract(jobs)
-        except Exception as exc:  # surface a clean error, never a traceback
-            raise HTTPException(status_code=422, detail=f"extraction failed: {exc}") from exc
+        docs, stats, errors = _best_effort_extract(jobs)
+        # Types were inferred (no manifest on uploads) — refine from the
+        # extracted fields, a much stronger signal than filename/keyword hints.
+        for doc in docs:
+            doc.document_type = refine_document_type(doc.document_type, doc.fields)
 
     return {
         "artifact": "realdoor.extraction",
@@ -84,6 +132,7 @@ async def extract(files: list[UploadFile] = File(...)) -> dict:
             "llm_seconds": round(stats.llm_seconds, 3),
             "llm_calls": stats.llm_calls,
             "workers": stats.workers,
+            "errors": errors,
         },
         "documents": [doc.to_dict() for doc in docs],
     }

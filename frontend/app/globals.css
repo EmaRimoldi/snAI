@@ -1,3 +1,5 @@
+@import "tailwindcss";
+
 @font-face {
   font-family: "Public Sans";
   src: url("/fonts/PublicSans-Variable.ttf") format("truetype");
@@ -32,6 +34,26 @@
   --warn: #8a5a00; /* status-pending amber — always paired with text/icon, never color-only */
 }
 
+@theme inline {
+  --font-sans: "Public Sans", "Noto Sans SC UI", "PingFang SC", "Microsoft YaHei", system-ui,
+    sans-serif;
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary-dark);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--secondary);
+  --color-accent-foreground: var(--foreground);
+  --color-destructive: var(--danger);
+  --color-destructive-foreground: var(--primary-foreground);
+  --color-border: var(--input);
+  --color-input: var(--input);
+  --color-ring: var(--primary-dark);
+}
+
 * { box-sizing: border-box; }
 
 html {
@@ -53,6 +75,50 @@ body {
   color: var(--foreground);
   font: 16px/1.5 "Public Sans", "Noto Sans SC UI", "PingFang SC", "Microsoft YaHei",
     system-ui, sans-serif;
+}
+
+@property --grid-active {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 0;
+}
+
+.cursor-grid {
+  --grid-active: 0;
+  --grid-cursor-x: 50vw;
+  --grid-cursor-y: 50vh;
+  position: fixed;
+  z-index: 0;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(to right, rgb(145 75 55 / 0.14) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(145 75 55 / 0.14) 1px, transparent 1px);
+  background-size: 38px 38px;
+  animation: cursor-grid-drift 9s linear infinite;
+  -webkit-mask-image: radial-gradient(
+    circle 210px at var(--grid-cursor-x) var(--grid-cursor-y),
+    rgb(0 0 0 / calc(0.32 + var(--grid-active) * 0.68)) 0%,
+    rgb(0 0 0 / calc(0.32 + var(--grid-active) * 0.5)) 48%,
+    rgb(0 0 0 / 0.32) 100%
+  );
+  mask-image: radial-gradient(
+    circle 210px at var(--grid-cursor-x) var(--grid-cursor-y),
+    rgb(0 0 0 / calc(0.32 + var(--grid-active) * 0.68)) 0%,
+    rgb(0 0 0 / calc(0.32 + var(--grid-active) * 0.5)) 48%,
+    rgb(0 0 0 / 0.32) 100%
+  );
+  transition: --grid-active 180ms ease-out;
+  will-change: background-position, mask-image;
+}
+
+@keyframes cursor-grid-drift {
+  to { background-position: 38px 38px; }
+}
+
+.site-main {
+  position: relative;
+  z-index: 1;
 }
 
 button,
@@ -136,7 +202,7 @@ a { -webkit-tap-highlight-color: transparent; }
 }
 
 .brand-name {
-  font-size: 1.05rem;
+  font-size: 1.3rem;
   font-weight: 700;
   letter-spacing: -0.025em;
 }
@@ -496,13 +562,13 @@ a { -webkit-tap-highlight-color: transparent; }
   flex: 1;
   display: flex;
   flex-direction: column;
-  width: min(100%, 72rem);
+  width: min(100%, 86rem);
   margin: 0 auto;
   padding: 0 2.5rem clamp(0.75rem, 2vh, 2rem);
 }
 
 .site-main-discover {
-  width: min(100%, 86rem);
+  width: min(100%, 96rem);
 }
 
 /* The landing fills the space under the header and distributes its three
@@ -513,8 +579,9 @@ a { -webkit-tap-highlight-color: transparent; }
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   gap: clamp(1rem, 3.5vh, 2.5rem);
+  padding-top: clamp(1rem, 2.5vh, 1.5rem);
 }
 
 .hero-section {
@@ -525,48 +592,99 @@ a { -webkit-tap-highlight-color: transparent; }
 }
 
 .hero-heading {
-  min-height: 2.12em;
-  max-width: 58rem;
-  margin: 0;
+  max-width: 62rem;
+  margin: 0 auto;
   color: var(--foreground);
-  font-size: clamp(2.2rem, min(6.2vw, 8vh), 4.65rem);
+  font-size: clamp(2.35rem, min(5.5vw, 8.2vh), 4.8rem);
   font-weight: 700;
   letter-spacing: -0.045em;
   line-height: 1.06;
   text-wrap: balance;
 }
 
-.hero-heading.is-cycle {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  white-space: nowrap;
-  font-size: clamp(1rem, 5.2vw, 3.5rem);
-}
+.hero-heading-line { display: block; }
 
-.hero-heading.is-typing::after {
+.hero-subheadline.is-typing::after {
   content: "";
   display: inline-block;
   width: 3px;
-  height: 0.82em;
-  margin-left: 0.12em;
-  vertical-align: -0.04em;
+  height: 0.9em;
+  margin-left: 0.14em;
+  vertical-align: -0.08em;
   background: currentColor;
   animation: typing-cursor 800ms steps(1, end) infinite;
 }
 
 .hero-subheadline {
-  min-height: 2.1rem;
-  margin: clamp(0.9rem, 2.4vh, 1.4rem) 0 0;
+  display: block;
+  min-height: 2.2em;
+  margin: clamp(1rem, 2.2vh, 1.35rem) 0 0;
   color: var(--muted-foreground);
-  font-size: clamp(1.15rem, min(2.5vw, 3.2vh), 1.55rem);
+  font-size: clamp(1.28rem, min(2.7vw, 3.4vh), 1.7rem);
   font-weight: 550;
   letter-spacing: -0.01em;
   line-height: 1.4;
   white-space: nowrap;
 }
 
-.hero-cta { margin-top: clamp(1.6rem, 3.2vh, 2.15rem); }
+.hero-cta { margin-top: clamp(1.35rem, 2.6vh, 1.8rem); }
+
+.hero-start-button {
+  height: 3rem;
+  border-radius: 999px;
+  padding-inline: 1.5rem;
+  background: var(--primary-dark);
+  color: var(--primary-foreground);
+  font-family: inherit;
+  font-size: 0.98rem;
+  font-weight: 750;
+  box-shadow: 0 0.45rem 1.1rem color-mix(in srgb, var(--primary-dark) 20%, transparent);
+  transition: background-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+}
+
+.hero-start-button:hover {
+  background: #7d3e2e;
+  box-shadow: 0 0.65rem 1.4rem color-mix(in srgb, var(--primary-dark) 26%, transparent);
+  transform: translateY(-1px);
+}
+
+.hero-start-icon {
+  margin-inline-start: 0.55rem;
+  opacity: 0.72;
+  transition: transform 160ms ease;
+}
+
+.hero-start-button:hover .hero-start-icon { transform: translateX(0.16rem); }
+
+.hero-assurances {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0;
+  margin: 0.82rem 0 0;
+  padding: 0;
+  color: color-mix(in srgb, var(--muted-foreground) 82%, var(--background));
+  font-size: clamp(0.72rem, 1.25vw, 0.8rem);
+  font-weight: 520;
+  letter-spacing: 0.005em;
+  list-style: none;
+}
+
+.hero-assurances li {
+  display: inline-flex;
+  align-items: center;
+}
+
+.hero-assurances li + li::before {
+  content: "";
+  width: 0.2rem;
+  height: 0.2rem;
+  margin: 0 0.75rem;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.72;
+}
 
 @keyframes typing-cursor {
   50% { opacity: 0; }
@@ -819,16 +937,21 @@ a { -webkit-tap-highlight-color: transparent; }
   .site-main { padding: 0 1.25rem 4rem; }
   /* Stacked cards are taller than a phone screen: flow from the top and
      let the page scroll naturally instead of centering. */
-  .landing-view { justify-content: flex-start; padding-top: 2rem; }
+  .landing-view { justify-content: flex-start; padding-top: 0.75rem; }
   .phase-section { grid-template-columns: 1fr; gap: 1rem; }
   .phase-card { min-height: auto; padding: 2rem 1.75rem; }
   .account-panel { right: 1.25rem; }
+  .hero-heading-line { white-space: normal; }
+}
+
+@media (min-width: 721px) {
+  .hero-heading-line { white-space: nowrap; }
 }
 
 @media (max-width: 440px) {
   .site-header,
   .site-main { padding-left: 1rem; padding-right: 1rem; }
-  .landing-view { padding-top: 1.25rem; }
+  .landing-view { padding-top: 0.35rem; }
   .nav-actions { gap: 0.35rem; }
   .prompt-shell { padding: 0.45rem; }
   .prompt-input { font-size: 0.93rem; }
@@ -844,5 +967,24 @@ a { -webkit-tap-highlight-color: transparent; }
     transition-duration: 0.01ms !important;
   }
   .phase-card { animation: none; }
-  .hero-heading.is-typing::after { animation: none; }
+  .hero-subheadline.is-typing::after { animation: none; }
+  .cursor-grid { animation: none; }
+}
+
+/* Print: when the readiness receipt is on screen (Prepare step), only it reaches
+   paper / Save-as-PDF — app chrome, cards, and controls are hidden. Scoped with
+   :has() so printing any other page stays untouched. */
+@media print {
+  html, body { height: auto !important; overflow: visible !important; }
+  body:has([data-print-region]) { background: #fff; }
+  body:has([data-print-region]) * { visibility: hidden; }
+  body:has([data-print-region]) [data-print-region],
+  body:has([data-print-region]) [data-print-region] * { visibility: visible; }
+  body:has([data-print-region]) [data-print-region] {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    margin: 0;
+  }
 }

@@ -1,8 +1,7 @@
 // Engine seam. The UI depends only on processBatch(): one call per upload,
 // covering classification + extraction for every file. The real engine
-// (engine/server.py) swaps in via NEXT_PUBLIC_ENGINE; the deterministic MOCK
-// is the default. No values are keyed to household IDs — everything is derived
-// from a hash of the file name, so nothing is hardcoded to the oracle.
+// (engine/server.py) is the default local target. The deterministic mock is
+// available only as an explicit opt-in with NEXT_PUBLIC_ENGINE=mock.
 
 import type {
   DocumentType,
@@ -11,7 +10,8 @@ import type {
   PayFrequency,
 } from "@/lib/pipeline/types";
 
-const ENGINE = process.env.NEXT_PUBLIC_ENGINE ?? "mock";
+const DEFAULT_ENGINE_URL = "http://127.0.0.1:8787";
+const ENGINE = process.env.NEXT_PUBLIC_ENGINE ?? DEFAULT_ENGINE_URL;
 
 export type ClassifyResult = { documentType: DocumentType; confidence: number };
 export type ExtractResult = { fields: ExtractedField[]; quarantinedText?: string };
@@ -20,12 +20,13 @@ export type ProcessedDoc = {
   confidence: number;
   fields: ExtractedField[];
   quarantinedText?: string;
+  extractionError?: string;
 };
 
 /**
  * Process a whole upload in one go. The real engine receives ALL files in a
  * single POST /extract (its batch mode caps LLM-backup calls per batch); the
- * mock keeps its deterministic per-file behavior.
+ * mock is reserved for explicit demos/tests.
  */
 export async function processBatch(
   inputs: ReadonlyArray<{ id: string; file: File }>,
@@ -35,7 +36,7 @@ export async function processBatch(
     return httpProcessBatch(ENGINE, inputs);
   }
   if (ENGINE !== "mock") {
-    throw new Error(`Unknown NEXT_PUBLIC_ENGINE "${ENGINE}" — use "mock" or an engine URL`);
+    throw new Error(`Unknown NEXT_PUBLIC_ENGINE "${ENGINE}" — use an engine URL or explicit "mock"`);
   }
   const results: ProcessedDoc[] = [];
   for (const { id, file } of inputs) {
@@ -48,6 +49,43 @@ export async function processBatch(
     results.push({ documentType, confidence, fields, quarantinedText });
   }
   return results;
+}
+
+// Backwards-compatible adapters for dev diagnostics added on main. The legacy
+// API split classification and extraction into two calls; keep one real batch
+// request under the hood and hand its result to extractFields().
+const legacyResults = new Map<string, Promise<ProcessedDoc>>();
+
+export async function classifyDocument(file: File): Promise<ClassifyResult> {
+  const pending = processBatch([{ id: `legacy:${file.name}`, file }]).then(
+    ([result]) => result,
+  );
+  legacyResults.set(file.name, pending);
+  const result = await pending;
+  return { documentType: result.documentType, confidence: result.confidence };
+}
+
+export async function extractFields(doc: {
+  id: string;
+  fileName: string;
+  documentType: DocumentType;
+}): Promise<ExtractResult> {
+  const pending = legacyResults.get(doc.fileName);
+  if (!pending) return mockExtract(doc);
+
+  try {
+    const result = await pending;
+    return {
+      fields: result.fields.map((field) => ({
+        ...field,
+        id: `${doc.id}:${field.key}`,
+        documentId: doc.id,
+      })),
+      quarantinedText: result.quarantinedText,
+    };
+  } finally {
+    legacyResults.delete(doc.fileName);
+  }
 }
 
 // ---- deterministic PRNG (stable per file name) ------------------------------

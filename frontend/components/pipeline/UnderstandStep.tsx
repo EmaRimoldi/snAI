@@ -4,100 +4,217 @@
 // formula/effective-date/sources, and rules Q&A answered only from the frozen corpus
 // (with citations) — refusing decision requests, abstaining out of corpus.
 
-import { useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useApp } from "@/lib/pipeline/state";
-import { useCopy, fmt } from "@/lib/pipeline/copy";
+import { useCopy } from "@/lib/pipeline/copy";
+import { useI18n } from "@/lib/i18n";
 import {
   FREQUENCY,
-  annualizeCents,
-  toCents,
+  deriveIncomeSources,
   formatMoneyCents,
   compareToThreshold,
   thresholdCentsForSize,
 } from "@/lib/pipeline/calc";
+import type { PayFrequency } from "@/lib/pipeline/types";
+import { useFieldLabel } from "@/lib/pipeline/labels";
 import { MTSP_2026, thresholdForSize } from "@/lib/data/mtsp2026";
-import { answerRulesQuestion, AUTHORITY_LABEL, SAMPLE_QUESTIONS } from "@/lib/pipeline/rules";
-import type { RulesAnswer } from "@/lib/pipeline/rules";
-import type { Rule } from "@/lib/data/ruleCorpus";
+import { askRealDoor } from "@/lib/ai/client";
+import { buildSafeUnderstandingContext } from "@/lib/ai/context";
+import { localRulesFallback } from "@/lib/ai/fallback";
+import type { AiChatResponse } from "@/lib/ai/types";
+import AiAnswer from "@/components/ai/AiAnswer";
 import s from "./pipeline.module.css";
-
-function badgeClass(authority: Rule["authority"]): string {
-  if (authority === "official_hud") return `${s.badge} ${s.badgeHud}`;
-  if (authority === "official_federal") return `${s.badge} ${s.badgeFederal}`;
-  return `${s.badge} ${s.badgeConvention}`;
-}
 
 export default function UnderstandStep() {
   const c = useCopy();
-  const { fields, householdSize, householdSizeConfirmed, grossIncomeCents, goToStep } = useApp();
+  const { language } = useI18n();
+  const {
+    documents,
+    fields,
+    householdSize,
+    householdSizeConfirmed,
+    grossIncomeCents,
+    missingRequired,
+    readiness,
+    goToStep,
+  } = useApp();
   const [query, setQuery] = useState("");
-  const [answer, setAnswer] = useState<RulesAnswer | null>(null);
+  const [thread, setThread] = useState<
+    Array<{ question: string; response: AiChatResponse; fellBack: boolean }>
+  >([]);
+  const [asking, setAsking] = useState(false);
+  const chatRef = useRef<HTMLDivElement>(null);
 
-  const incomeFields = fields.filter(
-    (f) => f.isIncome && f.reviewStatus !== "extracted",
+  // Keep the newest exchange in view — scrollable area, pinned to the bottom.
+  useEffect(() => {
+    const el = chatRef.current;
+    if (!el) return;
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    el.scrollTo({ top: el.scrollHeight, behavior: reduce ? "auto" : "smooth" });
+  }, [thread, asking]);
+
+  const aiContext = useMemo(
+    () => buildSafeUnderstandingContext({
+      documents,
+      fields,
+      householdSize,
+      householdSizeConfirmed,
+      grossIncomeCents,
+      missingRequired,
+      readiness,
+    }),
+    [documents, fields, householdSize, householdSizeConfirmed, grossIncomeCents, missingRequired, readiness],
   );
-  const thresholdDollars = thresholdForSize(householdSize);
+
+  const incomeSources = useMemo(
+    () => deriveIncomeSources(documents, fields),
+    [documents, fields],
+  );
+  const countedSources = incomeSources.filter((src) => src.counted);
+  const fieldLabel = useFieldLabel();
+  const money = (cents: number): string => formatMoneyCents(cents, language);
+  const srcName = (key: string): string =>
+    key === "gross_pay" || key === "letter_wage"
+      ? c.srcPay
+      : key.endsWith("_benefit")
+        ? c.srcBenefit
+        : key === "gross_receipts"
+          ? c.srcGig
+          : fieldLabel(key);
+  const freqLabel: Record<PayFrequency, string> = {
+    weekly: c.freqWeekly,
+    biweekly: c.freqBiweekly,
+    semimonthly: c.freqSemimonthly,
+    monthly: c.freqMonthly,
+    annual: c.freqAnnual,
+  };
+  const thresholdDollars = householdSize === null ? null : thresholdForSize(householdSize);
   const comparison = compareToThreshold(grossIncomeCents, thresholdCentsForSize(householdSize));
   const cmpText =
     comparison === "below_or_equal" ? c.cmpBelow : comparison === "above" ? c.cmpAbove : c.cmpNone;
+  const sampleQuestions = [c.sampleQ1, c.sampleQ2, c.sampleQ3, c.sampleQ4];
 
-  const runAsk = (q: string) => {
-    setQuery(q);
-    setAnswer(answerRulesQuestion(q));
+  const runAsk = async (q: string) => {
+    const question = q.trim();
+    if (!question || asking) return;
+    setQuery("");
+    setAsking(true);
+    try {
+      const response = await askRealDoor({
+        mode: "personalized",
+        locale: language,
+        question,
+        context: aiContext,
+      });
+      setThread((prev) => [...prev, { question, response, fellBack: false }]);
+    } catch {
+      setThread((prev) => [
+        ...prev,
+        { question, response: localRulesFallback(question, { refusal: c.refusal, abstain: c.abstain }), fellBack: true },
+      ]);
+    } finally {
+      setAsking(false);
+    }
   };
 
   return (
     <>
+      <div className={s.understandGrid}>
       <section className={s.card} aria-labelledby="income-h">
         <h2 id="income-h" className={s.cardTitle}>
           {c.incomeCalcTitle}
         </h2>
 
-        <div className={s.formula}>
+        <div className={`${s.formula} ${s.formulaFlat}`}>
           <div className={s.confidenceHead} style={{ fontSize: "0.9rem", marginBottom: "0.4rem" }}>
             <span>{c.formulaHead}</span>
           </div>
-          {incomeFields.length === 0 ? (
+          {countedSources.length === 0 ? (
             <p className={s.hint} style={{ margin: 0 }}>
               {c.confirmSizeNote}
             </p>
           ) : (
-            incomeFields.map((f) => {
-              const freq = f.incomeFrequency ?? "monthly";
-              const per = toCents(f.value);
-              const annual = annualizeCents(per, freq);
-              return (
-                <div key={f.id}>
-                  {f.key.replace(/_/g, " ")}: {formatMoneyCents(per)} × {FREQUENCY[freq]}/yr ={" "}
-                  <strong>{formatMoneyCents(annual)}</strong>
+            <div className={s.mathTable}>
+              <div className={`${s.mathRow} ${s.mathHead}`} aria-hidden="true">
+                <span className={s.mathSrcCell}>{c.source}</span>
+                <span className={s.mathCalcCell}>{c.mathCalc}</span>
+                <span className={s.mathNum}>{c.mathPerYear}</span>
+              </div>
+              {countedSources.map((src) => (
+                <div key={src.fieldId} className={s.mathRow}>
+                  <span className={s.mathSrcCell}>
+                    {srcName(src.key)}
+                    <span className={s.mathSrcSub}>{freqLabel[src.frequency]}</span>
+                  </span>
+                  <span className={s.mathCalcCell}>
+                    {money(src.periodCents)} × {FREQUENCY[src.frequency]}
+                  </span>
+                  <span className={s.mathNum}>
+                    <strong>{money(src.annualCents)}</strong>
+                  </span>
                 </div>
-              );
-            })
+              ))}
+              <div className={`${s.mathRow} ${s.mathTotalRow}`}>
+                <span className={s.mathSrcCell}>{c.mathTotal}</span>
+                <span className={s.mathCalcCell} />
+                <span className={s.mathNum}>
+                  <strong>{money(grossIncomeCents)}</strong>
+                </span>
+              </div>
+            </div>
           )}
-          <div style={{ marginTop: "0.5rem" }}>
-            {c.annualizedIncome}: <strong>{formatMoneyCents(grossIncomeCents)}</strong>
-          </div>
         </div>
 
-        <ul className={s.summaryList} style={{ marginTop: "1rem" }}>
-          <li className={s.summaryRow}>
+        <ul className={s.flatList}>
+          <li className={s.flatRow}>
             <span className={s.summaryKey}>{c.householdSize}</span>
             <span className={s.summaryVal}>
-              {householdSize}
+              {householdSize ?? "—"}
               {!householdSizeConfirmed && ` — ${c.confirmSizeNote}`}
             </span>
           </li>
-          <li className={s.summaryRow}>
+          <li className={s.flatRow}>
             <span className={s.summaryKey}>{c.threshold60}</span>
             <span className={s.summaryVal}>
-              {thresholdDollars === null ? c.cmpNone : formatMoneyCents(thresholdDollars * 100)}
+              {thresholdDollars === null ? c.cmpNone : money(thresholdDollars * 100)}
             </span>
           </li>
-          <li className={s.summaryRow}>
-            <span className={s.summaryKey}>{c.comparison}</span>
-            <span className={s.summaryVal}>{cmpText}</span>
-          </li>
         </ul>
+
+        {/* Comparison result — green/red, but the text always carries the
+            meaning, and it describes the published limit, never eligibility. */}
+        <p
+          className={`${s.resultBanner} ${
+            comparison === "below_or_equal"
+              ? s.resultOk
+              : comparison === "above"
+                ? s.resultBad
+                : s.resultNone
+          }`}
+          role="status"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            {comparison === "below_or_equal" ? (
+              <path d="m5 13 4 4L19 7" />
+            ) : comparison === "above" ? (
+              <>
+                <circle cx="12" cy="12" r="9" />
+                <path d="M12 7.5v5.5" />
+                <path d="M12 16.4v.1" />
+              </>
+            ) : (
+              <circle cx="12" cy="12" r="4" />
+            )}
+          </svg>
+          <span className={s.resultText}>
+            <strong>{cmpText}</strong>
+            {thresholdDollars !== null && (
+              <span className={s.resultAmounts}>
+                {money(grossIncomeCents)} / {money(thresholdDollars * 100)}
+              </span>
+            )}
+          </span>
+        </p>
 
         <p className={s.sourceLine}>
           {c.effective} {MTSP_2026.effectiveDate} · {MTSP_2026.hudArea} ·{" "}
@@ -108,17 +225,54 @@ export default function UnderstandStep() {
         <p className={s.hint}>{c.notDecision}</p>
       </section>
 
-      <section className={s.card} aria-labelledby="rules-h">
-        <h2 id="rules-h" className={s.cardTitle}>
-          {c.rulesTitle}
-        </h2>
-        <p className={s.hint}>{c.rulesHint}</p>
+      <section className={`${s.card} ${s.qaCard}`} aria-labelledby="rules-h">
+        <div className={s.chatHeader}>
+          <span className={s.chatHeaderDot} aria-hidden="true" />
+          <div>
+            <h2 id="rules-h" className={s.chatHeaderTitle}>
+              {c.rulesTitle}
+            </h2>
+            <p className={s.chatHeaderHint}>{c.rulesHint}</p>
+          </div>
+        </div>
+
+        {thread.length === 0 && !asking && (
+          <div className={s.sampleRow}>
+            <span className={s.hint}>{c.tryAsking}:</span>
+            {sampleQuestions.map((q) => (
+              <button key={q} type="button" className={s.sampleChip} onClick={() => void runAsk(q)} disabled={asking}>
+                {q}
+              </button>
+            ))}
+          </div>
+        )}
+
+        <div className={s.qaAnswerArea} ref={chatRef}>
+          {thread.map((entry, index) => (
+            <div key={index} className={s.chatEntry}>
+              <p className={s.chatQuestion}>{entry.question}</p>
+              {entry.fellBack && (
+                <p className={s.aiNotice} role="status">
+                  {c.aiFallback}
+                </p>
+              )}
+              <div className={s.chatAnswer}>
+                <AiAnswer response={entry.response} documents={documents} onSuggestion={(question) => void runAsk(question)} />
+              </div>
+            </div>
+          ))}
+          {asking && (
+            <p className={s.hint} role="status">
+              {c.aiThinking}
+            </p>
+          )}
+        </div>
 
         <form
           className={s.qaForm}
           onSubmit={(e) => {
             e.preventDefault();
-            if (query.trim()) setAnswer(answerRulesQuestion(query));
+            void runAsk(query);
           }}
         >
           <label className="visually-hidden" htmlFor="rules-q">
@@ -131,57 +285,13 @@ export default function UnderstandStep() {
             placeholder={c.askPlaceholder}
             onChange={(e) => setQuery(e.target.value)}
           />
-          <button type="submit" className="primary-button">
-            {c.ask}
+          <button type="submit" className="primary-button" disabled={asking || !query.trim()}>
+            {asking ? c.aiThinking : c.ask}
           </button>
         </form>
-
-        <div className={s.sampleRow}>
-          <span className={s.hint}>{c.tryAsking}:</span>
-          {SAMPLE_QUESTIONS.map((q) => (
-            <button key={q} type="button" className={s.sampleChip} onClick={() => runAsk(q)}>
-              {q}
-            </button>
-          ))}
-        </div>
-
-        {answer && (
-          <div className={s.qaAnswer} aria-live="polite">
-            {answer.kind === "refusal" && <p>{c.refusal}</p>}
-            {answer.kind === "abstain" && <p>{c.abstain}</p>}
-            {answer.kind === "answer" && (
-              <>
-                <p>
-                  <strong>{c.answerIntro}</strong>
-                </p>
-                {answer.rules.map((r) => (
-                  <div key={r.ruleId} className={s.citation}>
-                    <div className={s.citationHead}>
-                      <span className={s.ruleId}>{r.ruleId}</span>
-                      <span className={badgeClass(r.authority)}>{AUTHORITY_LABEL[r.authority]}</span>
-                      {r.effectiveDate && (
-                        <span className={s.hint} style={{ fontSize: "0.8rem" }}>
-                          {c.effective} {r.effectiveDate}
-                        </span>
-                      )}
-                    </div>
-                    <p style={{ margin: 0 }}>{r.text}</p>
-                    <a
-                      className={s.docLink}
-                      href={r.sourceUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      style={{ display: "inline-block", marginTop: "0.4rem" }}
-                    >
-                      {r.sourceLocator} ↗
-                    </a>
-                  </div>
-                ))}
-              </>
-            )}
-          </div>
-        )}
+        <p className={s.aiPrivacy}>{c.aiPrivacy}</p>
       </section>
+      </div>
 
       <div className={s.actions}>
         <button type="button" className="secondary-button" onClick={() => goToStep("profile")}>
