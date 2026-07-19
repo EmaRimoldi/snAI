@@ -41,3 +41,16 @@ export function useReasonTexts(): Record<ReviewReasonCode, string> {
     MISSING_REQUIRED_DOCUMENT: c.rc_MISSING_REQUIRED_DOCUMENT,
   };
 }
+
+/** Localized short titles for reason codes (the raw code stays a machine reference). */
+export function useReasonTitles(): Record<ReviewReasonCode, string> {
+  const c = useCopy();
+  return {
+    PAY_STUB_TOTAL_CONFLICT: c.rcTitle_PAY_STUB_TOTAL_CONFLICT,
+    GIG_INCOME_UNCORROBORATED: c.rcTitle_GIG_INCOME_UNCORROBORATED,
+    EMPLOYMENT_LETTER_EXPIRED: c.rcTitle_EMPLOYMENT_LETTER_EXPIRED,
+    UNCONFIRMED_FIELDS: c.rcTitle_UNCONFIRMED_FIELDS,
+    LOW_CONFIDENCE_FIELDS: c.rcTitle_LOW_CONFIDENCE_FIELDS,
+    MISSING_REQUIRED_DOCUMENT: c.rcTitle_MISSING_REQUIRED_DOCUMENT,
+  };
+}

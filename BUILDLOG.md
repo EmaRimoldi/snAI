@@ -189,6 +189,13 @@ languages ("Correct anything marked in red, then save your receipt as a PDF."), 
 `verdictNote` line dropped from the rail — the non-decisional note remains on the document's
 readiness section, and `lockedNote` still appears when locked.
 
+**Reason codes localized (user-flagged, same day):** the raw `UNCONFIRMED_FIELDS` /
+`MISSING_REQUIRED_DOCUMENT`-style constants were showing untranslated in the reason lists. New
+`rcTitle_*` short titles ×6 codes ×5 languages + `useReasonTitles()` in `labels.ts`; the rail shows
+only the localized title, the receipt shows the localized title with the raw code demoted to a small
+muted `.codeRef` (kept on the artifact — organizer evidence vocabulary; `submission.json` codes
+unchanged). Verified in ES via a triggered PAY_STUB_TOTAL_CONFLICT.
+
 **Known quirk (pre-existing, unchanged):** the DeletionProof panel in PrepareStep is unreachable —
 `deleteSession()` navigates back to Profile, unmounting PrepareStep before the proof renders. Also
 pre-existing: ProfileStep's correction input still lacks the numeric guard (same crash path), and

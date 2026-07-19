@@ -152,6 +152,13 @@
 
 .screenOnly {}
 .verdictLine { margin: 0.2rem 0 0.5rem; }
+.codeRef {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: color-mix(in srgb, var(--muted-foreground) 70%, transparent);
+  overflow-wrap: anywhere;
+}
 .reasonNotes { margin: 0.4rem 0 0; padding: 0; list-style: none; display: grid; gap: 0.3rem; }
 .note { color: var(--muted-foreground); font-size: 0.85rem; line-height: 1.55; margin: 0.5rem 0 0; }
 

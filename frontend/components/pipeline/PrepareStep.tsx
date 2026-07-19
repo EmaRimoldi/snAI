@@ -11,7 +11,7 @@ import { useApp } from "@/lib/pipeline/state";
 import type { DeletionProof } from "@/lib/pipeline/state";
 import type { DocumentType } from "@/lib/pipeline/types";
 import { useCopy, fmt } from "@/lib/pipeline/copy";
-import { useDocLabels, useReasonTexts } from "@/lib/pipeline/labels";
+import { useDocLabels, useReasonTexts, useReasonTitles } from "@/lib/pipeline/labels";
 import ReceiptDocument from "./ReceiptDocument";
 import s from "./pipeline.module.css";
 
@@ -30,6 +30,7 @@ export default function PrepareStep() {
   } = useApp();
 
   const reasonText = useReasonTexts();
+  const reasonTitle = useReasonTitles();
   const docLabels = useDocLabels();
   const [proof, setProof] = useState<DeletionProof | null>(null);
   const [showRaw, setShowRaw] = useState(false);
@@ -118,7 +119,7 @@ export default function PrepareStep() {
               <ul className={s.reasonList}>
                 {readiness.reasons.map((r, i) => (
                   <li key={`${r.code}-${i}`} className={r.blocking ? `${s.reason} ${s.reasonBlocking}` : s.reason}>
-                    <span className={s.reasonCode}>{r.code}</span>
+                    <span className={s.reasonCode}>{reasonTitle[r.code]}</span>
                     <span>
                       {reasonText[r.code]}
                       {r.detail && r.code === "MISSING_REQUIRED_DOCUMENT"

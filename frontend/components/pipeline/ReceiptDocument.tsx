@@ -14,7 +14,7 @@ import { useCopy, fmt } from "@/lib/pipeline/copy";
 import { useI18n } from "@/lib/i18n";
 import { formatMoneyCents, compareToThreshold, thresholdCentsForSize } from "@/lib/pipeline/calc";
 import { MTSP_2026 } from "@/lib/data/mtsp2026";
-import { useDocLabels, useFieldLabel, useReasonTexts } from "@/lib/pipeline/labels";
+import { useDocLabels, useFieldLabel, useReasonTexts, useReasonTitles } from "@/lib/pipeline/labels";
 import s from "./pipeline.module.css";
 import r from "./receipt.module.css";
 
@@ -127,6 +127,7 @@ export default function ReceiptDocument() {
   } = useApp();
   const docLabels = useDocLabels();
   const reasonTexts = useReasonTexts();
+  const reasonTitles = useReasonTitles();
   const fieldLabel = useFieldLabel();
 
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -351,10 +352,11 @@ export default function ReceiptDocument() {
                 <ul className={r.reasonNotes}>
                   {readiness.reasons.map((reason, i) => (
                     <li key={`${reason.code}-${i}`} className={r.note}>
-                      <strong>{reason.code}</strong> — {reasonTexts[reason.code]}
+                      <strong>{reasonTitles[reason.code]}</strong> — {reasonTexts[reason.code]}
                       {reason.detail && reason.code === "MISSING_REQUIRED_DOCUMENT"
                         ? ` (${docLabels[reason.detail as DocumentType] ?? reason.detail})`
-                        : ""}
+                        : ""}{" "}
+                      <span className={r.codeRef}>{reason.code}</span>
                     </li>
                   ))}
                 </ul>
