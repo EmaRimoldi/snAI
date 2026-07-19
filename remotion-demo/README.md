@@ -13,6 +13,8 @@ The video recreates the site's design system (cream `#faf6ef` background, terrac
 | 22–27s | Cited Q&A ("Does overtime pay count toward my income?") + **Ready to apply** verdict |
 | 27–30s | Outro — lockup, URL, "it never decides eligibility" |
 
+A pre-rendered copy is included at [`realdoor-demo.mp4`](./realdoor-demo.mp4).
+
 ## Usage
 
 ```bash
