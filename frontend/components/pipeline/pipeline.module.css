@@ -937,12 +937,17 @@ button.reviewerTab:hover,
 /* Field review */
 .reviewGrid {
   display: grid;
-  grid-template-columns: minmax(16rem, 0.72fr) minmax(34rem, 1.55fr);
+  /* The viewer column can shrink to zero — the PDF scrolls inside its own
+     box, so a 721–800px viewport no longer overflows horizontally. */
+  grid-template-columns: minmax(16rem, 0.72fr) minmax(0, 1.55fr);
   gap: 1.5rem;
   /* Children may hold oversized canvases — never let them stretch the tracks. */
   min-width: 0;
   align-items: start;
 }
+/* Grid items default to min-width:auto — without this, a wide PDF canvas
+   forces the track (and the page) past the viewport on phones. */
+.reviewGrid > * { min-width: 0; }
 .fieldNavBar {
   display: flex;
   align-items: center;
@@ -1076,19 +1081,33 @@ button.reviewerTab:hover,
 
 .statusRow {
   display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem;
-  margin: 0.25rem 0 0.5rem;
 }
 
 /* Prepare: controls rail on the left, the big document preview on the right
-   (~half the screen, like a PDF pane). Collapses to one column below 960px. */
+   (~half the screen, like a PDF pane). Collapses to one column below 960px.
+   Vertical rhythm in the rail comes from the flex gap, not per-element margins. */
 .prepareGrid {
   display: grid;
   grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
-  gap: 1.75rem;
+  gap: clamp(1.5rem, 3vw, 2.75rem);
   align-items: start;
+  margin-top: 0.5rem;
 }
-.prepareControls { min-width: 0; }
+.prepareControls {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.15rem;
+}
+.prepareControls > * { margin: 0; }
 .prepareDoc { min-width: 0; }
+.railGroup { display: grid; gap: 0.6rem; }
+.railGroup .reasonList { margin: 0; }
+.railHeading { margin: 0; font-size: 1rem; }
+.railActions { display: flex; flex-direction: column; align-items: stretch; gap: 0.6rem; }
+.railActions > button { width: 100%; }
+.deleteZone { border-top: 1px solid var(--input); padding-top: 1.15rem; }
+.deleteZone .actions { margin-top: 0; }
 @media (min-width: 961px) {
   /* keep the controls in view while the long document scrolls (site header is sticky) */
   .prepareControls { position: sticky; top: 5.5rem; }

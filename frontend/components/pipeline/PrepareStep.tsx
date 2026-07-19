@@ -1,53 +1,28 @@
 "use client";
 
-// Prepare: one simple surface. Readiness status + lock at the top, a single
-// visible actions row (save PDF / download packet / edit / raw data), then the
-// SAMPLE receipt document itself; delete-with-confirm sits last, out of the
-// happy path. Readiness describes the file (READY_TO_REVIEW / NEEDS_REVIEW) —
-// never eligibility.
+// Prepare: one simple surface. The rail on the left holds guidance, readiness
+// status + lock, reasons, and the two actions (save PDF / edit); the SAMPLE
+// receipt document fills the right pane; delete-with-confirm sits last, out of
+// the happy path. Readiness describes the file (READY_TO_REVIEW / NEEDS_REVIEW)
+// — never eligibility.
 
 import { useState } from "react";
 import { useApp } from "@/lib/pipeline/state";
-import type { DocumentType } from "@/lib/pipeline/types";
-import { useCopy, fmt } from "@/lib/pipeline/copy";
+import { useCopy } from "@/lib/pipeline/copy";
 import { humanize, useDocLabels, useReasonTexts, useReasonTitles } from "@/lib/pipeline/labels";
 import ReceiptDocument from "./ReceiptDocument";
 import s from "./pipeline.module.css";
 
 export default function PrepareStep() {
   const c = useCopy();
-  const {
-    documents,
-    readiness,
-    locked,
-    lock,
-    unlock,
-    deleteSession,
-    buildSubmission,
-    goToStep,
-    applicationId,
-  } = useApp();
+  const { documents, readiness, locked, lock, unlock, deleteSession, goToStep } = useApp();
 
   const reasonText = useReasonTexts();
   const reasonTitle = useReasonTitles();
   const docLabels = useDocLabels();
-  const [showRaw, setShowRaw] = useState(false);
   const [confirmingDelete, setConfirmingDelete] = useState(false);
 
-  const submission = buildSubmission();
   const isReady = readiness.status === "READY_TO_REVIEW";
-
-  const download = () => {
-    const blob = new Blob([JSON.stringify(submission, null, 2)], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `realdoor-${applicationId}.json`;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    URL.revokeObjectURL(url);
-  };
 
   // The proof itself is stored in the provider and rendered by PipelineApp —
   // deleteSession navigates back to Profile, which unmounts this component.
@@ -97,8 +72,8 @@ export default function PrepareStep() {
           </div>
           {locked && <p className={s.hint}>{c.lockedNote}</p>}
           {readiness.reasons.length > 0 && (
-            <>
-              <h3 style={{ margin: "1rem 0 0", fontSize: "1rem" }}>{c.reasonsTitle}</h3>
+            <div className={s.railGroup}>
+              <h3 className={s.railHeading}>{c.reasonsTitle}</h3>
               <ul className={s.reasonList}>
                 {readiness.reasons.map((r, i) => (
                   <li key={`${r.code}-${i}`} className={r.blocking ? `${s.reason} ${s.reasonBlocking}` : s.reason}>
@@ -112,44 +87,22 @@ export default function PrepareStep() {
                   </li>
                 ))}
               </ul>
-            </>
+            </div>
           )}
 
-          <div className={s.actions}>
+          <div className={s.railActions}>
             <button type="button" className="primary-button" onClick={() => window.print()}>
               {c.receiptPrint}
-            </button>
-            <button type="button" className="secondary-button" onClick={download}>
-              {c.downloadBtn}
             </button>
             <button type="button" className="secondary-button" onClick={() => goToStep("profile")}>
               {c.editBtn}
             </button>
-            <button
-              type="button"
-              className="secondary-button"
-              onClick={() => setShowRaw((v) => !v)}
-              aria-expanded={showRaw}
-              aria-controls="receipt-raw"
-            >
-              {showRaw ? c.rawHide : c.rawShow}
-            </button>
           </div>
-          {showRaw && (
-            <pre
-              id="receipt-raw"
-              className={s.formula}
-              style={{ marginTop: "1rem", whiteSpace: "pre-wrap", overflowX: "auto" }}
-              aria-label="submission.json"
-            >
-              {JSON.stringify(submission, null, 2)}
-            </pre>
-          )}
 
           {/* Delete — destructive, out of the happy path */}
-          <div style={{ marginTop: "1.25rem", borderTop: "1px solid var(--input)", paddingTop: "1rem" }}>
+          <div className={s.deleteZone}>
             {confirmingDelete ? (
-              <div className={s.actions} style={{ marginTop: 0 }}>
+              <div className={s.actions}>
                 <span className={s.hint}>{c.deleteConfirm}</span>
                 <button type="button" className="primary-button" onClick={doDelete}>
                   {c.deleteBtn}

@@ -196,6 +196,16 @@ only the localized title, the receipt shows the localized title with the raw cod
 muted `.codeRef` (kept on the artifact — organizer evidence vocabulary; `submission.json` codes
 unchanged). Verified in ES via a triggered PAY_STUB_TOTAL_CONFLICT.
 
+**Prepare rail trimmed + spacing pass (user-directed, same day):** removed "Download packet" and
+the "View raw data" toggle from Prepare (the JSON export UI is gone; `buildSubmission`/codes remain
+intact in state for the organizer schema — copy keys left dormant in copy.ts in case it returns).
+Rail spacing reworked: `.prepareControls` is now a flex column with a uniform 1.15rem gap (child
+margins zeroed — rhythm from the gap, not ad-hoc margins); reasons grouped under `.railGroup`;
+actions are full-width stacked buttons (`.railActions` — Save PDF primary, Edit secondary); delete
+in a bordered `.deleteZone`; grid gap now fluid `clamp(1.5rem, 3vw, 2.75rem)`; inline styles
+removed from PrepareStep. Also repaired a corrupted CSS comment opener before `.prepareGrid`
+(was already re-fixed upstream). Verified at 1440/375, tsc clean.
+
 **Known quirk (pre-existing, unchanged):** the DeletionProof panel in PrepareStep is unreachable —
 `deleteSession()` navigates back to Profile, unmounting PrepareStep before the proof renders. Also
 pre-existing: ProfileStep's correction input still lacks the numeric guard (same crash path), and
