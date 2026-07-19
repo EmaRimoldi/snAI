@@ -1,5 +1,17 @@
 # BUILDLOG
 
+## 2026-07-19 — Discover map fits the viewport on every screen
+
+**Shipped (user-directed):** the Discover shell no longer uses a fixed `min-height:
+clamp(36rem, 74vh, 52rem)` (which overflowed any laptop under ~1000px tall). Desktop now sizes the
+map+detail shell to the viewport that remains under the header/title/filters
+(`height: calc(100dvh - 20.5rem)` with a 24rem floor and 52rem cap — offset measured, not guessed;
+`vh` fallback for older browsers), and the property-detail column scrolls internally
+(`overflow-y: auto; min-height: 0`). Stacked ≤1080px: shell flows naturally and the map takes
+`clamp(18rem, 48dvh, 32rem)`; ≤720px phones: `clamp(16rem, 45dvh, 28rem)`. Verified: full map + all
+pins visible without scrolling at 1920×1080 / 1440×900 / 1366×768; tablet and phone stack with the
+map at ~half the viewport. Only `discovery.module.css` touched.
+
 ## 2026-07-19 — Bounded AI assistant for Understand
 
 **Shipped locally on branch `AI`:**

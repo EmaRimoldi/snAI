@@ -84,9 +84,16 @@
   background: color-mix(in srgb, var(--secondary) 60%, transparent);
 }
 
+/* Fit the map + detail shell inside the viewport that remains under the sticky
+   header, title, and filters (~20.5rem of chrome) — no page scroll needed to
+   see the whole map. Floor keeps it usable on short screens; cap keeps it from
+   feeling empty on tall ones. The detail column scrolls internally instead. */
 .discoverShell {
   display: grid;
-  min-height: clamp(36rem, 74vh, 52rem);
+  min-height: 24rem;
+  height: calc(100vh - 20.5rem);
+  height: calc(100dvh - 20.5rem);
+  max-height: 52rem;
   overflow: hidden;
   grid-template-columns: minmax(0, 1fr) minmax(22rem, 25rem);
   border: 1px solid var(--input);
@@ -104,7 +111,7 @@
 
 .discoverMap {
   position: relative;
-  min-height: clamp(36rem, 74vh, 52rem);
+  min-height: 0; /* fill the shell row, never force it taller */
   overflow: hidden;
   background: #eee8dc;
 }
@@ -226,6 +233,8 @@
   display: grid;
   align-content: start;
   gap: 1rem;
+  min-height: 0;
+  overflow-y: auto; /* long detail content scrolls inside the fixed-height shell */
   border-left: 1px solid var(--input);
   background: #ffffff;
   padding: 1.25rem;
@@ -371,11 +380,21 @@
 }
 
 @media (max-width: 1080px) {
+  /* Stacked: the shell flows naturally (map above, detail below); the map alone
+     takes about half the viewport so both stay reachable. */
   .discoverShell {
     grid-template-columns: 1fr;
+    height: auto;
+    max-height: none;
+    min-height: 0;
+  }
+
+  .discoverMap {
+    height: clamp(18rem, 48dvh, 32rem);
   }
 
   .propertyDetail {
+    overflow-y: visible;
     border-top: 1px solid var(--input);
     border-left: 0;
   }
@@ -395,6 +414,6 @@
   }
 
   .discoverMap {
-    min-height: 32rem;
+    height: clamp(16rem, 45dvh, 28rem);
   }
 }
