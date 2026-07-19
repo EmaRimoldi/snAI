@@ -8,9 +8,9 @@ session. Read it before writing code. For visual/interaction design, see
 
 ## ⛔ THE RED LINE — read this first
 
-**RealDoor must NEVER decide or imply eligibility, approval, denial, a score, a rank, priority, or
-property availability.** This is the instant-disqualification line for the challenge and it is
-enforced by tests.
+**RealDoor must NEVER decide or imply eligibility, approval, denial, a score, a rank, priority, or a
+property's status (availability, rent, or an open waitlist).** This is the instant-disqualification
+line for the challenge and it is enforced by tests.
 
 - The product only ever: extracts evidence, does deterministic math, compares to a published
   threshold, reports **document** readiness, and hands off to a human.
@@ -58,7 +58,7 @@ renter-controlled readiness packet — **without deciding eligibility**.
 
 ---
 
-## 2A. Product flow — the renter journey (UPLOAD → REVIEW → CONFIRM)
+## 2A. Product flow — the renter journey (PROFILE → UNDERSTAND → PREPARE)
 
 The UI is a **strict three-phase pipeline** over a single application record — **one applicant = one
 application record**, built entirely from uploaded documents. Progress is tracked **per phase**. This
@@ -75,19 +75,17 @@ These are **readiness / accuracy / completeness signals only — never an eligib
 line). Everything is **reactive**: any data change immediately propagates to Status, Gross Income,
 Errors, and the required-documents checklist.
 
-1. **UPLOAD** — the renter uploads documents (ID, pay stubs, benefit letters, …). Each file is
-   auto-classified against a required-documents checklist that live-updates into **uploaded** vs
-   **still missing (even if required)**. Missing items **never hard-block** progress; they persist as
-   errors until resolved.
-2. **REVIEW** — the AI extracts structured fields; the renter validates them **one at a time**
-   (prev / next navigation). Each field shows: the **source-document preview with the exact region
-   highlighted**, a **confidence score**, and a **plain-language explanation** of what it is and why
-   it's needed. Three actions per field: **confirm** it's true, **correct** it (a typed value
-   overrides the extraction), or **ask the assistant**. Every confirm/correct updates the record and
-   recomputes Gross Income + Errors.
-3. **CONFIRM** — a single summary listing all collected information. The renter either **confirms**
-   (application locked as *ready to review* — about the **file**, per §6, not about eligibility) or
-   goes back to fix things.
+1. **PROFILE** — the renter uploads synthetic PDFs. Each file is auto-classified against a
+   required-documents checklist (**uploaded** vs **still missing**; missing items **never hard-block**).
+   The AI extracts **only allowlisted fields**; the renter validates them **one at a time**, each shown
+   with its **document, page, bounding box, and confidence**, and **confirms or corrects** every value.
+   **Only confirmed values** are used downstream. Injected/untrusted text is **quarantined**, never a field.
+2. **UNDERSTAND** — **annualize income** with deterministic formulas, look up the correct **MTSP 2026
+   threshold**, and show the **formula, threshold, effective date, and sources**. Answer **rules
+   questions with citations** from the frozen corpus (abstain out of corpus; refuse decision requests).
+3. **PREPARE** — flag **missing / expired / inconsistent** documents, return **only
+   `READY_TO_REVIEW` or `NEEDS_REVIEW`** (about the **file**, per §6, never eligibility), and let the
+   renter **edit, preview, download** (download-only), and **delete the session**.
 
 **Cross-cutting:**
 - A minimal **entry point** explains how RealDoor works in **3 short steps**, then starts the flow.
@@ -256,7 +254,10 @@ The end-to-end results the app must reproduce **exactly**. Derive correctness fr
   never improvise a decision.
 - **Never-strings lint:** banned decision/approval/eligibility language app-wide (UI, logs, exports,
   model output). Add a test for it.
-- **Event log stores ids + event types only** — **never** document text or field values.
+- **Event log records consent, actions, and the rules-corpus version** — but **ids + event types
+  only**, **never** document text or field values.
+- **Session isolation:** never reveal prompts, secrets, or **another session's data**; a session sees
+  only its own documents, fields, and errors.
 - **Deletion really deletes** (DB rows *and* files) and returns a **before/after proof** object;
   the session 404s afterward.
 - **Never infer** protected characteristics, immigration status, disability, health, or family
