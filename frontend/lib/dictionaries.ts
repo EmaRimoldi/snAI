@@ -50,6 +50,17 @@ const en = {
       "Nothing is decided without you",
     ],
   },
+  aiChat: {
+    openLabel: "Open RealDoor assistant",
+    closeLabel: "Close assistant",
+    title: "RealDoor assistant",
+    placeholder: "How can I help you?",
+    sendLabel: "Send message",
+    empty: "Ask about the rules, your confirmed values, or what your file still needs.",
+    thinking: "Checking trusted sources…",
+    privacy: "Do not type names, addresses, or other personal details. Files and raw document text are never sent to the assistant.",
+    fallback: "The live assistant was unavailable, so RealDoor used its local frozen-rule fallback.",
+  },
   phases: {
     ariaLabel: "How RealDoor helps",
     profile: {
@@ -119,6 +130,17 @@ const es: Dictionary = {
       "Nada se decide sin ti",
     ],
   },
+  aiChat: {
+    openLabel: "Abrir el asistente de RealDoor",
+    closeLabel: "Cerrar el asistente",
+    title: "Asistente de RealDoor",
+    placeholder: "¿Cómo puedo ayudarte?",
+    sendLabel: "Enviar mensaje",
+    empty: "Pregunta sobre las reglas, tus valores confirmados o lo que todavía falta en tu expediente.",
+    thinking: "Consultando fuentes confiables…",
+    privacy: "No escribas nombres, direcciones ni otros datos personales. Los archivos y el texto original nunca se envían al asistente.",
+    fallback: "El asistente en vivo no estaba disponible; RealDoor usó las reglas congeladas locales.",
+  },
   phases: {
     ariaLabel: "Cómo ayuda RealDoor",
     profile: {
@@ -185,6 +207,17 @@ const zh: Dictionary = {
       "一步一步来",
       "没有您的确认，什么都不会决定",
     ],
+  },
+  aiChat: {
+    openLabel: "打开 RealDoor 助手",
+    closeLabel: "关闭助手",
+    title: "RealDoor 助手",
+    placeholder: "我能为您做些什么？",
+    sendLabel: "发送消息",
+    empty: "您可以询问规则、已确认的数值，或材料中仍缺少什么。",
+    thinking: "正在核对可信来源…",
+    privacy: "请勿输入姓名、地址或其他个人信息。文件和原始文档文字绝不会发送给助手。",
+    fallback: "实时助手暂时不可用，RealDoor 已改用本地冻结规则。",
   },
   phases: {
     ariaLabel: "RealDoor 如何帮助您",
@@ -253,6 +286,17 @@ const tl: Dictionary = {
       "Walang pinagpapasyahan nang wala ka",
     ],
   },
+  aiChat: {
+    openLabel: "Buksan ang RealDoor assistant",
+    closeLabel: "Isara ang assistant",
+    title: "RealDoor assistant",
+    placeholder: "Paano kita matutulungan?",
+    sendLabel: "Ipadala ang mensahe",
+    empty: "Magtanong tungkol sa mga patakaran, kumpirmadong halaga, o kung ano pa ang kulang sa file.",
+    thinking: "Sinusuri ang mga mapagkakatiwalaang sanggunian…",
+    privacy: "Huwag mag-type ng pangalan, address, o ibang personal na detalye. Hindi ipinapadala sa assistant ang mga file o hilaw na teksto.",
+    fallback: "Hindi available ang live assistant, kaya ginamit ng RealDoor ang lokal na frozen-rule fallback.",
+  },
   phases: {
     ariaLabel: "Paano tumutulong ang RealDoor",
     profile: {
@@ -319,6 +363,17 @@ const vi: Dictionary = {
       "Từng bước một",
       "Không có gì được quyết định nếu thiếu bạn",
     ],
+  },
+  aiChat: {
+    openLabel: "Mở trợ lý RealDoor",
+    closeLabel: "Đóng trợ lý",
+    title: "Trợ lý RealDoor",
+    placeholder: "Tôi có thể giúp gì cho bạn?",
+    sendLabel: "Gửi tin nhắn",
+    empty: "Hãy hỏi về quy định, các giá trị đã xác nhận hoặc hồ sơ còn thiếu gì.",
+    thinking: "Đang kiểm tra các nguồn đáng tin cậy…",
+    privacy: "Không nhập tên, địa chỉ hoặc thông tin cá nhân khác. Tệp và văn bản gốc không bao giờ được gửi cho trợ lý.",
+    fallback: "Trợ lý trực tiếp không khả dụng nên RealDoor đã dùng bộ quy tắc cục bộ đã đóng băng.",
   },
   phases: {
     ariaLabel: "RealDoor giúp bạn như thế nào",

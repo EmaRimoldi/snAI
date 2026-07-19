@@ -12,6 +12,7 @@ import Stepper from "./Stepper";
 import ProfileStep from "./ProfileStep";
 import UnderstandStep from "./UnderstandStep";
 import PrepareStep from "./PrepareStep";
+import AiChatWidget from "@/components/ai/AiChatWidget";
 import s from "./pipeline.module.css";
 
 type Props = { headingRef?: RefObject<HTMLHeadingElement | null>; headingId?: string };
@@ -43,6 +44,7 @@ export default function PipelineApp({ headingRef, headingId }: Props) {
   return (
     <AppStateProvider>
       <PipelineInner headingRef={headingRef} headingId={headingId} />
+      <AiChatWidget />
     </AppStateProvider>
   );
 }

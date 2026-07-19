@@ -4,9 +4,10 @@
 // formula/effective-date/sources, and rules Q&A answered only from the frozen corpus
 // (with citations) — refusing decision requests, abstaining out of corpus.
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useApp } from "@/lib/pipeline/state";
-import { useCopy, fmt } from "@/lib/pipeline/copy";
+import { useCopy } from "@/lib/pipeline/copy";
+import { useI18n } from "@/lib/i18n";
 import {
   FREQUENCY,
   annualizeCents,
@@ -16,22 +17,44 @@ import {
   thresholdCentsForSize,
 } from "@/lib/pipeline/calc";
 import { MTSP_2026, thresholdForSize } from "@/lib/data/mtsp2026";
-import { answerRulesQuestion, AUTHORITY_LABEL, SAMPLE_QUESTIONS } from "@/lib/pipeline/rules";
-import type { RulesAnswer } from "@/lib/pipeline/rules";
-import type { Rule } from "@/lib/data/ruleCorpus";
+import { SAMPLE_QUESTIONS } from "@/lib/pipeline/rules";
+import { askRealDoor } from "@/lib/ai/client";
+import { buildSafeUnderstandingContext } from "@/lib/ai/context";
+import { localRulesFallback } from "@/lib/ai/fallback";
+import type { AiChatResponse } from "@/lib/ai/types";
+import AiAnswer from "@/components/ai/AiAnswer";
 import s from "./pipeline.module.css";
-
-function badgeClass(authority: Rule["authority"]): string {
-  if (authority === "official_hud") return `${s.badge} ${s.badgeHud}`;
-  if (authority === "official_federal") return `${s.badge} ${s.badgeFederal}`;
-  return `${s.badge} ${s.badgeConvention}`;
-}
 
 export default function UnderstandStep() {
   const c = useCopy();
-  const { fields, householdSize, householdSizeConfirmed, grossIncomeCents, goToStep } = useApp();
+  const { language } = useI18n();
+  const {
+    documents,
+    fields,
+    householdSize,
+    householdSizeConfirmed,
+    grossIncomeCents,
+    missingRequired,
+    readiness,
+    goToStep,
+  } = useApp();
   const [query, setQuery] = useState("");
-  const [answer, setAnswer] = useState<RulesAnswer | null>(null);
+  const [answer, setAnswer] = useState<AiChatResponse | null>(null);
+  const [asking, setAsking] = useState(false);
+  const [askError, setAskError] = useState<string | null>(null);
+
+  const aiContext = useMemo(
+    () => buildSafeUnderstandingContext({
+      documents,
+      fields,
+      householdSize,
+      householdSizeConfirmed,
+      grossIncomeCents,
+      missingRequired,
+      readiness,
+    }),
+    [documents, fields, householdSize, householdSizeConfirmed, grossIncomeCents, missingRequired, readiness],
+  );
 
   const incomeFields = fields.filter(
     (f) => f.isIncome && f.reviewStatus !== "extracted",
@@ -41,9 +64,25 @@ export default function UnderstandStep() {
   const cmpText =
     comparison === "below_or_equal" ? c.cmpBelow : comparison === "above" ? c.cmpAbove : c.cmpNone;
 
-  const runAsk = (q: string) => {
-    setQuery(q);
-    setAnswer(answerRulesQuestion(q));
+  const runAsk = async (q: string) => {
+    const question = q.trim();
+    if (!question || asking) return;
+    setQuery(question);
+    setAsking(true);
+    setAskError(null);
+    try {
+      setAnswer(await askRealDoor({
+        mode: "personalized",
+        locale: language,
+        question,
+        context: aiContext,
+      }));
+    } catch {
+      setAnswer(localRulesFallback(question));
+      setAskError(c.aiFallback);
+    } finally {
+      setAsking(false);
+    }
   };
 
   return (
@@ -118,7 +157,7 @@ export default function UnderstandStep() {
           className={s.qaForm}
           onSubmit={(e) => {
             e.preventDefault();
-            if (query.trim()) setAnswer(answerRulesQuestion(query));
+            void runAsk(query);
           }}
         >
           <label className="visually-hidden" htmlFor="rules-q">
@@ -131,56 +170,23 @@ export default function UnderstandStep() {
             placeholder={c.askPlaceholder}
             onChange={(e) => setQuery(e.target.value)}
           />
-          <button type="submit" className="primary-button">
-            {c.ask}
+          <button type="submit" className="primary-button" disabled={asking || !query.trim()}>
+            {asking ? c.aiThinking : c.ask}
           </button>
         </form>
 
         <div className={s.sampleRow}>
           <span className={s.hint}>{c.tryAsking}:</span>
           {SAMPLE_QUESTIONS.map((q) => (
-            <button key={q} type="button" className={s.sampleChip} onClick={() => runAsk(q)}>
+            <button key={q} type="button" className={s.sampleChip} onClick={() => void runAsk(q)} disabled={asking}>
               {q}
             </button>
           ))}
         </div>
 
-        {answer && (
-          <div className={s.qaAnswer} aria-live="polite">
-            {answer.kind === "refusal" && <p>{c.refusal}</p>}
-            {answer.kind === "abstain" && <p>{c.abstain}</p>}
-            {answer.kind === "answer" && (
-              <>
-                <p>
-                  <strong>{c.answerIntro}</strong>
-                </p>
-                {answer.rules.map((r) => (
-                  <div key={r.ruleId} className={s.citation}>
-                    <div className={s.citationHead}>
-                      <span className={s.ruleId}>{r.ruleId}</span>
-                      <span className={badgeClass(r.authority)}>{AUTHORITY_LABEL[r.authority]}</span>
-                      {r.effectiveDate && (
-                        <span className={s.hint} style={{ fontSize: "0.8rem" }}>
-                          {c.effective} {r.effectiveDate}
-                        </span>
-                      )}
-                    </div>
-                    <p style={{ margin: 0 }}>{r.text}</p>
-                    <a
-                      className={s.docLink}
-                      href={r.sourceUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      style={{ display: "inline-block", marginTop: "0.4rem" }}
-                    >
-                      {r.sourceLocator} ↗
-                    </a>
-                  </div>
-                ))}
-              </>
-            )}
-          </div>
-        )}
+        <p className={s.aiPrivacy}>{c.aiPrivacy}</p>
+        {askError && <p className={s.aiNotice} role="status">{askError}</p>}
+        {answer && <AiAnswer response={answer} documents={documents} />}
       </section>
 
       <div className={s.actions}>
