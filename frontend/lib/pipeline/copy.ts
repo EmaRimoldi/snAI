@@ -12,6 +12,7 @@ import type { Language } from "@/lib/dictionaries";
 const en = {
   appTitle: "Your application",
   appSubtitle: "RealDoor prepares and checks your paperwork. It never decides eligibility.",
+  getStarted: "Get started",
   step1: "Profile",
   step2: "Understand",
   step3: "Prepare",
@@ -123,6 +124,7 @@ export type Copy = typeof en;
 const es: Partial<Copy> = {
   appTitle: "Tu solicitud",
   appSubtitle: "RealDoor prepara y revisa tus documentos. Nunca decide la elegibilidad.",
+  getStarted: "Empezar",
   step1: "Perfil", step2: "Entender", step3: "Preparar",
   back: "Atrás", next: "Siguiente", continue: "Continuar",
   statusLabel: "Estado", incomeLabel: "Ingreso bruto", errorsLabel: "Errores",
@@ -147,6 +149,7 @@ const es: Partial<Copy> = {
 const zh: Partial<Copy> = {
   appTitle: "您的申请",
   appSubtitle: "RealDoor 帮您准备并核对材料，绝不判定资格。",
+  getStarted: "开始",
   step1: "个人资料", step2: "了解", step3: "准备",
   back: "返回", next: "下一步", continue: "继续",
   statusLabel: "状态", incomeLabel: "总收入", errorsLabel: "错误",
@@ -170,6 +173,7 @@ const zh: Partial<Copy> = {
 const tl: Partial<Copy> = {
   appTitle: "Ang iyong aplikasyon",
   appSubtitle: "Inihahanda at sinusuri ng RealDoor ang iyong mga papeles. Hindi ito nagpapasya ng eligibility.",
+  getStarted: "Magsimula",
   step1: "Profile", step2: "Unawain", step3: "Maghanda",
   back: "Bumalik", next: "Susunod", continue: "Magpatuloy",
   statusLabel: "Katayuan", incomeLabel: "Kabuuang kita", errorsLabel: "Mga error",
@@ -193,6 +197,7 @@ const tl: Partial<Copy> = {
 const vi: Partial<Copy> = {
   appTitle: "Hồ sơ của bạn",
   appSubtitle: "RealDoor chuẩn bị và kiểm tra giấy tờ của bạn. Không bao giờ quyết định điều kiện.",
+  getStarted: "Bắt đầu",
   step1: "Hồ sơ", step2: "Tìm hiểu", step3: "Chuẩn bị",
   back: "Quay lại", next: "Tiếp theo", continue: "Tiếp tục",
   statusLabel: "Trạng thái", incomeLabel: "Tổng thu nhập", errorsLabel: "Lỗi",

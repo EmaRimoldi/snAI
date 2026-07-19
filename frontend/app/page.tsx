@@ -1,13 +1,10 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import type { Session } from "@supabase/supabase-js";
 import { I18nProvider, useI18n } from "@/lib/i18n";
-import { supabase } from "@/lib/supabase";
+import { useCopy } from "@/lib/pipeline/copy";
 import SiteHeader from "@/components/SiteHeader";
-import PromptShell from "@/components/PromptShell";
 import PhaseCards from "@/components/PhaseCards";
-import LoginView from "@/components/LoginView";
 import PipelineApp from "@/components/pipeline/PipelineApp";
 
 export default function Page() {
@@ -18,59 +15,37 @@ export default function Page() {
   );
 }
 
-type View = "landing" | "login";
+type View = "landing" | "app";
 
 function RealDoorApp() {
   const { language, t } = useI18n();
+  const c = useCopy();
   const [view, setView] = useState<View>("landing");
-  const [session, setSession] = useState<Session | null>(null);
-  const [status, setStatus] = useState("");
 
   const heroHeadingRef = useRef<HTMLHeadingElement>(null);
-  const loginHeadingRef = useRef<HTMLHeadingElement>(null);
-  const pendingFocusRef = useRef<"hero" | "login" | null>(null);
-
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => setSession(data.session));
-  }, []);
+  const appHeadingRef = useRef<HTMLHeadingElement>(null);
+  const pendingFocusRef = useRef<"hero" | "app" | null>(null);
 
   useEffect(() => {
     document.documentElement.lang = language;
-    document.title = t(view === "login" ? "titles.login" : "titles.landing");
-  }, [language, view, t]);
+    document.title = t("titles.landing");
+  }, [language, t]);
 
-  // Move focus after the requested view has rendered.
+  // Move focus to the destination view's heading after it renders.
   useEffect(() => {
     if (pendingFocusRef.current === "hero") heroHeadingRef.current?.focus();
-    if (pendingFocusRef.current === "login") loginHeadingRef.current?.focus();
+    if (pendingFocusRef.current === "app") appHeadingRef.current?.focus();
     pendingFocusRef.current = null;
   }, [view]);
 
-  const showLanding = (moveFocus: boolean) => {
-    pendingFocusRef.current = moveFocus ? "hero" : null;
-    setView("landing");
-  };
-
-  const showLogin = () => {
-    pendingFocusRef.current = "login";
-    setView("login");
-  };
-
-  const handleSignedIn = (newSession: Session) => {
-    setSession(newSession);
+  const showLanding = () => {
     pendingFocusRef.current = "hero";
     setView("landing");
-    setStatus(t("login.signedIn"));
   };
 
-  const handleSignOut = async () => {
-    await supabase.auth.signOut();
-    setSession(null);
-    setView("landing");
-    setStatus(t("login.signedOut"));
-    // The landing view is already rendered when signing out, so the
-    // view-change effect won't fire — focus the hero directly.
-    heroHeadingRef.current?.focus();
+  const showApp = () => {
+    pendingFocusRef.current = "app";
+    setView("app");
   };
 
   return (
@@ -79,13 +54,7 @@ function RealDoorApp() {
         {t("accessibility.skip")}
       </a>
 
-      <SiteHeader
-        view={view}
-        session={session}
-        onShowLanding={showLanding}
-        onShowLogin={showLogin}
-        onSignOut={handleSignOut}
-      />
+      <SiteHeader onHome={showLanding} />
 
       <main id="main" className="site-main">
         <section
@@ -94,34 +63,24 @@ function RealDoorApp() {
           aria-labelledby="hero-heading"
           hidden={view !== "landing"}
         >
-          {session ? (
-            <PipelineApp headingRef={heroHeadingRef} headingId="hero-heading" />
-          ) : (
-            <>
-              <div id="top" className="hero-section">
-                <h1 id="hero-heading" className="hero-heading" ref={heroHeadingRef} tabIndex={-1}>
-                  {t("hero.headline")}
-                </h1>
-                <p className="hero-subheadline">{t("hero.subheadline")}</p>
-              </div>
+          <div id="top" className="hero-section">
+            <h1 id="hero-heading" className="hero-heading" ref={heroHeadingRef} tabIndex={-1}>
+              {t("hero.headline")}
+            </h1>
+            <p className="hero-subheadline">{t("hero.subheadline")}</p>
+            <div style={{ marginTop: "1.75rem" }}>
+              <button type="button" className="primary-button" onClick={showApp}>
+                {c.getStarted}
+              </button>
+            </div>
+          </div>
 
-              <PromptShell />
-              <PhaseCards />
-            </>
-          )}
+          <PhaseCards />
         </section>
 
-        <LoginView
-          hidden={view !== "login"}
-          headingRef={loginHeadingRef}
-          announce={setStatus}
-          onBack={() => showLanding(true)}
-          onSignedIn={handleSignedIn}
-        />
-
-        <p id="status" role="status" aria-live="polite" className="visually-hidden">
-          {status}
-        </p>
+        <section id="view-app" aria-label={c.appTitle} hidden={view !== "app"}>
+          <PipelineApp headingRef={appHeadingRef} />
+        </section>
       </main>
     </>
   );

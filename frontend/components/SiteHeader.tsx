@@ -1,7 +1,5 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import type { Session } from "@supabase/supabase-js";
 import { SUPPORTED_LANGUAGES, useI18n } from "@/lib/i18n";
 import type { Language } from "@/lib/i18n";
 
@@ -12,56 +10,11 @@ function isLanguage(value: string): value is Language {
 }
 
 type SiteHeaderProps = {
-  view: "landing" | "login";
-  session: Session | null;
-  onShowLanding: (moveFocus: boolean) => void;
-  onShowLogin: () => void;
-  onSignOut: () => void;
+  onHome: () => void;
 };
 
-export default function SiteHeader({
-  view,
-  session,
-  onShowLanding,
-  onShowLogin,
-  onSignOut,
-}: SiteHeaderProps) {
+export default function SiteHeader({ onHome }: SiteHeaderProps) {
   const { language, setLanguage, t } = useI18n();
-  const [panelOpen, setPanelOpen] = useState(false);
-  const panelRef = useRef<HTMLDivElement>(null);
-  const accountBtnRef = useRef<HTMLButtonElement>(null);
-
-  const showLoginLink = view === "landing" && !session;
-  const showAccountButton = view === "landing" && Boolean(session);
-
-  useEffect(() => {
-    if (!panelOpen) return;
-
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        setPanelOpen(false);
-        accountBtnRef.current?.focus();
-      }
-    };
-    const onClick = (event: MouseEvent) => {
-      const target = event.target as Node;
-      if (!panelRef.current?.contains(target) && !accountBtnRef.current?.contains(target)) {
-        setPanelOpen(false);
-      }
-    };
-
-    document.addEventListener("keydown", onKeyDown);
-    document.addEventListener("click", onClick);
-    return () => {
-      document.removeEventListener("keydown", onKeyDown);
-      document.removeEventListener("click", onClick);
-    };
-  }, [panelOpen]);
-
-  // Close the panel whenever the view or session changes (mirrors closeAccountPanel calls).
-  useEffect(() => {
-    setPanelOpen(false);
-  }, [view, session]);
 
   return (
     <header className="site-header">
@@ -72,7 +25,7 @@ export default function SiteHeader({
         aria-label={t("nav.homeLabel")}
         onClick={(event) => {
           event.preventDefault();
-          onShowLanding(view === "login");
+          onHome();
         }}
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -109,43 +62,6 @@ export default function SiteHeader({
             <path d="m6 9 6 6 6-6" />
           </svg>
         </label>
-
-        <a
-          id="login-link"
-          className="login-link"
-          href="#login"
-          hidden={!showLoginLink}
-          onClick={(event) => {
-            event.preventDefault();
-            onShowLogin();
-          }}
-        >
-          {t("nav.login")}
-        </a>
-
-        <button
-          id="account-button"
-          ref={accountBtnRef}
-          className="icon-button"
-          type="button"
-          aria-expanded={panelOpen}
-          aria-controls="account-panel"
-          aria-label={t("nav.account")}
-          hidden={!showAccountButton}
-          onClick={() => setPanelOpen((open) => !open)}
-        >
-          <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-            <circle cx="12" cy="8" r="4" fill="currentColor" />
-            <path d="M4 20.5 a8 8 0 0 1 16 0 Z" fill="currentColor" />
-          </svg>
-        </button>
-      </div>
-
-      <div id="account-panel" ref={panelRef} className="account-panel" hidden={!panelOpen}>
-        <p id="account-email">{session?.user.email ?? ""}</p>
-        <button id="signout" className="secondary-button" type="button" onClick={onSignOut}>
-          {t("nav.signout")}
-        </button>
       </div>
     </header>
   );
