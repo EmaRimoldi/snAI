@@ -228,11 +228,12 @@
 /* Reasons / readiness */
 .reasonList { display: grid; gap: 0.5rem; margin: 0.75rem 0 0; padding: 0; list-style: none; }
 .reason {
-  display: flex; gap: 0.6rem; align-items: baseline;
+  display: flex; flex-wrap: wrap; gap: 0.25rem 0.6rem; align-items: baseline;
+  min-width: 0;
   padding: 0.6rem 0.85rem; border: 1px solid var(--input); border-radius: 0.8rem;
 }
 .reasonBlocking { border-color: color-mix(in srgb, var(--danger) 55%, var(--input)); }
-.reasonCode { font-weight: 800; font-size: 0.85rem; }
+.reasonCode { font-weight: 800; font-size: 0.85rem; overflow-wrap: anywhere; }
 .reasonBlocking .reasonCode { color: var(--danger); }
 
 .verdict {
