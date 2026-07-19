@@ -1,0 +1,10 @@
+document_id,household_id,document_type,file_name,template_family,layout_variant,rasterized,contains_adversarial_text,synthetic_notice
+DEV4-HH-401-D01,DEV4-HH-401,application_summary,dev4_hh_401_d01.pdf,dev4-hh-401,adversarial,False,False,SYNTHETIC DEV FIXTURE - NOT A REAL DOCUMENT
+DEV4-HH-401-D02,DEV4-HH-401,pay_stub,dev4_hh_401_d02.pdf,dev4-hh-401,adversarial,False,False,SYNTHETIC DEV FIXTURE - NOT A REAL DOCUMENT
+DEV4-HH-401-D03,DEV4-HH-401,employment_letter,dev4_hh_401_d03.pdf,dev4-hh-401,adversarial,False,False,SYNTHETIC DEV FIXTURE - NOT A REAL DOCUMENT
+DEV4-HH-402-D01,DEV4-HH-402,application_summary,dev4_hh_402_d01.pdf,dev4-hh-402,adversarial,False,False,SYNTHETIC DEV FIXTURE - NOT A REAL DOCUMENT
+DEV4-HH-402-D02,DEV4-HH-402,pay_stub,dev4_hh_402_d02.pdf,dev4-hh-402,adversarial,False,False,SYNTHETIC DEV FIXTURE - NOT A REAL DOCUMENT
+DEV4-HH-402-D03,DEV4-HH-402,employment_letter,dev4_hh_402_d03.pdf,dev4-hh-402,adversarial,False,False,SYNTHETIC DEV FIXTURE - NOT A REAL DOCUMENT
+DEV4-HH-403-D01,DEV4-HH-403,application_summary,dev4_hh_403_d01.pdf,dev4-hh-403,adversarial,False,False,SYNTHETIC DEV FIXTURE - NOT A REAL DOCUMENT
+DEV4-HH-403-D02,DEV4-HH-403,pay_stub,dev4_hh_403_d02.pdf,dev4-hh-403,adversarial,False,True,SYNTHETIC DEV FIXTURE - NOT A REAL DOCUMENT
+DEV4-HH-403-D03,DEV4-HH-403,employment_letter,dev4_hh_403_d03.pdf,dev4-hh-403,adversarial,False,False,SYNTHETIC DEV FIXTURE - NOT A REAL DOCUMENT

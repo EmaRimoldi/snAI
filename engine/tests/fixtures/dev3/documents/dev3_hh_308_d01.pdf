@@ -1,0 +1,59 @@
+%PDF-1.4
+%‚„œ”
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 5 0 R /F2 6 0 R >> >> /Contents 4 0 R >>
+endobj
+4 0 obj
+<< /Length 1747 >>
+stream
+BT /F2 20.00 Tf 0.060 0.180 0.260 rg 1 0 0 1 38.00 750.00 Tm (EVIDENCE DASHBOARD) Tj ET
+BT /F1 9.00 Tf 0.080 0.100 0.130 rg 1 0 0 1 38.00 724.00 Tm (Application Summary / Meadow Evidence Dashboard) Tj ET
+BT /F2 8.00 Tf 0.080 0.100 0.130 rg 1 0 0 1 505.54 750.00 Tm (DEV3-HH-308-D01) Tj ET
+BT /F2 7.50 Tf 0.720 0.080 0.080 rg 1 0 0 1 38.00 695.00 Tm (SYNTHETIC TILES - EACH BOX IS ONE CITED FACT) Tj ET
+q 0.910 0.950 0.980 rg 35.00 515.00 325.00 150.00 re f Q
+BT /F2 7.00 Tf 0.120 0.300 0.380 rg 1 0 0 1 46.00 632.00 Tm (CHECK / HOW MANY PEOPLE?) Tj ET
+BT /F2 14.50 Tf 0.080 0.100 0.130 rg 1 0 0 1 46.00 566.00 Tm (8) Tj ET
+q 0.940 0.920 0.970 rg 385.00 570.00 190.00 95.00 re f Q
+BT /F2 7.00 Tf 0.120 0.300 0.380 rg 1 0 0 1 396.00 632.00 Tm (CHECK / WHO IS THIS FOR?) Tj ET
+BT /F2 14.50 Tf 0.080 0.100 0.130 rg 1 0 0 1 396.00 602.30 Tm (Hope Meadow) Tj ET
+q 0.910 0.970 0.940 rg 385.00 450.00 190.00 95.00 re f Q
+BT /F2 7.00 Tf 0.120 0.300 0.380 rg 1 0 0 1 396.00 512.00 Tm (CHECK / WHERE IS MAIL SENT?) Tj ET
+BT /F2 9.00 Tf 0.080 0.100 0.130 rg 1 0 0 1 396.00 482.30 Tm (308 Tile Terrace, Cambridge, MA 00000) Tj ET
+q 0.910 0.950 0.980 rg 35.00 380.00 210.00 105.00 re f Q
+BT /F2 7.00 Tf 0.120 0.300 0.380 rg 1 0 0 1 46.00 452.00 Tm (CHECK / WHEN WAS IT FILED?) Tj ET
+BT /F2 14.50 Tf 0.080 0.100 0.130 rg 1 0 0 1 46.00 415.70 Tm (2026-07-14) Tj ET
+BT /F2 26.00 Tf 0.940 0.870 0.870 rg 0.74314 0.66913 -0.66913 0.74314 95.00 260.00 Tm (SYNTHETIC - NOT A REAL DOCUMENT) Tj ET
+BT /F1 7.80 Tf 0.280 0.340 0.400 rg 1 0 0 1 38.00 86.00 Tm (Evidence dashboard: every tile is one cited fact; readiness is not approval.) Tj ET
+BT /F1 7.00 Tf 0.380 0.420 0.460 rg 1 0 0 1 34.00 18.00 Tm (SYNTHETIC DEV FIXTURE - NOT A REAL DOCUMENT - DEV3-HH-308-D01) Tj ET
+endstream
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+6 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>
+endobj
+7 0 obj
+<< /Title (DEV3-HH-308-D01) /Author (RealDoor synthetic fixture generator) /Creator (dev2/generate_fixtures.py) /Producer (standard-library vector PDF writer) >>
+endobj
+xref
+0 8
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000121 00000 n 
+0000000257 00000 n 
+0000002056 00000 n 
+0000002126 00000 n 
+0000002201 00000 n 
+trailer
+<< /Size 8 /Root 1 0 R /Info 7 0 R >>
+startxref
+2378
+%%EOF

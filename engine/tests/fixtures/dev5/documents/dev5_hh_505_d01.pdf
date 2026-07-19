@@ -1,0 +1,60 @@
+%PDF-1.4
+%‚„œ”
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 5 0 R /F2 6 0 R >> >> /Contents 4 0 R >>
+endobj
+4 0 obj
+<< /Length 1839 >>
+stream
+BT /F2 20.00 Tf 0.080 0.280 0.300 rg 1 0 0 1 36.00 748.00 Tm (DOCUMENT EVIDENCE WORKFLOW) Tj ET
+BT /F1 8.60 Tf 0.070 0.090 0.120 rg 1 0 0 1 36.00 720.00 Tm (Application Summary / River Process Workshop) Tj ET
+BT /F2 7.20 Tf 0.070 0.090 0.120 rg 1 0 0 1 512.39 748.00 Tm (DEV5-HH-505-D01) Tj ET
+q 0.910 0.970 0.960 rg 0.200 0.480 0.500 RG 0.70 w 42.00 610.00 175.00 64.00 re B Q
+BT /F2 7.40 Tf 0.310 0.360 0.410 rg 1 0 0 1 52.00 650.00 Tm (NODE / 01 / RECORD HOLDER) Tj ET
+BT /F2 10.80 Tf 0.070 0.090 0.120 rg 1 0 0 1 52.00 632.00 Tm (Milo River) Tj ET
+q 0.180 0.550 0.560 RG 2.00 w 127.00 604.00 m 435.00 665.00 l S Q
+q 0.950 0.930 0.980 rg 0.200 0.480 0.500 RG 0.70 w 350.00 610.00 175.00 64.00 re B Q
+BT /F2 7.40 Tf 0.310 0.360 0.410 rg 1 0 0 1 360.00 650.00 Tm (NODE / 02 / FILED DATE) Tj ET
+BT /F1 10.80 Tf 0.070 0.090 0.120 rg 1 0 0 1 360.00 632.00 Tm (2026-07-14) Tj ET
+q 0.180 0.550 0.560 RG 2.00 w 435.00 604.00 m 280.00 580.00 l S Q
+q 0.910 0.970 0.960 rg 0.200 0.480 0.500 RG 0.70 w 195.00 525.00 175.00 64.00 re B Q
+BT /F1 6.50 Tf 0.180 0.210 0.240 rg 1 0 0 1 205.00 547.00 Tm (At this workflow step, the mailing address is ) Tj ET
+BT /F2 6.50 Tf 0.070 0.090 0.120 rg 1 0 0 1 332.52 547.00 Tm (505 Workflow Bend, Quincy, MA 00000) Tj ET
+q 0.180 0.550 0.560 RG 2.00 w 280.00 519.00 m 127.00 495.00 l S Q
+q 0.950 0.930 0.980 rg 0.200 0.480 0.500 RG 0.70 w 42.00 440.00 175.00 64.00 re B Q
+BT /F2 7.40 Tf 0.310 0.360 0.410 rg 1 0 0 1 52.00 480.00 Tm (NODE / 04 / PEOPLE INCLUDED) Tj ET
+BT /F1 10.80 Tf 0.070 0.090 0.120 rg 1 0 0 1 52.00 462.00 Tm (5) Tj ET
+BT /F1 7.30 Tf 0.310 0.360 0.410 rg 1 0 0 1 40.00 92.00 Tm (Connected workflow nodes deliberately break conventional top-down field order.) Tj ET
+BT /F1 6.80 Tf 0.380 0.420 0.460 rg 1 0 0 1 28.00 17.00 Tm (SYNTHETIC DEV FIXTURE - NOT A REAL DOCUMENT - DEV5-HH-505-D01) Tj ET
+endstream
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+6 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>
+endobj
+7 0 obj
+<< /Title (DEV5-HH-505-D01) /Author (RealDoor synthetic fixture generator) /Creator (dev2/generate_fixtures.py) /Producer (standard-library vector PDF writer) >>
+endobj
+xref
+0 8
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000121 00000 n 
+0000000257 00000 n 
+0000002148 00000 n 
+0000002218 00000 n 
+0000002293 00000 n 
+trailer
+<< /Size 8 /Root 1 0 R /Info 7 0 R >>
+startxref
+2470
+%%EOF

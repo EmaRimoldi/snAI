@@ -1,0 +1,71 @@
+%PDF-1.4
+%‚„œ”
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 5 0 R /F2 6 0 R >> >> /Contents 4 0 R >>
+endobj
+4 0 obj
+<< /Length 2660 >>
+stream
+q 0.080 0.500 0.520 rg 0.00 0.00 14.00 792.00 re f Q
+q 0.080 0.500 0.520 rg 32.00 718.00 544.00 2.00 re f Q
+BT /F2 8.50 Tf 0.080 0.500 0.520 rg 1 0 0 1 38.00 758.00 Tm (PAY STUB) Tj ET
+BT /F2 17.00 Tf 0.075 0.180 0.290 rg 1 0 0 1 38.00 733.00 Tm (Ember Stale Payroll) Tj ET
+q 0.900 0.960 0.960 rg 456.00 739.00 120.00 25.00 re f Q
+BT /F2 7.80 Tf 0.075 0.180 0.290 rg 1 0 0 1 463.00 747.00 Tm (DEV2-HH-208-D02) Tj ET
+BT /F2 8.50 Tf 0.720 0.080 0.080 rg 1 0 0 1 36.00 697.00 Tm (SYNTHETIC DEV FIXTURE - ALL NAMES AND ORGANIZATIONS ARE FICTIONAL) Tj ET
+BT /F2 28 Tf 0.965 0.890 0.890 rg 0.74314 0.66913 -0.66913 0.74314 -75.00 355.00 Tm (SYNTHETIC - NOT A REAL DOCUMENT) Tj ET
+BT /F2 28 Tf 0.965 0.890 0.890 rg 0.74314 0.66913 -0.66913 0.74314 60.00 95.00 Tm (SYNTHETIC - NOT A REAL DOCUMENT) Tj ET
+BT /F2 28 Tf 0.965 0.890 0.890 rg 0.74314 0.66913 -0.66913 0.74314 245.00 315.00 Tm (SYNTHETIC - NOT A REAL DOCUMENT) Tj ET
+BT /F2 8.00 Tf 0.330 0.380 0.430 rg 1 0 0 1 48.00 660.00 Tm (EMPLOYEE) Tj ET
+BT /F1 11.00 Tf 0.080 0.100 0.130 rg 1 0 0 1 48.00 640.00 Tm (Jo Ember) Tj ET
+BT /F2 8.00 Tf 0.330 0.380 0.430 rg 1 0 0 1 378.00 660.00 Tm (PAY DATE) Tj ET
+BT /F1 11.00 Tf 0.080 0.100 0.130 rg 1 0 0 1 378.00 640.00 Tm (2026-05-18) Tj ET
+BT /F2 8.00 Tf 0.330 0.380 0.430 rg 1 0 0 1 48.00 582.00 Tm (PAY PERIOD) Tj ET
+BT /F1 11.00 Tf 0.080 0.100 0.130 rg 1 0 0 1 48.00 562.00 Tm (2026-05-04) Tj ET
+BT /F2 8.00 Tf 0.330 0.380 0.430 rg 1 0 0 1 218.00 582.00 Tm (THROUGH) Tj ET
+BT /F1 11.00 Tf 0.080 0.100 0.130 rg 1 0 0 1 218.00 562.00 Tm (2026-05-17) Tj ET
+BT /F2 8.00 Tf 0.330 0.380 0.430 rg 1 0 0 1 410.00 582.00 Tm (PAY FREQUENCY) Tj ET
+BT /F1 11.00 Tf 0.080 0.100 0.130 rg 1 0 0 1 410.00 562.00 Tm (biweekly) Tj ET
+q 0.930 0.950 0.980 rg 36.00 443.00 540.00 88.00 re f Q
+BT /F2 8.00 Tf 0.330 0.380 0.430 rg 1 0 0 1 52.00 501.00 Tm (GROSS PAY) Tj ET
+BT /F2 12.00 Tf 0.080 0.100 0.130 rg 1 0 0 1 52.00 478.00 Tm ($1,500.00) Tj ET
+BT /F2 8.00 Tf 0.330 0.380 0.430 rg 1 0 0 1 190.00 501.00 Tm (HOURS) Tj ET
+BT /F1 12.00 Tf 0.080 0.100 0.130 rg 1 0 0 1 190.00 478.00 Tm (80) Tj ET
+BT /F2 8.00 Tf 0.330 0.380 0.430 rg 1 0 0 1 330.00 501.00 Tm (RATE) Tj ET
+BT /F1 12.00 Tf 0.080 0.100 0.130 rg 1 0 0 1 330.00 478.00 Tm ($18.75) Tj ET
+BT /F2 8.00 Tf 0.330 0.380 0.430 rg 1 0 0 1 454.00 501.00 Tm (NET REFERENCE) Tj ET
+BT /F1 12.00 Tf 0.080 0.100 0.130 rg 1 0 0 1 454.00 478.00 Tm ($1,170.00) Tj ET
+BT /F1 9.00 Tf 0.340 0.380 0.430 rg 1 0 0 1 48.00 401.00 Tm (Training payroll statement; not issued by a real employer.) Tj ET
+BT /F1 7.20 Tf 0.350 0.390 0.440 rg 1 0 0 1 36.00 28.00 Tm (SYNTHETIC DEV FIXTURE - NOT A REAL DOCUMENT - generated for local rule testing) Tj ET
+endstream
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+6 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>
+endobj
+7 0 obj
+<< /Title (DEV2-HH-208-D02) /Author (RealDoor synthetic fixture generator) /Creator (dev2/generate_fixtures.py) /Producer (standard-library vector PDF writer) >>
+endobj
+xref
+0 8
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000121 00000 n 
+0000000257 00000 n 
+0000002969 00000 n 
+0000003039 00000 n 
+0000003114 00000 n 
+trailer
+<< /Size 8 /Root 1 0 R /Info 7 0 R >>
+startxref
+3291
+%%EOF

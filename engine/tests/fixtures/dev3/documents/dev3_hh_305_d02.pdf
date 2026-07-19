@@ -1,0 +1,66 @@
+%PDF-1.4
+%‚„œ”
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 5 0 R /F2 6 0 R >> >> /Contents 4 0 R >>
+endobj
+4 0 obj
+<< /Length 2264 >>
+stream
+q 0.060 0.320 0.360 rg 0.00 0.00 205.00 792.00 re f Q
+BT /F2 21.00 Tf 0.060 0.180 0.260 rg 1 0 0 1 235.00 748.00 Tm (Pay Stub) Tj ET
+BT /F1 9.50 Tf 0.300 0.360 0.400 rg 1 0 0 1 235.00 720.00 Tm (Juniper Quick Reference) Tj ET
+BT /F2 8.00 Tf 0.080 0.100 0.130 rg 1 0 0 1 505.54 748.00 Tm (DEV3-HH-305-D02) Tj ET
+BT /F2 7.50 Tf 0.720 0.080 0.080 rg 1 0 0 1 235.00 689.00 Tm (SYNTHETIC QUICK-REFERENCE LAYOUT) Tj ET
+BT /F2 8.00 Tf 0.740 0.930 0.930 rg 1 0 0 1 25.00 638.00 Tm (QUICK NAME) Tj ET
+BT /F2 12.00 Tf 1.000 1.000 1.000 rg 1 0 0 1 25.00 610.00 Tm (Eli Juniper) Tj ET
+BT /F2 8.00 Tf 0.740 0.930 0.930 rg 1 0 0 1 25.00 493.00 Tm (QUICK PAID) Tj ET
+BT /F2 12.00 Tf 1.000 1.000 1.000 rg 1 0 0 1 25.00 465.00 Tm (2026-07-03) Tj ET
+BT /F2 7.50 Tf 0.100 0.360 0.390 rg 1 0 0 1 235.00 635.00 Tm (QUICK FROM) Tj ET
+BT /F1 12.00 Tf 0.080 0.100 0.130 rg 1 0 0 1 235.00 610.00 Tm (2026-06-18) Tj ET
+BT /F2 7.50 Tf 0.100 0.360 0.390 rg 1 0 0 1 420.00 635.00 Tm (QUICK TO) Tj ET
+BT /F1 12.00 Tf 0.080 0.100 0.130 rg 1 0 0 1 420.00 610.00 Tm (2026-07-01) Tj ET
+BT /F2 7.50 Tf 0.100 0.360 0.390 rg 1 0 0 1 235.00 505.00 Tm (QUICK GROSS AMOUNT) Tj ET
+BT /F1 12.00 Tf 0.080 0.100 0.130 rg 1 0 0 1 235.00 480.00 Tm ($2,100.00) Tj ET
+BT /F2 7.50 Tf 0.100 0.360 0.390 rg 1 0 0 1 420.00 505.00 Tm (QUICK CYCLE) Tj ET
+BT /F1 12.00 Tf 0.080 0.100 0.130 rg 1 0 0 1 420.00 480.00 Tm (biweekly) Tj ET
+BT /F2 7.50 Tf 0.100 0.360 0.390 rg 1 0 0 1 235.00 375.00 Tm (QUICK HOURS) Tj ET
+BT /F1 12.00 Tf 0.080 0.100 0.130 rg 1 0 0 1 235.00 350.00 Tm (70) Tj ET
+BT /F2 7.50 Tf 0.100 0.360 0.390 rg 1 0 0 1 420.00 375.00 Tm (QUICK RATE) Tj ET
+BT /F1 12.00 Tf 0.080 0.100 0.130 rg 1 0 0 1 420.00 350.00 Tm ($30.00) Tj ET
+BT /F2 7.50 Tf 0.100 0.360 0.390 rg 1 0 0 1 325.00 245.00 Tm (QUICK NET REFERENCE) Tj ET
+BT /F1 12.00 Tf 0.080 0.100 0.130 rg 1 0 0 1 325.00 220.00 Tm ($1,638.00) Tj ET
+BT /F2 26.00 Tf 0.940 0.870 0.870 rg 0.74314 0.66913 -0.66913 0.74314 95.00 260.00 Tm (SYNTHETIC - NOT A REAL DOCUMENT) Tj ET
+BT /F1 8.00 Tf 0.280 0.340 0.400 rg 1 0 0 1 235.00 112.00 Tm (Quick-reference rail separates identity evidence from recurring-income evidence.) Tj ET
+BT /F1 7.00 Tf 0.380 0.420 0.460 rg 1 0 0 1 34.00 18.00 Tm (SYNTHETIC DEV FIXTURE - NOT A REAL DOCUMENT - DEV3-HH-305-D02) Tj ET
+endstream
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+6 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>
+endobj
+7 0 obj
+<< /Title (DEV3-HH-305-D02) /Author (RealDoor synthetic fixture generator) /Creator (dev2/generate_fixtures.py) /Producer (standard-library vector PDF writer) >>
+endobj
+xref
+0 8
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000121 00000 n 
+0000000257 00000 n 
+0000002573 00000 n 
+0000002643 00000 n 
+0000002718 00000 n 
+trailer
+<< /Size 8 /Root 1 0 R /Info 7 0 R >>
+startxref
+2895
+%%EOF

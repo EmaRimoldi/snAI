@@ -1,0 +1,63 @@
+%PDF-1.4
+%‚„œ”
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 5 0 R /F2 6 0 R >> >> /Contents 4 0 R >>
+endobj
+4 0 obj
+<< /Length 1935 >>
+stream
+q 0.120 0.160 0.190 rg 0.00 738.00 612.00 54.00 re f Q
+BT /F2 14.00 Tf 1.000 1.000 1.000 rg 1 0 0 1 28.00 758.00 Tm (APPLICATION SUMMARY :: DATA LEDGER) Tj ET
+BT /F1 7.20 Tf 1.000 1.000 1.000 rg 1 0 0 1 522.39 758.00 Tm (DEV3-HH-302-D01) Tj ET
+BT /F2 7.00 Tf 0.720 0.080 0.080 rg 1 0 0 1 28.00 716.00 Tm (SYNTHETIC / ROW-ORIENTED EXTRACTION FIXTURE) Tj ET
+q 0.950 0.960 0.970 rg 34.00 653.00 544.00 42.00 re f Q
+q 0.720 0.750 0.770 RG 0.50 w 34.00 653.00 m 578.00 653.00 l S Q
+BT /F2 6.80 Tf 0.270 0.320 0.360 rg 1 0 0 1 46.00 670.00 Tm (ROW 01 / APPLICATION DATE) Tj ET
+BT /F1 7.50 Tf 0.080 0.100 0.130 rg 1 0 0 1 306.00 670.00 Tm (2026-07-12) Tj ET
+q 1.000 1.000 1.000 rg 34.00 598.00 544.00 42.00 re f Q
+q 0.720 0.750 0.770 RG 0.50 w 34.00 598.00 m 578.00 598.00 l S Q
+BT /F2 6.80 Tf 0.270 0.320 0.360 rg 1 0 0 1 46.00 615.00 Tm (ROW 02 / APPLICANT NAME) Tj ET
+BT /F1 7.50 Tf 0.080 0.100 0.130 rg 1 0 0 1 306.00 615.00 Tm (Ben Glass) Tj ET
+q 0.950 0.960 0.970 rg 34.00 543.00 544.00 42.00 re f Q
+q 0.720 0.750 0.770 RG 0.50 w 34.00 543.00 m 578.00 543.00 l S Q
+BT /F2 6.80 Tf 0.270 0.320 0.360 rg 1 0 0 1 46.00 560.00 Tm (ROW 03 / HOUSEHOLD SIZE) Tj ET
+BT /F1 7.50 Tf 0.080 0.100 0.130 rg 1 0 0 1 306.00 560.00 Tm (2) Tj ET
+q 1.000 1.000 1.000 rg 34.00 488.00 544.00 42.00 re f Q
+q 0.720 0.750 0.770 RG 0.50 w 34.00 488.00 m 578.00 488.00 l S Q
+BT /F2 6.80 Tf 0.270 0.320 0.360 rg 1 0 0 1 46.00 505.00 Tm (ROW 04 / MAILING ADDRESS) Tj ET
+BT /F1 7.50 Tf 0.080 0.100 0.130 rg 1 0 0 1 306.00 505.00 Tm (302 Ledger Lane, Cambridge, MA 00000) Tj ET
+BT /F2 26.00 Tf 0.940 0.870 0.870 rg 0.74314 0.66913 -0.66913 0.74314 95.00 260.00 Tm (SYNTHETIC - NOT A REAL DOCUMENT) Tj ET
+BT /F1 7.60 Tf 0.280 0.340 0.400 rg 1 0 0 1 34.00 105.00 Tm (Ledger view: each row is a captured fact, not a housing decision.) Tj ET
+BT /F1 7.00 Tf 0.380 0.420 0.460 rg 1 0 0 1 34.00 18.00 Tm (SYNTHETIC DEV FIXTURE - NOT A REAL DOCUMENT - DEV3-HH-302-D01) Tj ET
+endstream
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+6 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>
+endobj
+7 0 obj
+<< /Title (DEV3-HH-302-D01) /Author (RealDoor synthetic fixture generator) /Creator (dev2/generate_fixtures.py) /Producer (standard-library vector PDF writer) >>
+endobj
+xref
+0 8
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000121 00000 n 
+0000000257 00000 n 
+0000002244 00000 n 
+0000002314 00000 n 
+0000002389 00000 n 
+trailer
+<< /Size 8 /Root 1 0 R /Info 7 0 R >>
+startxref
+2566
+%%EOF
